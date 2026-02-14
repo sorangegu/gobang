@@ -600,6 +600,7 @@ class UI {
     document.getElementById('multiplayerSelect').style.display = 'block';
     document.getElementById('joinInputSection').style.display = 'none';
     this.opponentCard.style.display = 'none';
+    this.updateModeUI('multiplayer');
     this.drawBoard();
     this.updateUI();
   }
