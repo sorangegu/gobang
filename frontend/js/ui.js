@@ -837,6 +837,7 @@ class UI {
     localStorage.setItem('gobang-room', JSON.stringify({
       roomId,
       playerColor,
+      isHost: playerColor === 1,  // 黑棋是房主
       timestamp: Date.now()
     }));
   }
