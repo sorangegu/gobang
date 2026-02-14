@@ -29,26 +29,25 @@ echo "📝 步骤 1: 提交代码到 GitHub"
 
 # 检查是否有未提交的更改
 if [ -z "$(git status --porcelain)" ]; then
-    echo "⚠️  没有需要提交的更改"
-    exit 0
-fi
+    echo "⚠️  没有需要提交的更改，跳过提交步骤"
+else
+    # 添加所有更改
+    git add -A
 
-# 添加所有更改
-git add -A
+    # 生成提交信息
+    echo "📋 提交信息: $COMMIT_MSG"
 
-# 生成提交信息
-echo "📋 提交信息: $COMMIT_MSG"
-
-# 提交更改
-git commit -m "$COMMIT_MSG
+    # 提交更改
+    git commit -m "$COMMIT_MSG
 
 Co-Authored-By: Claude Sonnet 4.5 <noreply@anthropic.com>"
 
-# 推送到远程仓库
-echo "⬆️  推送到 GitHub..."
-git push origin main
+    # 推送到远程仓库
+    echo "⬆️  推送到 GitHub..."
+    git push origin main
 
-echo "✅ 代码已提交并推送到 GitHub"
+    echo "✅ 代码已提交并推送到 GitHub"
+fi
 
 # ========== 2. SSH 远程部署 ==========
 echo ""
