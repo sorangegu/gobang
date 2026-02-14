@@ -26,12 +26,15 @@ class UI {
       // 人机模式：加载保存的进度
       game.init('ai');
       game.myColor = 1;
+      // 尝试加载保存的游戏状态
       const loaded = game.loadGame();
       if (!loaded) {
         game.isPlaying = true;
         game.board = Array(15).fill(null).map(() => Array(15).fill(0));
       }
       this.updateModeUI('ai');
+      // 加载完棋局后再绘制棋盘
+      this.drawBoard();
     } else if (this.initMode.type === 'create') {
       // 创建房间模式
       game.init('create');
@@ -54,9 +57,9 @@ class UI {
         this.pendingRoomId = this.initMode.roomId;
       }
       this.updateModeUI('room');
+      this.drawBoard();
     }
 
-    this.drawBoard();
     this.updateUI();
     this.updateStats();
   }
@@ -102,10 +105,6 @@ class UI {
 
   // 更新模式相关的 UI
   updateModeUI(mode) {
-    // 隐藏所有面板
-    this.roomPanel.style.display = 'none';
-    this.roomInfoSection.style.display = 'none';
-
     // 更新导航按钮状态
     this.navBtns.forEach(btn => {
       const btnMode = btn.dataset.mode;
@@ -118,9 +117,12 @@ class UI {
     });
 
     if (mode === 'ai') {
+      this.roomPanel.style.display = 'none';
+      this.roomInfoSection.style.display = 'none';
       this.opponentCard.style.display = 'flex';
       this.opponentCard.querySelector('.player-label').textContent = 'AI (白方)';
     } else if (mode === 'create' || mode === 'join' || mode === 'room') {
+      // create/join/room 模式的面板在 DOMContentLoaded 中处理
       this.opponentCard.style.display = 'none';
     }
   }
