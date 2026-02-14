@@ -175,16 +175,20 @@ class UI {
 
   // 初始�� Canvas 尺寸（只在构造函数中调用一次）
   initCanvas() {
-    const { canvas, boardSize, padding } = this;
+    const { canvas, boardSize } = this;
     const dpr = window.devicePixelRatio || 1;
 
     let canvasSize;
+    let padding;
     if (window.innerWidth <= 768) {
       canvasSize = window.innerWidth <= 400 ? 304 : 340;
+      padding = window.innerWidth <= 400 ? 8 : 10;
     } else {
       canvasSize = 604;
+      padding = 22;
     }
 
+    this.padding = padding;
     this.cellSize = (canvasSize - padding * 2) / (boardSize - 1);
 
     canvas.width = canvasSize * dpr;
