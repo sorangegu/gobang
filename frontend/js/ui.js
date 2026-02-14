@@ -272,9 +272,15 @@ class UI {
     this.leaveRoomBtn.addEventListener('click', () => this.handleLeaveRoom());
 
     // 加入房间按钮
-    document.getElementById('joinRoomBtn').addEventListener('click', () => this.joinRoom());
-    document.getElementById('roomIdInput').addEventListener('keypress', (e) => {
+    document.getElementById('joinRoomBtn')?.addEventListener('click', () => this.joinRoom());
+    document.getElementById('roomIdInput')?.addEventListener('keypress', (e) => {
       if (e.key === 'Enter') this.joinRoom();
+    });
+
+    // 左侧面板的加入房间按钮
+    document.getElementById('joinRoomBtnPanel')?.addEventListener('click', () => this.joinRoomFromPanel());
+    document.getElementById('roomIdInputPanel')?.addEventListener('keypress', (e) => {
+      if (e.key === 'Enter') this.joinRoomFromPanel();
     });
 
     // 复制房间号
@@ -611,19 +617,29 @@ class UI {
     game.gameMode = 'join';
     game.isPlaying = false;
 
-    this.roomPanel.style.display = 'block';
-    document.getElementById('createSection').style.display = 'none';
-    document.getElementById('joinSection').style.display = 'block';
-
-    this.opponentCard.style.display = 'none';
+    // 隐藏顶部面板，显示左侧面板
+    this.roomPanel.style.display = 'none';
     this.roomInfoSection.style.display = 'block';
     document.getElementById('inviteSection').style.display = 'none';
+    document.getElementById('joinSectionPanel').style.display = 'block';
+
+    this.opponentCard.style.display = 'none';
     this.updateUI();
   }
 
-  // 加入房间
+  // 加入房间（从顶部面板）
   joinRoom() {
     const roomId = document.getElementById('roomIdInput').value.trim().toUpperCase();
+    if (roomId.length !== 6) {
+      this.showToast('请输入6位房间号');
+      return;
+    }
+    socketManager.joinRoom(roomId);
+  }
+
+  // 加入房间（从左侧面板）
+  joinRoomFromPanel() {
+    const roomId = document.getElementById('roomIdInputPanel').value.trim().toUpperCase();
     if (roomId.length !== 6) {
       this.showToast('请输入6位房间号');
       return;

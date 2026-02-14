@@ -108,6 +108,14 @@
             </div>
             <p class="waiting-text" style="margin-top: 10px; font-size: 12px;">等待对手加入...</p>
           </div>
+          <!-- 加入房间输入 -->
+          <div class="join-section" id="joinSectionPanel" style="display: none; margin-top: 12px;">
+            <div style="margin-bottom: 6px; color: var(--text-secondary); font-size: 13px;">加入房间:</div>
+            <div style="display: flex; gap: 6px;">
+              <input type="text" id="roomIdInputPanel" placeholder="输入房间号" maxlength="6" style="flex: 1; padding: 6px 10px; background-color: var(--bg-primary); border: 1px solid var(--border-color); border-radius: var(--radius); color: var(--text-primary); font-size: 13px; text-transform: uppercase; letter-spacing: 2px; text-align: center;">
+              <button class="btn-primary" id="joinRoomBtnPanel" style="padding: 6px 12px; font-size: 12px;">加入</button>
+            </div>
+          </div>
           <button class="btn-action" id="leaveRoomBtn" style="width: 100%; margin-top: 12px;">离开房间</button>
         </div>
       </aside>
