@@ -1,0 +1,133 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>五子棋测试</title>
+  <style>
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+    body { background: #1a1a2e; display: flex; justify-content: center; align-items: center; min-height: 100vh; }
+    .board { background: #deb887; padding: 15px; border-radius: 4px; }
+    canvas { display: block; cursor: pointer; background: #deb887; }
+    .info { color: white; margin-top: 20px; text-align: center; font-family: sans-serif; }
+  </style>
+</head>
+<body>
+  <div>
+    <div class="board">
+      <canvas id="board" width="450" height="450"></canvas>
+    </div>
+    <div class="info">
+      <p>当前回合: <span id="turn">黑方</span></p>
+      <p>点击棋盘落子</p>
+    </div>
+  </div>
+
+  <script>
+    // 简单测试
+    const canvas = document.getElementById('board');
+    const ctx = canvas.getContext('2d');
+    const turnDisplay = document.getElementById('turn');
+
+    let cellSize = 30;
+    let boardSize = 15;
+    let padding = 15;
+    let board = [];
+    let currentPlayer = 1; // 1: 黑, 2: 白
+
+    // 初始化棋盘
+    for (let i = 0; i < boardSize; i++) {
+      board[i] = [];
+      for (let j = 0; j < boardSize; j++) {
+        board[i][j] = 0;
+      }
+    }
+
+    // 绘制棋盘
+    function drawBoard() {
+      const totalSize = cellSize * (boardSize - 1);
+      canvas.width = totalSize + padding * 2;
+      canvas.height = totalSize + padding * 2;
+
+      // 清空
+      ctx.fillStyle = '#deb887';
+      ctx.fillRect(0, 0, canvas.width, canvas.height);
+
+      // 绘制网格线
+      ctx.strokeStyle = '#8b7355';
+      ctx.lineWidth = 1;
+
+      for (let i = 0; i < boardSize; i++) {
+        // 横线
+        ctx.beginPath();
+        ctx.moveTo(padding, padding + i * cellSize);
+        ctx.lineTo(padding + totalSize, padding + i * cellSize);
+        ctx.stroke();
+
+        // 竖线
+        ctx.beginPath();
+        ctx.moveTo(padding + i * cellSize, padding);
+        ctx.lineTo(padding + i * cellSize, padding + totalSize);
+        ctx.stroke();
+      }
+
+      // 绘制星位
+      ctx.fillStyle = '#8b7355';
+      const stars = [[3, 3], [11, 3], [7, 7], [3, 11], [11, 11]];
+      stars.forEach(([x, y]) => {
+        ctx.beginPath();
+        ctx.arc(padding + x * cellSize, padding + y * cellSize, 4, 0, Math.PI * 2);
+        ctx.fill();
+      });
+
+      // 绘制棋子
+      for (let y = 0; y < boardSize; y++) {
+        for (let x = 0; x < boardSize; x++) {
+          if (board[y][x] !== 0) {
+            drawStone(x, y, board[y][x]);
+          }
+        }
+      }
+    }
+
+    // 绘制棋子
+    function drawStone(x, y, player) {
+      const centerX = padding + x * cellSize;
+      const centerY = padding + y * cellSize;
+      const radius = cellSize / 2 - 2;
+
+      ctx.beginPath();
+      ctx.arc(centerX, centerY, radius, 0, Math.PI * 2);
+
+      if (player === 1) {
+        ctx.fillStyle = '#1a1a1a';
+      } else {
+        ctx.fillStyle = '#f5f5f5';
+      }
+
+      ctx.fill();
+    }
+
+    // 点击落子
+    canvas.addEventListener('click', (e) => {
+      const rect = canvas.getBoundingClientRect();
+      const x = e.clientX - rect.left;
+      const y = e.clientY - rect.top;
+
+      const cellX = Math.round((x - padding) / cellSize);
+      const cellY = Math.round((y - padding) / cellSize);
+
+      if (cellX >= 0 && cellX < 15 && cellY >= 0 && cellY < 15 && board[cellY][cellX] === 0) {
+        board[cellY][cellX] = currentPlayer;
+        drawBoard();
+        currentPlayer = 3 - currentPlayer;
+        turnDisplay.textContent = currentPlayer === 1 ? '黑方' : '白方';
+      }
+    });
+
+    // 初始绘制
+    drawBoard();
+    console.log('棋盘已绘制');
+  </script>
+</body>
+</html>

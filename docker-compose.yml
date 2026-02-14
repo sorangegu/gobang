@@ -1,0 +1,18 @@
+services:
+  backend:
+    build:
+      context: ./backend
+      dockerfile: Dockerfile
+    container_name: gobang-backend
+    ports:
+      - "127.0.0.1:5001:5001"
+    environment:
+      - NODE_ENV=production
+      - PORT=5001
+    restart: unless-stopped
+    networks:
+      - gobang-network
+
+networks:
+  gobang-network:
+    driver: bridge

@@ -1,0 +1,187 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>五子棋在线</title>
+  <link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+  <!-- 顶部导航 -->
+  <header class="navbar">
+    <div class="logo">五子棋</div>
+    <div class="nav-center">
+      <button class="nav-btn active" data-mode="ai">人机对战</button>
+      <button class="nav-btn" data-mode="create">创建房间</button>
+      <button class="nav-btn" data-mode="join">加入房间</button>
+    </div>
+    <div class="nav-right">
+      <button class="theme-toggle" id="themeToggle" title="切换主题">
+        <span class="theme-icon">◐</span>
+      </button>
+    </div>
+  </header>
+
+  <!-- 主内容区 -->
+  <main class="main-content">
+    <!-- 房间面板 -->
+    <div class="room-panel" id="roomPanel" style="display: none;">
+      <div class="panel-content">
+        <!-- 创建房间 -->
+        <div class="panel-section" id="createSection" style="display: none;">
+          <h3>创建房间</h3>
+          <div class="room-info">
+            <div class="room-id-display">
+              <span>房间号:</span>
+              <strong id="roomIdDisplay">------</strong>
+              <button class="btn-copy" id="copyRoomId">复制</button>
+            </div>
+            <div class="invite-link">
+              <span>邀请链接:</span>
+              <input type="text" id="inviteLink" readonly>
+              <button class="btn-copy" id="copyInviteLink">复制</button>
+            </div>
+          </div>
+          <p class="waiting-text">等待对手加入...</p>
+        </div>
+
+        <!-- 加入房间 -->
+        <div class="panel-section" id="joinSection" style="display: none;">
+          <h3>加入房间</h3>
+          <div class="join-form">
+            <input type="text" id="roomIdInput" placeholder="请输入房间号" maxlength="6">
+            <button class="btn-primary" id="joinRoomBtn">加入</button>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- 游戏区域 -->
+    <div class="game-container">
+      <!-- 侧边信息面板 -->
+      <aside class="side-panel" id="sidePanel">
+        <div class="player-info">
+          <div class="player-card" id="playerCard">
+            <div class="player-stone black"></div>
+            <div class="player-status">
+              <span class="player-label">你 (黑方)</span>
+              <span class="player-turn" id="yourTurn" style="display: none;">你的回合</span>
+            </div>
+          </div>
+          <div class="player-card opponent" id="opponentCard">
+            <div class="player-stone white"></div>
+            <div class="player-status">
+              <span class="player-label">AI (白方)</span>
+              <span class="player-turn" id="opponentTurn" style="display: none;">AI回合</span>
+            </div>
+          </div>
+        </div>
+
+        <div class="game-info">
+          <div class="info-row">
+            <span>当前回合:</span>
+            <span id="currentTurn">黑方</span>
+          </div>
+          <div class="info-row mode-display">
+            <span>模式:</span>
+            <span id="gameMode">人机对战</span>
+          </div>
+        </div>
+
+        <div class="game-actions">
+          <button class="btn-action" id="undoBtn" disabled>悔棋</button>
+          <button class="btn-action" id="restartBtn" disabled>重新开始</button>
+        </div>
+
+        <!-- 房间信息 -->
+        <div class="room-info-section" id="roomInfoSection" style="display: none;">
+          <div class="info-row">
+            <span>房间号:</span>
+            <span id="displayRoomId">------</span>
+          </div>
+          <button class="btn-action" id="leaveRoomBtn" style="width: 100%; margin-top: 12px;">离开房间</button>
+        </div>
+      </aside>
+
+      <!-- 棋盘区域 -->
+      <div class="board-wrapper">
+        <canvas id="board" width="450" height="450"></canvas>
+      </div>
+
+      <!-- 右侧装饰面板 -->
+      <aside class="decor-panel">
+        <div class="decor-section">
+          <h3>🎮 游戏规则</h3>
+          <p>双方轮流落子，先连成五子者获胜。黑方先手。</p>
+        </div>
+
+        <div class="decor-section">
+          <h3>💡 游戏提示</h3>
+          <ul class="game-tips">
+            <li>占据中心位置获得更多进攻机会</li>
+            <li>注意防守对手的连子</li>
+            <li>活三、活四是制胜关键</li>
+          </ul>
+        </div>
+
+        <div class="decor-section">
+          <h3>📊 游戏统计</h3>
+          <div class="stats-grid">
+            <div class="stat-item">
+              <span class="stat-value" id="totalGames">0</span>
+              <span class="stat-label">总场次</span>
+            </div>
+            <div class="stat-item">
+              <span class="stat-value" id="winGames">0</span>
+              <span class="stat-label">胜利</span>
+            </div>
+            <div class="stat-item">
+              <span class="stat-value" id="winRate">0%</span>
+              <span class="stat-label">胜率</span>
+            </div>
+            <div class="stat-item">
+              <span class="stat-value" id="totalMoves">0</span>
+              <span class="stat-label">总步数</span>
+            </div>
+          </div>
+          <button class="btn-action" id="resetStatsBtn" style="width: 100%; margin-top: 12px;">重置统计</button>
+        </div>
+      </aside>
+    </div>
+  </main>
+
+  <!-- 结果弹窗 -->
+  <div class="modal" id="resultModal" style="display: none;">
+    <div class="modal-content">
+      <h2 id="resultTitle">游戏结束</h2>
+      <p id="resultMessage">黑方获胜</p>
+      <div class="modal-actions">
+        <button class="btn-primary" id="restartGameBtn">再来一局</button>
+        <button class="btn-secondary" id="backHomeBtn">返回主页</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- 确认弹窗 -->
+  <div class="modal" id="confirmModal" style="display: none;">
+    <div class="modal-content">
+      <h2 id="confirmTitle">确认</h2>
+      <p id="confirmMessage">确定要悔棋吗？</p>
+      <div class="modal-actions">
+        <button class="btn-primary" id="confirmYesBtn">确定</button>
+        <button class="btn-secondary" id="confirmNoBtn">取消</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- 通知弹窗 -->
+  <div class="toast" id="toast" style="display: none;">
+    <span id="toastMessage"></span>
+  </div>
+
+  <script src="/socket.io/socket.io.js"></script>
+  <script src="js/socket.js?v=1.1"></script>
+  <script src="js/game.js?v=1.1"></script>
+  <script src="js/ui.js?v=1.1"></script>
+</body>
+</html>
