@@ -593,12 +593,15 @@ class UI {
   // 处理模式切换 - 通过 URL 导航
   handleModeChange(mode) {
     if (mode === 'ai') {
+      this.clearRoomInfo();
       window.history.pushState({}, '', '/');
       location.reload();
     } else if (mode === 'create') {
+      this.clearRoomInfo();  // 主动创建房间时清除之前的房间信息
       window.history.pushState({}, '', '/room/create');
       location.reload();
     } else if (mode === 'join') {
+      this.clearRoomInfo();  // 主动加入房间时清除之前的房间信息
       window.history.pushState({}, '', '/room/join');
       location.reload();
     }
