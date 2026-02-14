@@ -70,12 +70,14 @@ class UI {
         document.getElementById('inviteSection').style.display = 'block';
         const inviteUrl = `${window.location.origin}/room/${savedRoom.roomId}`;
         document.getElementById('inviteLink').value = inviteUrl;
+        this.updateModeUI('room');
       } else {
-        // 没有保存的房间信息或房间ID不匹配，尝试新加入
-        game.init('join');
-        this.pendingRoomId = this.initMode.roomId;
+        // 没有保存的房间信息，重定向到玩家对战选择页面
+        window.history.replaceState({}, '', '/room');
+        game.init('ai');
+        this.updateModeUI('multiplayer');
+        document.getElementById('multiplayerSelect').style.display = 'block';
       }
-      this.updateModeUI('room');
       this.drawBoard();
     }
 
@@ -972,14 +974,14 @@ class UI {
     // 清理房间信息
     this.clearRoomInfo();
 
-    // 重置游戏状态（但保持在玩家对战模式）
+    // 重置游戏状态
     game.reset();
 
-    // 显示玩家对战选择面板，而不是切换到人机模式
-    this.showMultiplayerSelect();
+    // 更新 URL 为玩家对战选择页面
+    window.history.pushState({}, '', '/room');
 
-    // 导航按钮保持当前状态（玩家对战），不强制切换到人机
-    // 这样用户离开房间后仍然在玩家对战页面
+    // 显示玩家对战选择面板
+    this.showMultiplayerSelect();
 
     this.showToast('已离开房间');
   }
