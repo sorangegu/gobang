@@ -69,7 +69,7 @@ class UI {
         document.getElementById('multiplayerSelect').style.display = 'block';
         this.opponentCard.style.display = 'none';
         this.updateModeUI('multiplayer');
-        this.drawBoard();
+        // 不需要再调用 drawBoard()，initCanvas 已经绘制过了
       }
     } else if (this.initMode.type === 'room') {
       // 具体房间：检查是否有保存的房间信息
@@ -89,7 +89,13 @@ class UI {
       } else {
         // 没有保存的房间信息，重定向到玩家对战选择页面
         window.history.replaceState({}, '', '/room');
-        game.init('ai');
+        game.gameMode = 'multiplayer';
+        game.board = Array(15).fill(null).map(() => Array(15).fill(0));
+        game.currentPlayer = 1;
+        game.isPlaying = false;
+        game.moveHistory = [];
+        game.winner = null;
+        game.lastMove = null;
         this.updateModeUI('multiplayer');
         document.getElementById('multiplayerSelect').style.display = 'block';
       }
