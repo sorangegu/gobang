@@ -568,6 +568,17 @@ class UI {
     });
 
     socketManager.on('playerLeft', (data) => {
+      // 检查是否还在游戏中（可能已重连）
+      if (game.isPlaying && game.gameMode !== 'ai') {
+        // 如果还在对局中，可能是误报，尝试重连
+        const savedRoom = this.getValidSavedRoom();
+        if (savedRoom) {
+          console.log('[DEBUG] 收到 playerLeft，但还在游戏中，尝试重连');
+          socketManager.reconnectRoom(savedRoom.roomId, savedRoom.playerColor);
+          return;
+        }
+      }
+
       this.showToast(data.reason || '对手离开');
       // 立即清空棋盘显示
       game.board = Array(15).fill(null).map(() => Array(15).fill(0));
