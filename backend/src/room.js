@@ -610,6 +610,9 @@ class RoomManager {
       opponent.emit('opponent_reconnected', {});
     }
 
+    // 检查对手是否在线
+    const opponentOnline = socket.isHost ? (room.guest !== null) : (room.host !== null);
+
     return {
       success: true,
       roomId,
@@ -617,7 +620,8 @@ class RoomManager {
       playerColor: socket.playerColor,
       board: room.board,
       currentPlayer: room.currentPlayer,
-      status: room.status
+      status: room.status,
+      opponentOnline
     };
   }
 }

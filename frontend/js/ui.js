@@ -408,19 +408,25 @@ class UI {
         game.myColor = data.playerColor;
         game.board = data.board;
         game.currentPlayer = data.currentPlayer;
-        game.isPlaying = data.status === 'playing';
+        game.isPlaying = data.status === 'playing' && data.opponentOnline;
         document.getElementById('displayRoomId').textContent = data.roomId;
         this.roomPanel.style.display = 'none';
         document.getElementById('multiplayerSelect').style.display = 'none';
         this.roomInfoSection.style.display = 'block';
 
-        if (data.status === 'playing') {
-          // 正在游戏中，显示对手
+        if (data.status === 'playing' && data.opponentOnline) {
+          // 正在游戏中且对手在线，显示对手
           this.opponentCard.style.display = 'flex';
           this.opponentCard.querySelector('.player-label').textContent = data.isHost ? '对手 (白方)' : '对手 (黑方)';
           this.playerCard.querySelector('.player-label').textContent = data.isHost ? '你 (黑方)' : '你 (白方)';
           document.getElementById('inviteSection').style.display = 'none';
           document.getElementById('readySection').style.display = 'none';
+        } else if (data.status === 'playing' && !data.opponentOnline) {
+          // 游戏进行中但对手离线，显示等待对手重连
+          this.opponentCard.style.display = 'none';
+          document.getElementById('inviteSection').style.display = 'none';
+          document.getElementById('readySection').style.display = 'none';
+          this.showToast('对手已断开，等待对手重连...');
         } else {
           // 等待中，显示准备区域或邀请链接
           this.opponentCard.style.display = 'none';
