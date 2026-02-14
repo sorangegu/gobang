@@ -47,9 +47,26 @@ class UI {
         this.drawBoard();
       }
     } else if (this.initMode.type === 'multiplayer') {
-      // 玩家对战选择页面
-      game.init('ai');
-      this.updateModeUI('multiplayer');
+      // 玩家对战选择页面：检查是否有保存的房间，有则自动重连
+      const savedRoom = this.getValidSavedRoom();
+      if (savedRoom) {
+        // 有保存的房间，自动重连
+        game.init(savedRoom.isHost ? 'create' : 'join');
+        game.myColor = savedRoom.playerColor;
+        game.roomId = savedRoom.roomId;
+        this.pendingReconnect = savedRoom;
+        // 更新 URL 为房间页
+        window.history.replaceState({}, '', `/room/${savedRoom.roomId}`);
+        this.updateModeUI('room');
+        document.getElementById('displayRoomId').textContent = savedRoom.roomId;
+        document.getElementById('inviteSection').style.display = 'block';
+        const inviteUrl = `${window.location.origin}/room/${savedRoom.roomId}`;
+        document.getElementById('inviteLink').value = inviteUrl;
+      } else {
+        // 没有保存的房间，显示玩家对战选择页面
+        game.init('ai');
+        this.updateModeUI('multiplayer');
+      }
       this.drawBoard();
     } else if (this.initMode.type === 'room') {
       // 具体房间：检查重连还是新加入
