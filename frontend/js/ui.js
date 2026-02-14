@@ -386,8 +386,13 @@ class UI {
         // 显示准备区域
         document.getElementById('inviteSection').style.display = 'none';
         document.getElementById('readySection').style.display = 'block';
+        // 重置准备状态
         document.getElementById('myReadyStatus').textContent = '未准备';
+        document.getElementById('myReadyStatus').style.color = 'var(--text-muted)';
         document.getElementById('opponentReadyStatus').textContent = '未准备';
+        document.getElementById('opponentReadyStatus').style.color = 'var(--text-muted)';
+        document.getElementById('readyBtn').disabled = false;
+        document.getElementById('readyBtn').textContent = '准备开始';
         this.drawBoard();
         this.updateUI();
         this.saveRoomInfo(data.roomId, data.playerColor || 2);
@@ -419,13 +424,23 @@ class UI {
         } else {
           // 等待中，显示准备区域或邀请链接
           this.opponentCard.style.display = 'none';
-          document.getElementById('readySection').style.display = 'none';
           if (data.isHost) {
+            // 房主显示邀请链接
             document.getElementById('inviteSection').style.display = 'block';
+            document.getElementById('readySection').style.display = 'none';
             const inviteUrl = `${window.location.origin}/room/${data.roomId}`;
             document.getElementById('inviteLink').value = inviteUrl;
           } else {
+            // 被邀玩家显示准备区域
             document.getElementById('inviteSection').style.display = 'none';
+            document.getElementById('readySection').style.display = 'block';
+            // 重置准备状态
+            document.getElementById('myReadyStatus').textContent = '未准备';
+            document.getElementById('myReadyStatus').style.color = 'var(--text-muted)';
+            document.getElementById('opponentReadyStatus').textContent = '未准备';
+            document.getElementById('opponentReadyStatus').style.color = 'var(--text-muted)';
+            document.getElementById('readyBtn').disabled = false;
+            document.getElementById('readyBtn').textContent = '准备开始';
           }
         }
 
@@ -453,8 +468,13 @@ class UI {
       // 显示准备区域
       document.getElementById('inviteSection').style.display = 'none';
       document.getElementById('readySection').style.display = 'block';
+      // 重置准备状态
       document.getElementById('myReadyStatus').textContent = '未准备';
+      document.getElementById('myReadyStatus').style.color = 'var(--text-muted)';
       document.getElementById('opponentReadyStatus').textContent = '未准备';
+      document.getElementById('opponentReadyStatus').style.color = 'var(--text-muted)';
+      document.getElementById('readyBtn').disabled = false;
+      document.getElementById('readyBtn').textContent = '准备开始';
       this.drawBoard();
       this.updateUI();
       this.showToast('对手已加入，请准备开始游戏');
@@ -568,6 +588,14 @@ class UI {
       game.winner = null;
       game.isPlaying = false;
       this.drawBoard();
+
+      // 重置准备状态
+      document.getElementById('myReadyStatus').textContent = '未准备';
+      document.getElementById('myReadyStatus').style.color = 'var(--text-muted)';
+      document.getElementById('opponentReadyStatus').textContent = '未准备';
+      document.getElementById('opponentReadyStatus').style.color = 'var(--text-muted)';
+      document.getElementById('readyBtn').disabled = false;
+      document.getElementById('readyBtn').textContent = '准备开始';
 
       // 在左侧面板显示邀请信息
       this.roomPanel.style.display = 'none';
