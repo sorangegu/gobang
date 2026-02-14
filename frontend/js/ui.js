@@ -299,11 +299,12 @@ class UI {
   initSocketListeners() {
     socketManager.on('roomCreated', (data) => {
       if (data.success) {
-        document.getElementById('roomIdDisplay').textContent = data.roomId;
+        // 在左侧面板显示房间信息
+        document.getElementById('displayRoomId').textContent = data.roomId;
+        document.getElementById('inviteSection').style.display = 'block';
         const inviteUrl = `${window.location.origin}/room/${data.roomId}`;
         document.getElementById('inviteLink').value = inviteUrl;
         game.setRoomInfo(data.roomId, true);
-        document.getElementById('displayRoomId').textContent = data.roomId;
         this.saveRoomInfo(data.roomId, 1);
       } else {
         this.showToast(data.error || '创建房间失败');
@@ -459,17 +460,15 @@ class UI {
       game.gameMode = 'create';
       this.saveRoomInfo(data.roomId, 1);
 
-      // 显示创建房间面板（带邀请链接）
-      this.roomPanel.style.display = 'block';
-      document.getElementById('createSection').style.display = 'block';
-      document.getElementById('joinSection').style.display = 'none';
-      document.getElementById('roomIdDisplay').textContent = data.roomId;
+      // 在左侧面板显示邀请信息
+      this.roomPanel.style.display = 'none';
+      this.roomInfoSection.style.display = 'block';
+      document.getElementById('displayRoomId').textContent = data.roomId;
+      document.getElementById('inviteSection').style.display = 'block';
       const inviteUrl = `${window.location.origin}/room/${data.roomId}`;
       document.getElementById('inviteLink').value = inviteUrl;
-      document.getElementById('displayRoomId').textContent = data.roomId;
 
       this.opponentCard.style.display = 'none';
-      this.roomInfoSection.style.display = 'block';
       this.updateUI();
       this.showToast(data.reason || '你已成为新房主');
     });
@@ -598,12 +597,12 @@ class UI {
 
     socketManager.createRoom();
 
-    this.roomPanel.style.display = 'block';
-    document.getElementById('createSection').style.display = 'block';
-    document.getElementById('joinSection').style.display = 'none';
+    // 在左侧面板显示等待信息
+    this.roomPanel.style.display = 'none';
+    this.roomInfoSection.style.display = 'block';
+    document.getElementById('inviteSection').style.display = 'block';
 
     this.opponentCard.style.display = 'none';
-    this.roomInfoSection.style.display = 'block';
     this.updateUI();
   }
 
@@ -618,6 +617,7 @@ class UI {
 
     this.opponentCard.style.display = 'none';
     this.roomInfoSection.style.display = 'block';
+    document.getElementById('inviteSection').style.display = 'none';
     this.updateUI();
   }
 

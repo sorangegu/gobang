@@ -98,6 +98,15 @@
           <div class="info-row">
             <span>房间号:</span>
             <span id="displayRoomId">------</span>
+            <button class="btn-copy" id="copyRoomId" style="padding: 4px 8px; font-size: 11px;">复制</button>
+          </div>
+          <div class="invite-section" id="inviteSection" style="display: none; margin-top: 12px;">
+            <div style="margin-bottom: 6px; color: var(--text-secondary); font-size: 13px;">邀请链接:</div>
+            <div style="display: flex; gap: 6px;">
+              <input type="text" id="inviteLink" readonly style="flex: 1; padding: 6px 10px; background-color: var(--bg-primary); border: 1px solid var(--border-color); border-radius: var(--radius); color: var(--text-primary); font-size: 12px;">
+              <button class="btn-copy" id="copyInviteLink" style="padding: 6px 12px; font-size: 12px;">复制</button>
+            </div>
+            <p class="waiting-text" style="margin-top: 10px; font-size: 12px;">等待对手加入...</p>
           </div>
           <button class="btn-action" id="leaveRoomBtn" style="width: 100%; margin-top: 12px;">离开房间</button>
         </div>
