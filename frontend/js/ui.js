@@ -47,14 +47,13 @@ class UI {
         this.drawBoard();
       }
     } else if (this.initMode.type === 'multiplayer') {
-      // 玩家对战选择页面：检查是否有保存的房间，有则自动重连
+      // 玩家对战选择页面：检查是否有保存的房间，保持房间状态（不自动重连）
       const savedRoom = this.getValidSavedRoom();
       if (savedRoom) {
-        // 有保存的房间，自动重连
+        // 有保存的房间，显示房间信息但不重连
         game.init(savedRoom.isHost ? 'create' : 'join');
         game.myColor = savedRoom.playerColor;
         game.roomId = savedRoom.roomId;
-        this.pendingReconnect = savedRoom;
         // 更新 URL 为房间页
         window.history.replaceState({}, '', `/room/${savedRoom.roomId}`);
         this.updateModeUI('room');
