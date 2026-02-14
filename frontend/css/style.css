@@ -73,11 +73,7 @@ body {
 }
 
 .logo {
-  font-size: 24px;
-  font-weight: 700;
-  color: var(--accent);
-  position: absolute;
-  left: 24px;
+  display: none;
 }
 
 .nav-center {
@@ -299,10 +295,25 @@ body.pre-init[data-initial-mode="multiplayer"] .mode-display {
   background-color: var(--bg-secondary);
   border: 1px solid var(--border-color);
   border-radius: var(--radius-lg);
-  padding: 24px;
+  padding: 20px 24px 24px;
   transition: background-color var(--transition), border-color var(--transition);
   display: flex;
   flex-direction: column;
+}
+
+.side-panel-header {
+  text-align: center;
+  margin-bottom: 16px;
+  padding-bottom: 12px;
+  border-bottom: 1px solid var(--border-color);
+}
+
+.game-title {
+  font-size: 22px;
+  font-weight: 700;
+  color: var(--accent);
+  margin: 0;
+  letter-spacing: 2px;
 }
 
 /* ===== 右侧装饰面板 ===== */
