@@ -37,11 +37,11 @@ class UI {
       // 加载完棋局后再绘制棋盘
       this.drawBoard();
     } else if (this.initMode.type === 'multiplayer') {
-      // 玩家对战选择页面：检查是否有保存的房间，保持房间状态（不自动重连）
+      // 玩家对战选择页面：检查是否有保存的房间
       const savedRoom = this.getValidSavedRoom();
       console.log('[DEBUG] multiplayer mode, savedRoom:', savedRoom);
       if (savedRoom) {
-        // 有保存的房间，显示房间信息但不重连
+        // 有保存的房间，设置待重连
         game.init(savedRoom.isHost ? 'create' : 'join');
         game.myColor = savedRoom.playerColor;
         game.roomId = savedRoom.roomId;
@@ -53,6 +53,11 @@ class UI {
         document.getElementById('inviteSection').style.display = 'block';
         const inviteUrl = `${window.location.origin}/room/${savedRoom.roomId}`;
         document.getElementById('inviteLink').value = inviteUrl;
+        // 设置待重连
+        this.pendingReconnect = {
+          roomId: savedRoom.roomId,
+          playerColor: savedRoom.playerColor
+        };
       } else {
         // 没有保存的房间，显示玩家对战选择页面
         console.log('[DEBUG] No saved room, showing multiplayer select');
@@ -75,7 +80,7 @@ class UI {
       // 具体房间：检查是否有保存的房间信息
       const savedRoom = this.getValidSavedRoom();
       if (savedRoom && savedRoom.roomId === this.initMode.roomId) {
-        // 有保存的房间信息，显示房间状态（不自动重连）
+        // 有保存的房间信息，设置待重连
         game.init(savedRoom.isHost ? 'create' : 'join');
         game.myColor = savedRoom.playerColor;
         game.roomId = savedRoom.roomId;
@@ -86,6 +91,11 @@ class UI {
         const inviteUrl = `${window.location.origin}/room/${savedRoom.roomId}`;
         document.getElementById('inviteLink').value = inviteUrl;
         this.updateModeUI('room');
+        // 设置待重连
+        this.pendingReconnect = {
+          roomId: savedRoom.roomId,
+          playerColor: savedRoom.playerColor
+        };
       } else {
         // 没有保存的房间信息，但是通过邀请链接进来的，设置待加入房间
         console.log('[DEBUG] 通过邀请链接进入，设置待加入房间:', this.initMode.roomId);
