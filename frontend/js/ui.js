@@ -580,8 +580,7 @@ class UI {
   // 处理模式切换
   handleModeChange(mode) {
     if (mode === 'ai') {
-      this.clearRoomInfo();
-      // 恢复人机对战状态（不是重置）
+      // 不清除房间信息，保留玩家对战状态
       this.resumeAIGame();
       // 更新 URL
       window.history.pushState({}, '', '/');
@@ -600,7 +599,34 @@ class UI {
       game.saveGame();
     }
 
-    // 清空棋盘��示
+    // 检查是否有保存的房间
+    const savedRoom = this.getValidSavedRoom();
+    if (savedRoom) {
+      // 有保存的房间，尝试恢复房间状态
+      game.gameMode = savedRoom.isHost ? 'create' : 'join';
+      game.myColor = savedRoom.playerColor;
+      this.pendingReconnect = savedRoom;
+
+      // 等待 socket 连接后重连
+      socketManager.waitForConnection().then(() => {
+        if (this.pendingReconnect) {
+          socketManager.reconnectRoom(this.pendingReconnect.roomId, this.pendingReconnect.playerColor);
+          this.pendingReconnect = null;
+        }
+      });
+
+      // 显示房间信息面板
+      this.roomInfoSection.style.display = 'block';
+      document.getElementById('multiplayerSelect').style.display = 'none';
+      this.opponentCard.style.display = 'none';
+      this.updateModeUI('multiplayer');
+      this.drawBoard();
+      this.updateUI();
+      return;
+    }
+
+    // 没有保存的房间，显示选择面板
+    // 清空棋盘显示
     game.board = Array(15).fill(null).map(() => Array(15).fill(0));
     game.isPlaying = false;
     game.winner = null;
