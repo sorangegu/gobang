@@ -46,6 +46,7 @@ class UI {
         // 更新 URL 为房间页
         window.history.replaceState({}, '', `/room/${savedRoom.roomId}`);
         this.updateModeUI('room');
+        this.roomInfoSection.style.display = 'block';
         document.getElementById('displayRoomId').textContent = savedRoom.roomId;
         document.getElementById('inviteSection').style.display = 'block';
         const inviteUrl = `${window.location.origin}/room/${savedRoom.roomId}`;
@@ -53,6 +54,11 @@ class UI {
       } else {
         // 没有保存的房间，显示玩家对战选择页面
         game.init('ai');
+        game.gameMode = 'multiplayer';  // 设置为 multiplayer 模式
+        this.roomPanel.style.display = 'none';
+        this.roomInfoSection.style.display = 'none';
+        document.getElementById('multiplayerSelect').style.display = 'block';
+        this.opponentCard.style.display = 'none';
         this.updateModeUI('multiplayer');
       }
       this.drawBoard();
