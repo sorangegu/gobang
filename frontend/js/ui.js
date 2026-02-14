@@ -40,32 +40,20 @@ class UI {
     const { canvas, boardSize, padding } = this;
     const dpr = window.devicePixelRatio || 1;
 
-    // 计算合适的棋盘尺寸
-    let canvasSize;
+    // 读取 CSS 已设置的尺寸，避免重新计算导致抖动
+    const computedStyle = getComputedStyle(canvas);
+    const cssWidth = parseFloat(computedStyle.width);
+    const cssHeight = parseFloat(computedStyle.height);
 
-    if (window.innerWidth <= 768) {
-      // 手机端：根据屏幕实际可用宽度计算
-      // 考虑 main-content 的 padding 和 board-wrapper 的边距
-      const mainPadding = window.innerWidth <= 400 ? 12 : 16; // .main-content padding
-      const boardPadding = 20; // board-wrapper padding (10px * 2)
-      const availableWidth = window.innerWidth - mainPadding * 2 - boardPadding;
-
-      // 设置合理的最大宽度
-      const maxWidth = window.innerWidth <= 400 ? 320 : 360;
-      canvasSize = Math.min(availableWidth, maxWidth);
-    } else {
-      // 桌面端：使用固定尺寸
-      const totalSize = this.cellSize * (boardSize - 1);
-      canvasSize = totalSize + padding * 2;
-    }
+    // 使用 CSS 设置的尺寸
+    const canvasSize = cssWidth || cssHeight || 604;
 
     // 根据最终尺寸计算格子大小
     this.cellSize = (canvasSize - padding * 2) / (boardSize - 1);
 
     canvas.width = canvasSize * dpr;
     canvas.height = canvasSize * dpr;
-    canvas.style.width = canvasSize + 'px';
-    canvas.style.height = canvasSize + 'px';
+    // 不再修改 style.width/height，保持 CSS 设置的值
 
     // 保存 dpr 供后续使用
     this.dpr = dpr;
