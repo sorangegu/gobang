@@ -18,44 +18,42 @@ class UI {
     this.initEventListeners();
     this.loadTheme();
 
-    // 检查是否有多人房间信息
-    const savedRoom = localStorage.getItem('gobang-room');
-    const roomInfo = savedRoom ? (() => {
-      try {
-        const roomData = JSON.parse(savedRoom);
-        if (roomData.roomId && roomData.playerColor && Date.now() - roomData.timestamp < 5 * 60 * 1000) {
-          return roomData;
-        }
-      } catch (e) {}
-      localStorage.removeItem('gobang-room');
-      return null;
-    })() : null;
+    // 解析当前路径，决定初始化模式
+    this.initMode = this.detectModeFromURL();
 
-    // 检查 URL 是否有房间号
-    const pathParts = window.location.pathname.split('/');
-    const urlRoomId = (pathParts.length >= 3 && pathParts[1] === 'room') ? pathParts[2].toUpperCase() : null;
-
-    // 根据情况初始化游戏
-    if (urlRoomId && /^[A-Z0-9]{6}$/.test(urlRoomId)) {
-      // 有 URL 房间号，等待加入房间
-      game.init('join');
-      this.pendingRoomId = urlRoomId;
-    } else if (roomInfo) {
-      // 有本地房间信息，等待重连
-      game.init(roomInfo.isHost ? 'create' : 'join');
-      game.myColor = roomInfo.playerColor;
-      this.pendingReconnect = roomInfo;
-    } else {
-      // 没有房间信息，进入人机模式
+    // 根据模式初始化
+    if (this.initMode.type === 'ai') {
+      // 人机模式：加载保存的进度
       game.init('ai');
       game.myColor = 1;
-
-      // 尝试加载人机进度
       const loaded = game.loadGame();
       if (!loaded) {
         game.isPlaying = true;
         game.board = Array(15).fill(null).map(() => Array(15).fill(0));
       }
+      this.updateModeUI('ai');
+    } else if (this.initMode.type === 'create') {
+      // 创建房间模式
+      game.init('create');
+      this.updateModeUI('create');
+    } else if (this.initMode.type === 'join') {
+      // 加入房间模式（显示输入框）
+      game.init('join');
+      this.updateModeUI('join');
+    } else if (this.initMode.type === 'room') {
+      // 具体房间：检查重连还是新加入
+      const savedRoom = this.getValidSavedRoom();
+      if (savedRoom && savedRoom.roomId === this.initMode.roomId) {
+        // 重连
+        game.init(savedRoom.isHost ? 'create' : 'join');
+        game.myColor = savedRoom.playerColor;
+        this.pendingReconnect = savedRoom;
+      } else {
+        // 新加入
+        game.init('join');
+        this.pendingRoomId = this.initMode.roomId;
+      }
+      this.updateModeUI('room');
     }
 
     this.drawBoard();
@@ -63,7 +61,71 @@ class UI {
     this.updateStats();
   }
 
-  // 初始化 Canvas 尺寸（只在构造函数中调用一次）
+  // 从 URL 检测当前模式
+  detectModeFromURL() {
+    const path = window.location.pathname;
+
+    // /room/XXXXXX - 具体房间
+    const roomMatch = path.match(/^\/room\/([A-Z0-9]{6})$/i);
+    if (roomMatch) {
+      return { type: 'room', roomId: roomMatch[1].toUpperCase() };
+    }
+
+    // /room/create - 创建房间
+    if (path === '/room/create') {
+      return { type: 'create' };
+    }
+
+    // /room/join - 加入房间
+    if (path === '/room/join') {
+      return { type: 'join' };
+    }
+
+    // / 或 /ai - 人机对战（默认）
+    return { type: 'ai' };
+  }
+
+  // 获取有效的保存房间信息
+  getValidSavedRoom() {
+    const savedRoom = localStorage.getItem('gobang-room');
+    if (!savedRoom) return null;
+
+    try {
+      const roomData = JSON.parse(savedRoom);
+      if (roomData.roomId && roomData.playerColor && Date.now() - roomData.timestamp < 5 * 60 * 1000) {
+        return roomData;
+      }
+    } catch (e) {}
+    localStorage.removeItem('gobang-room');
+    return null;
+  }
+
+  // 更新模式相关的 UI
+  updateModeUI(mode) {
+    // 隐藏所有面板
+    this.roomPanel.style.display = 'none';
+    this.roomInfoSection.style.display = 'none';
+
+    // 更新导航按钮状态
+    this.navBtns.forEach(btn => {
+      const btnMode = btn.dataset.mode;
+      btn.classList.toggle('active',
+        (mode === 'ai' && btnMode === 'ai') ||
+        (mode === 'create' && btnMode === 'create') ||
+        (mode === 'join' && btnMode === 'join') ||
+        (mode === 'room' && btnMode === 'join')
+      );
+    });
+
+    if (mode === 'ai') {
+      this.opponentCard.style.display = 'flex';
+      this.opponentCard.querySelector('.player-label').textContent = 'AI (白方)';
+    } else if (mode === 'create' || mode === 'join' || mode === 'room') {
+      this.opponentCard.style.display = 'none';
+    }
+  }
+
+  // 初始�� Canvas 尺寸（只在构造函数中调用一次）
   initCanvas() {
     const { canvas, boardSize, padding } = this;
     const dpr = window.devicePixelRatio || 1;
@@ -481,26 +543,22 @@ class UI {
     ctx.fill();
   }
 
-  // 处理模式切换
+  // 处理模式切换 - 通过 URL 导航
   handleModeChange(mode) {
-    this.navBtns.forEach(btn => {
-      btn.classList.toggle('active', btn.dataset.mode === mode);
-    });
-
     if (mode === 'ai') {
-      this.startAIGame();
+      window.history.pushState({}, '', '/');
+      location.reload();
     } else if (mode === 'create') {
-      this.createRoom();
+      window.history.pushState({}, '', '/room/create');
+      location.reload();
     } else if (mode === 'join') {
-      this.showJoinPanel();
+      window.history.pushState({}, '', '/room/join');
+      location.reload();
     }
   }
 
   // 创建房间
   createRoom() {
-    // 清除人机保存的游戏进度
-    game.clearSavedGame();
-
     game.gameMode = 'create';
     game.isPlaying = false;
 
@@ -517,9 +575,6 @@ class UI {
 
   // 显示加入房间面板
   showJoinPanel() {
-    // 清除人机保存的游戏进度
-    game.clearSavedGame();
-
     game.gameMode = 'join';
     game.isPlaying = false;
 
@@ -888,13 +943,19 @@ document.addEventListener('DOMContentLoaded', async () => {
   // 等待 socket 连接成功
   await socketManager.waitForConnection();
 
-  // 处理待加入的房间（URL 邀请链接）
-  if (ui.pendingRoomId) {
+  // 根据初始化模式执行相应操作
+  if (ui.initMode.type === 'create') {
+    // 创建房间模式：自动创建房间
+    ui.createRoom();
+  } else if (ui.initMode.type === 'join' && !ui.pendingRoomId) {
+    // 加入房间模式（显示输入框）
+    ui.showJoinPanel();
+  } else if (ui.pendingRoomId) {
+    // 处理待加入的房间（URL 邀请链接）
     socketManager.joinRoom(ui.pendingRoomId);
     ui.pendingRoomId = null;
-  }
-  // 处理待重连的房间
-  else if (ui.pendingReconnect) {
+  } else if (ui.pendingReconnect) {
+    // 处理待重连的房间
     socketManager.reconnectRoom(ui.pendingReconnect.roomId, ui.pendingReconnect.playerColor);
     ui.pendingReconnect = null;
   }
