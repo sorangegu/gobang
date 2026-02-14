@@ -286,8 +286,18 @@ class UI {
     // 重新开始
     this.restartBtn.addEventListener('click', () => this.handleRestart());
 
-    // 棋盘点击
+    // 棋盘点击（支持鼠标和触摸）
     this.canvas.addEventListener('click', (e) => this.handleBoardClick(e));
+    this.canvas.addEventListener('touchend', (e) => {
+      e.preventDefault();
+      const touch = e.changedTouches[0];
+      const mouseEvent = new MouseEvent('click', {
+        clientX: touch.clientX,
+        clientY: touch.clientY,
+        bubbles: true
+      });
+      this.canvas.dispatchEvent(mouseEvent);
+    }, { passive: false });
 
     // 结果弹窗
     document.getElementById('restartGameBtn').addEventListener('click', () => {
@@ -523,9 +533,15 @@ class UI {
 
     socketManager.on('playerLeft', (data) => {
       this.showToast(data.reason || '对手离开');
+      // 立即清空棋盘显示
+      game.board = Array(15).fill(null).map(() => Array(15).fill(0));
+      game.moveHistory = [];
+      game.lastMove = null;
+      game.winner = null;
+      game.isPlaying = false;
+      this.drawBoard();
       this.clearRoomInfo();
       setTimeout(() => {
-        game.reset();
         this.startAIGame();
       }, 2000);
     });
