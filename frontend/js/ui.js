@@ -114,7 +114,8 @@ class UI {
 
     try {
       const roomData = JSON.parse(savedRoom);
-      if (roomData.roomId && roomData.playerColor && Date.now() - roomData.timestamp < 5 * 60 * 1000) {
+      // 只要有房间号和玩家颜色就返回，不限制时间
+      if (roomData.roomId && roomData.playerColor) {
         return roomData;
       }
     } catch (e) {}
