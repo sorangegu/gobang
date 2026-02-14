@@ -18,33 +18,44 @@ class UI {
     this.initEventListeners();
     this.loadTheme();
 
-    // 初始化游戏
-    game.init('ai');
-    game.myColor = 1;
-
-    // 检查是否有多人房间信息，如果有则不加载人机进度
+    // 检查是否有多人房间信息
     const savedRoom = localStorage.getItem('gobang-room');
-    const hasValidRoom = savedRoom && (() => {
+    const roomInfo = savedRoom ? (() => {
       try {
         const roomData = JSON.parse(savedRoom);
-        return roomData.roomId && roomData.playerColor && Date.now() - roomData.timestamp < 5 * 60 * 1000;
-      } catch (e) {
-        return false;
-      }
-    })();
+        if (roomData.roomId && roomData.playerColor && Date.now() - roomData.timestamp < 5 * 60 * 1000) {
+          return roomData;
+        }
+      } catch (e) {}
+      localStorage.removeItem('gobang-room');
+      return null;
+    })() : null;
 
-    // 只有在没有多人房间信息时才加载人机进度
-    if (!hasValidRoom) {
+    // 检查 URL 是否有房间号
+    const pathParts = window.location.pathname.split('/');
+    const urlRoomId = (pathParts.length >= 3 && pathParts[1] === 'room') ? pathParts[2].toUpperCase() : null;
+
+    // 根据情况初始化游戏
+    if (urlRoomId && /^[A-Z0-9]{6}$/.test(urlRoomId)) {
+      // 有 URL 房间号，等待加入房间
+      game.init('join');
+      this.pendingRoomId = urlRoomId;
+    } else if (roomInfo) {
+      // 有本地房间信息，等待重连
+      game.init(roomInfo.isHost ? 'create' : 'join');
+      game.myColor = roomInfo.playerColor;
+      this.pendingReconnect = roomInfo;
+    } else {
+      // 没有房间信息，进入人机模式
+      game.init('ai');
+      game.myColor = 1;
+
+      // 尝试加载人机进度
       const loaded = game.loadGame();
       if (!loaded) {
-        // 如果没有保存的游戏，初始化新游戏
         game.isPlaying = true;
         game.board = Array(15).fill(null).map(() => Array(15).fill(0));
       }
-    } else {
-      // 有多人房间信息，初始化空棋盘等待重连
-      game.isPlaying = true;
-      game.board = Array(15).fill(null).map(() => Array(15).fill(0));
     }
 
     this.drawBoard();
@@ -871,48 +882,14 @@ document.addEventListener('DOMContentLoaded', async () => {
   // 等待 socket 连接成功
   await socketManager.waitForConnection();
 
-  // 检查是否有本地房间信息（断线重连）
-  const savedRoom = localStorage.getItem('gobang-room');
-  if (savedRoom) {
-    try {
-      const roomData = JSON.parse(savedRoom);
-      // 检查是否在 5 分钟内
-      if (roomData.roomId && roomData.playerColor && Date.now() - roomData.timestamp < 5 * 60 * 1000) {
-        // 尝试重连
-        socketManager.reconnectRoom(roomData.roomId, roomData.playerColor);
-      } else {
-        // 过期，清除
-        localStorage.removeItem('gobang-room');
-      }
-    } catch (e) {
-      localStorage.removeItem('gobang-room');
-    }
+  // 处理待加入的房间（URL 邀请链接）
+  if (ui.pendingRoomId) {
+    socketManager.joinRoom(ui.pendingRoomId);
+    ui.pendingRoomId = null;
   }
-
-  // 检查 URL 是否包含房间号，自动加入房间
-  const pathParts = window.location.pathname.split('/');
-  if (pathParts.length >= 3 && pathParts[1] === 'room') {
-    const urlRoomId = pathParts[2].toUpperCase();
-    if (/^[A-Z0-9]{6}$/.test(urlRoomId)) {
-      // 检查是否与本地保存的房间相同
-      let shouldJoin = true;
-      if (savedRoom) {
-        try {
-          const roomData = JSON.parse(savedRoom);
-          // 如果是同一个房间，走重连逻辑；否则清除旧信息，加入新房间
-          if (roomData.roomId === urlRoomId) {
-            shouldJoin = false; // 已经在重连逻辑中处理
-          } else {
-            // 不同房间，清除旧的房间信息
-            localStorage.removeItem('gobang-room');
-          }
-        } catch (e) {
-          localStorage.removeItem('gobang-room');
-        }
-      }
-      if (shouldJoin) {
-        socketManager.joinRoom(urlRoomId);
-      }
-    }
+  // 处理待重连的房间
+  else if (ui.pendingReconnect) {
+    socketManager.reconnectRoom(ui.pendingReconnect.roomId, ui.pendingReconnect.playerColor);
+    ui.pendingReconnect = null;
   }
 });
