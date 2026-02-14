@@ -5,13 +5,32 @@ class Game {
     this.board = [];
     this.currentPlayer = 1; // 1: 黑棋, 2: 白棋
     this.myColor = 1; // 我的颜色
-    this.gameMode = 'ai'; // ai, create, join
+    this.gameMode = this.detectInitialMode(); // ai, create, join, multiplayer
     this.isPlaying = false;
     this.moveHistory = [];
     this.winner = null;
     this.roomId = null;
     this.isHost = false;
     this.lastMove = null; // {x, y}
+  }
+
+  // 根据当前 URL 检测初始模式
+  detectInitialMode() {
+    const path = window.location.pathname;
+
+    // /room/XXXXXX - 具体房间
+    const roomMatch = path.match(/^\/room\/([A-Z0-9]{6})$/i);
+    if (roomMatch) {
+      return 'room';
+    }
+
+    // /room - 玩家对战选择页面
+    if (path === '/room' || path === '/room/') {
+      return 'multiplayer';
+    }
+
+    // / 或其他 - 人机对战（默认）
+    return 'ai';
   }
 
   // 初始化游戏
