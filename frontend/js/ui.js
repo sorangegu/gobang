@@ -213,11 +213,15 @@ class UI {
         game.setRoomInfo(data.roomId, false);
         game.gameMode = 'join';
         game.myColor = data.playerColor || 2;
+        game.reset();
         document.getElementById('displayRoomId').textContent = data.roomId;
         this.roomPanel.style.display = 'none';
         this.opponentCard.style.display = 'flex';
         this.opponentCard.querySelector('.player-label').textContent = '对手 (黑方)';
         this.playerCard.querySelector('.player-label').textContent = '你 (白方)';
+        this.roomInfoSection.style.display = 'block';
+        this.drawBoard();
+        this.updateUI();
         this.saveRoomInfo(data.roomId, data.playerColor || 2);
       } else {
         this.showToast(data.error || '加入房间失败');
