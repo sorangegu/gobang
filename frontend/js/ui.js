@@ -20,6 +20,7 @@ class UI {
 
     // 解析当前路径，决定初始化模式
     this.initMode = this.detectModeFromURL();
+    console.log('[DEBUG] initMode:', this.initMode);
 
     // 根据模式初始化
     if (this.initMode.type === 'ai') {
@@ -38,6 +39,7 @@ class UI {
     } else if (this.initMode.type === 'multiplayer') {
       // 玩家对战选择页面：检查是否有保存的房间，保持房间状态（不自动重连）
       const savedRoom = this.getValidSavedRoom();
+      console.log('[DEBUG] multiplayer mode, savedRoom:', savedRoom);
       if (savedRoom) {
         // 有保存的房间，显示房间信息但不重连
         game.init(savedRoom.isHost ? 'create' : 'join');
@@ -53,6 +55,7 @@ class UI {
         document.getElementById('inviteLink').value = inviteUrl;
       } else {
         // 没有保存的房间，显示玩家对战选择页面
+        console.log('[DEBUG] No saved room, showing multiplayer select');
         game.init('ai');
         game.gameMode = 'multiplayer';  // 设置为 multiplayer 模式
         this.roomPanel.style.display = 'none';
@@ -61,6 +64,7 @@ class UI {
         this.opponentCard.style.display = 'none';
         this.updateModeUI('multiplayer');
       }
+      console.log('[DEBUG] About to drawBoard');
       this.drawBoard();
     } else if (this.initMode.type === 'room') {
       // 具体房间：检查是否有保存的房间信息
