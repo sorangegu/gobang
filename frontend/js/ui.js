@@ -338,10 +338,27 @@ class UI {
         game.isPlaying = data.status === 'playing';
         document.getElementById('displayRoomId').textContent = data.roomId;
         this.roomPanel.style.display = 'none';
-        this.opponentCard.style.display = 'flex';
-        this.opponentCard.querySelector('.player-label').textContent = data.isHost ? '对手 (白方)' : '对手 (黑方)';
-        this.playerCard.querySelector('.player-label').textContent = data.isHost ? '你 (黑方)' : '你 (白方)';
+        document.getElementById('multiplayerSelect').style.display = 'none';
         this.roomInfoSection.style.display = 'block';
+
+        if (data.status === 'playing') {
+          // 正在游戏中，显示对手
+          this.opponentCard.style.display = 'flex';
+          this.opponentCard.querySelector('.player-label').textContent = data.isHost ? '对手 (白方)' : '对手 (黑方)';
+          this.playerCard.querySelector('.player-label').textContent = data.isHost ? '你 (黑方)' : '你 (白方)';
+          document.getElementById('inviteSection').style.display = 'none';
+        } else {
+          // 等待中，显示邀请链接
+          this.opponentCard.style.display = 'none';
+          if (data.isHost) {
+            document.getElementById('inviteSection').style.display = 'block';
+            const inviteUrl = `${window.location.origin}/room/${data.roomId}`;
+            document.getElementById('inviteLink').value = inviteUrl;
+          } else {
+            document.getElementById('inviteSection').style.display = 'none';
+          }
+        }
+
         this.drawBoard();
         this.updateUI();
         this.showToast('重连成功！');
@@ -349,7 +366,7 @@ class UI {
         // 重连失败，清除本地存储
         this.clearRoomInfo();
         this.showToast(data.error || '重连失败');
-        // 如果是创建房间模式，��连失败后创建新房间
+        // 如果是创建房间模式，重连失败后创建新房间
         if (this.initMode.type === 'create') {
           setTimeout(() => this.createRoom(), 500);
         }
