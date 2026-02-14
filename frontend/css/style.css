@@ -514,6 +514,14 @@ body.pre-init[data-initial-mode="multiplayer"] .mode-display {
   background-color: #deb887;
 }
 
+body.pre-init #board {
+  background-image:
+    linear-gradient(#8b7355 1px, transparent 1px),
+    linear-gradient(90deg, #8b7355 1px, transparent 1px);
+  background-size: 40px 40px;
+  background-position: 22px 22px;
+}
+
 /* ===== 按钮样式 ===== */
 .btn-primary,
 .btn-secondary {
@@ -804,8 +812,61 @@ body.pre-init[data-initial-mode="multiplayer"] .mode-display {
     width: 340px;
     height: 340px;
     max-width: 100%;
-    /* 背景色匹配棋盘颜色 */
     background-color: #deb887;
+  }
+
+  body.pre-init #board {
+    background-image:
+      linear-gradient(#8b7355 1px, transparent 1px),
+      linear-gradient(90deg, #8b7355 1px, transparent 1px);
+    background-size: 22.86px 22.86px;
+    background-position: 10px 10px;
+  }
+
+  /* 玩家对战选择面板优化 */
+  .multiplayer-select {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+    padding: 12px;
+    background-color: var(--bg-primary);
+    border-radius: var(--radius);
+  }
+
+  .multiplayer-select h3 {
+    text-align: center;
+    margin-bottom: 4px;
+    font-size: 14px;
+    color: var(--text-primary);
+  }
+
+  .multiplayer-select .btn-action {
+    width: 100%;
+    padding: 10px 16px;
+    font-size: 13px;
+    font-weight: 500;
+    background-color: var(--bg-secondary);
+    border: 1px solid var(--border-color);
+  }
+
+  .multiplayer-select .btn-action:hover {
+    background-color: var(--accent);
+    border-color: var(--accent);
+  }
+
+  .multiplayer-select .join-input-section {
+    margin-top: 4px;
+  }
+
+  .multiplayer-select .join-input-section input {
+    flex: 1;
+    padding: 8px 12px;
+    font-size: 13px;
+  }
+
+  .multiplayer-select .join-input-section .btn-primary {
+    padding: 8px 14px;
+    font-size: 13px;
   }
 
 
@@ -885,8 +946,15 @@ body.pre-init[data-initial-mode="multiplayer"] .mode-display {
   #board {
     width: 304px;
     height: 304px;
-    /* 背景色匹配棋盘颜色 */
     background-color: #deb887;
+  }
+
+  body.pre-init #board {
+    background-image:
+      linear-gradient(#8b7355 1px, transparent 1px),
+      linear-gradient(90deg, #8b7355 1px, transparent 1px);
+    background-size: 20.29px 20.29px;
+    background-position: 8px 8px;
   }
 }
 
