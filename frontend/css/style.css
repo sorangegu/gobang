@@ -532,9 +532,146 @@ body.pre-init[data-initial-mode="multiplayer"] .mode-display {
 }
 
 .room-info-section {
-  margin-top: 20px;
-  padding-top: 16px;
+  margin-top: 16px;
+  padding-top: 12px;
   border-top: 1px solid var(--border-color);
+}
+
+/* 房间操作栏 - 一行布局 */
+.room-action-bar {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 8px 12px;
+  background-color: var(--bg-primary);
+  border-radius: var(--radius);
+  border: 1px solid var(--border-color);
+}
+
+.room-id-box {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.room-label {
+  font-size: 13px;
+  color: var(--text-secondary);
+}
+
+.room-code {
+  font-size: 16px;
+  font-weight: 700;
+  color: var(--accent);
+  letter-spacing: 1px;
+}
+
+.room-actions {
+  display: flex;
+  gap: 6px;
+}
+
+.btn-icon {
+  width: 32px;
+  height: 32px;
+  padding: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background-color: var(--bg-secondary);
+  border: 1px solid var(--border-color);
+  border-radius: var(--radius);
+  color: var(--text-secondary);
+  cursor: pointer;
+  transition: all 150ms ease;
+}
+
+.btn-icon:hover {
+  background-color: var(--accent);
+  border-color: var(--accent);
+  color: white;
+}
+
+.btn-icon.btn-leave:hover {
+  background-color: #dc3545;
+  border-color: #dc3545;
+}
+
+/* 邀请链接区域 */
+.invite-section {
+  margin-top: 8px;
+  padding: 8px 12px;
+  background-color: var(--bg-primary);
+  border-radius: var(--radius);
+  border: 1px solid var(--border-color);
+}
+
+.invite-link-row {
+  display: flex;
+  gap: 8px;
+}
+
+.invite-link-row input {
+  flex: 1;
+  padding: 6px 10px;
+  background-color: var(--bg-secondary);
+  border: 1px solid var(--border-color);
+  border-radius: var(--radius);
+  color: var(--text-primary);
+  font-size: 12px;
+}
+
+.invite-link-row input::placeholder {
+  color: var(--text-secondary);
+}
+
+.waiting-text {
+  margin: 8px 0 0;
+  font-size: 12px;
+  color: var(--text-secondary);
+  text-align: center;
+}
+
+/* 准备状态区域 */
+.ready-section {
+  margin-top: 8px;
+  padding: 12px;
+  background-color: var(--bg-primary);
+  border-radius: var(--radius);
+  border: 1px solid var(--border-color);
+}
+
+.ready-status-row {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 8px;
+}
+
+.ready-status-row:last-of-type {
+  margin-bottom: 12px;
+}
+
+.ready-label {
+  font-size: 13px;
+  color: var(--text-secondary);
+}
+
+.ready-value {
+  font-size: 13px;
+  color: var(--text-muted);
+  font-weight: 500;
+}
+
+.ready-value.ready {
+  color: var(--success-color);
+}
+
+#readyBtn {
+  width: 100%;
+  padding: 10px;
+  font-size: 14px;
+  font-weight: 600;
 }
 
 /* ===== 棋盘区域 ===== */
@@ -843,53 +980,70 @@ body.pre-init[data-initial-mode="multiplayer"] .mode-display {
     display: block;
   }
 
-  .room-info-section .info-row {
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    gap: 8px;
-    padding: 4px 0;
-    font-size: 12px;
+  /* 移动端房间操作栏 */
+  .room-action-bar {
+    padding: 6px 10px;
   }
 
-  .room-info-section .info-row span:first-child {
-    min-width: auto;
-    text-align: center;
+  .room-label {
+    font-size: 11px;
   }
 
-  .room-info-section .info-row span:last-child {
-    min-width: auto;
-    font-weight: 600;
-    color: var(--accent);
+  .room-code {
+    font-size: 14px;
   }
 
-  .room-info-section .btn-copy {
-    padding: 2px 6px;
-    font-size: 10px;
-    height: 20px;
-    line-height: 1;
+  .btn-icon {
+    width: 28px;
+    height: 28px;
+  }
+
+  .btn-icon svg {
+    width: 14px;
+    height: 14px;
   }
 
   .invite-section {
-    margin-top: 6px !important;
+    margin-top: 6px;
+    padding: 6px 10px;
   }
 
-  .invite-section > div:first-child {
-    display: none; /* 隐藏"邀请链接:"标签 */
-  }
-
-  .invite-section input {
+  .invite-link-row input {
     padding: 4px 8px;
     font-size: 11px;
   }
 
-  .waiting-text {
-    margin-top: 4px !important;
-    font-size: 11px !important;
+  .invite-link-row .btn-copy {
+    padding: 4px 10px;
+    font-size: 11px;
   }
 
-  #leaveRoomBtn {
-    margin-top: 6px !important;
+  .waiting-text {
+    margin-top: 4px;
+    font-size: 11px;
+  }
+
+  .ready-section {
+    margin-top: 6px;
+    padding: 10px;
+  }
+
+  .ready-status-row {
+    margin-bottom: 6px;
+  }
+
+  .ready-status-row:last-of-type {
+    margin-bottom: 10px;
+  }
+
+  .ready-label,
+  .ready-value {
+    font-size: 12px;
+  }
+
+  #readyBtn {
+    padding: 8px;
+    font-size: 13px;
     padding: 6px;
     font-size: 12px;
     height: 32px;

@@ -348,6 +348,16 @@ class UI {
       this.showToast('房间号已复制');
     });
 
+    // 切换邀请链接显示
+    document.getElementById('toggleInviteLink')?.addEventListener('click', () => {
+      const inviteSection = document.getElementById('inviteSection');
+      if (inviteSection.style.display === 'none') {
+        inviteSection.style.display = 'block';
+      } else {
+        inviteSection.style.display = 'none';
+      }
+    });
+
     // 复制邀请链接
     document.getElementById('copyInviteLink')?.addEventListener('click', () => {
       const link = document.getElementById('inviteLink').value;
