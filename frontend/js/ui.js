@@ -498,6 +498,9 @@ class UI {
 
   // 创建房间
   createRoom() {
+    // 清除人机保存的游戏进度
+    game.clearSavedGame();
+
     game.gameMode = 'create';
     game.isPlaying = false;
 
@@ -514,6 +517,9 @@ class UI {
 
   // 显示加入房间面板
   showJoinPanel() {
+    // 清除人机保存的游戏进度
+    game.clearSavedGame();
+
     game.gameMode = 'join';
     game.isPlaying = false;
 
