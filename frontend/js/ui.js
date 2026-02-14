@@ -280,13 +280,8 @@ class UI {
     // 离开房间
     this.leaveRoomBtn.addEventListener('click', () => this.handleLeaveRoom());
 
-    // 加入房间按钮
-    document.getElementById('joinRoomBtn')?.addEventListener('click', () => this.joinRoom());
-    document.getElementById('roomIdInput')?.addEventListener('keypress', (e) => {
-      if (e.key === 'Enter') this.joinRoom();
-    });
-
-    // 左侧面板的加入房间按钮
+    // 加入房间按钮（左侧面板）
+    document.getElementById('joinRoomBtnPanel')?.addEventListener('click', () => this.joinRoomFromPanel());
     document.getElementById('joinRoomBtnPanel')?.addEventListener('click', () => this.joinRoomFromPanel());
     document.getElementById('roomIdInputPanel')?.addEventListener('keypress', (e) => {
       if (e.key === 'Enter') this.joinRoomFromPanel();
@@ -294,7 +289,7 @@ class UI {
 
     // 复制房间号
     document.getElementById('copyRoomId')?.addEventListener('click', () => {
-      const roomId = document.getElementById('roomIdDisplay').textContent;
+      const roomId = document.getElementById('displayRoomId').textContent;
       navigator.clipboard.writeText(roomId);
       this.showToast('房间号已复制');
     });
@@ -634,16 +629,6 @@ class UI {
 
     this.opponentCard.style.display = 'none';
     this.updateUI();
-  }
-
-  // 加入房间（从顶部面板）
-  joinRoom() {
-    const roomId = document.getElementById('roomIdInput').value.trim().toUpperCase();
-    if (roomId.length !== 6) {
-      this.showToast('请输入6位房间号');
-      return;
-    }
-    socketManager.joinRoom(roomId);
   }
 
   // 加入房间（从左侧面板）

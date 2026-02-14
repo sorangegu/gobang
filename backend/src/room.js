@@ -57,14 +57,7 @@ class RoomManager {
     socket.isHost = true;
     socket.playerColor = 1;
 
-    // 发送事件通知
-    socket.emit('room_created', {
-      success: true,
-      roomId,
-      isHost: true,
-      playerColor: 1
-    });
-
+    // 通过回调返回结果（前端使用回调方式处理）
     return {
       success: true,
       roomId,
@@ -78,17 +71,14 @@ class RoomManager {
     const room = this.rooms.get(roomId);
 
     if (!room) {
-      socket.emit('room_joined', { success: false, error: '房间不存在' });
       return { success: false, error: '房间不存在' };
     }
 
     if (room.status !== 'waiting') {
-      socket.emit('room_joined', { success: false, error: '房间已开始游戏' });
       return { success: false, error: '房间已开始游戏' };
     }
 
     if (room.isFull()) {
-      socket.emit('room_joined', { success: false, error: '房间已满' });
       return { success: false, error: '房间已满' };
     }
 
@@ -107,13 +97,6 @@ class RoomManager {
       playerColor: 2
     });
 
-    // 通知加入者
-    socket.emit('room_joined', {
-      success: true,
-      roomId,
-      playerColor: 2
-    });
-
     // 通知双方游戏开始
     this.io.to(roomId).emit('game_start', {
       roomId,
@@ -121,6 +104,7 @@ class RoomManager {
       board: room.board
     });
 
+    // 通过回调返回结果给加入者
     return {
       success: true,
       roomId,

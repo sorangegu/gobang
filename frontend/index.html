@@ -24,37 +24,8 @@
 
   <!-- 主内容区 -->
   <main class="main-content">
-    <!-- 房间面板 -->
-    <div class="room-panel" id="roomPanel" style="display: none;">
-      <div class="panel-content">
-        <!-- 创建房间 -->
-        <div class="panel-section" id="createSection" style="display: none;">
-          <h3>创建房间</h3>
-          <div class="room-info">
-            <div class="room-id-display">
-              <span>房间号:</span>
-              <strong id="roomIdDisplay">------</strong>
-              <button class="btn-copy" id="copyRoomId">复制</button>
-            </div>
-            <div class="invite-link">
-              <span>邀请链接:</span>
-              <input type="text" id="inviteLink" readonly>
-              <button class="btn-copy" id="copyInviteLink">复制</button>
-            </div>
-          </div>
-          <p class="waiting-text">等待对手加入...</p>
-        </div>
-
-        <!-- 加入房间 -->
-        <div class="panel-section" id="joinSection" style="display: none;">
-          <h3>加入房间</h3>
-          <div class="join-form">
-            <input type="text" id="roomIdInput" placeholder="请输入房间号" maxlength="6">
-            <button class="btn-primary" id="joinRoomBtn">加入</button>
-          </div>
-        </div>
-      </div>
-    </div>
+    <!-- 房间面板（已弃用，保留用于兼容性） -->
+    <div class="room-panel" id="roomPanel" style="display: none;"></div>
 
     <!-- 游戏区域 -->
     <div class="game-container">
