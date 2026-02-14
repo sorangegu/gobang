@@ -807,30 +807,45 @@ body.pre-init[data-initial-mode="multiplayer"] .mode-display {
     background-color: #deb887;
   }
 
-  /* 玩家对战选择面板优化 */
+  /* 预加载状态显示背景网格，避免空白 */
+  body.pre-init #board {
+    background-image:
+      linear-gradient(#8b7355 1px, transparent 1px),
+      linear-gradient(90deg, #8b7355 1px, transparent 1px);
+    background-size: 22.86px 22.86px;
+    background-position: 10px 10px;
+  }
+
+  /* 玩家对战选择面板优化 - 更紧凑 */
   .multiplayer-select {
     display: flex;
-    flex-direction: column;
+    flex-direction: row;
+    flex-wrap: wrap;
     gap: 6px;
-    padding: 10px;
+    padding: 8px;
     background-color: var(--bg-primary);
     border-radius: var(--radius);
+    align-items: center;
   }
 
   .multiplayer-select h3 {
+    width: 100%;
     text-align: center;
-    margin-bottom: 2px;
-    font-size: 13px;
+    margin-bottom: 4px;
+    font-size: 12px;
     color: var(--text-primary);
+    font-weight: 500;
   }
 
   .multiplayer-select .btn-action {
-    width: 100%;
-    padding: 8px 12px;
-    font-size: 12px;
+    flex: 1;
+    min-width: 100px;
+    padding: 6px 10px;
+    font-size: 11px;
     font-weight: 500;
     background-color: var(--bg-secondary);
     border: 1px solid var(--border-color);
+    margin-bottom: 0;
   }
 
   .multiplayer-select .btn-action:hover {
@@ -839,18 +854,19 @@ body.pre-init[data-initial-mode="multiplayer"] .mode-display {
   }
 
   .multiplayer-select .join-input-section {
-    margin-top: 2px;
+    width: 100%;
+    margin-top: 4px;
   }
 
   .multiplayer-select .join-input-section input {
     flex: 1;
-    padding: 6px 10px;
-    font-size: 12px;
+    padding: 5px 8px;
+    font-size: 11px;
   }
 
   .multiplayer-select .join-input-section .btn-primary {
-    padding: 6px 12px;
-    font-size: 12px;
+    padding: 5px 10px;
+    font-size: 11px;
   }
 
 
@@ -931,6 +947,32 @@ body.pre-init[data-initial-mode="multiplayer"] .mode-display {
     width: 304px;
     height: 304px;
     background-color: #deb887;
+  }
+
+  /* 极小屏幕预加载状态背景网格 */
+  body.pre-init #board {
+    background-image:
+      linear-gradient(#8b7355 1px, transparent 1px),
+      linear-gradient(90deg, #8b7355 1px, transparent 1px);
+    background-size: 20.29px 20.29px;
+    background-position: 8px 8px;
+  }
+
+  /* 极小屏幕玩家对战按钮更紧凑 */
+  .multiplayer-select {
+    padding: 6px;
+    gap: 4px;
+  }
+
+  .multiplayer-select h3 {
+    font-size: 11px;
+    margin-bottom: 2px;
+  }
+
+  .multiplayer-select .btn-action {
+    padding: 5px 8px;
+    font-size: 10px;
+    min-width: 80px;
   }
 }
 
