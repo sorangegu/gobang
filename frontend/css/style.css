@@ -391,8 +391,9 @@ body.pre-init[data-initial-mode="multiplayer"] .mode-display {
 .player-card {
   display: flex;
   align-items: center;
-  gap: 12px;
-  padding: 12px 16px;
+  justify-content: center;
+  gap: 16px;
+  padding: 16px;
   background-color: var(--bg-primary);
   border-radius: var(--radius);
   border: 1px solid var(--border-color);
@@ -453,7 +454,9 @@ body.pre-init[data-initial-mode="multiplayer"] .mode-display {
 
 .info-row {
   display: flex;
-  justify-content: space-between;
+  justify-content: center;
+  align-items: center;
+  gap: 24px;
   padding: 12px 0;
   border-bottom: 1px solid var(--border-color);
   font-size: 15px;
@@ -461,6 +464,14 @@ body.pre-init[data-initial-mode="multiplayer"] .mode-display {
 
 .info-row span:first-child {
   color: var(--text-secondary);
+  text-align: right;
+  min-width: 80px;
+}
+
+.info-row span:last-child {
+  text-align: left;
+  min-width: 80px;
+  font-weight: 500;
 }
 
 .mode-display {
