@@ -568,6 +568,23 @@ class UI {
     });
 
     socketManager.on('playerLeft', (data) => {
+      // 检查是否保留对局
+      if (data.preserveGame && data.isPlaying) {
+        // 保留对局状态
+        game.board = data.board;
+        game.moveHistory = data.moveHistory || [];
+        game.currentPlayer = data.currentPlayer;
+        game.isPlaying = true;
+        game.lastMove = game.moveHistory.length > 0 ? game.moveHistory[game.moveHistory.length - 1] : null;
+        this.drawBoard();
+
+        // 显示对局保留提示
+        this.opponentCard.style.display = 'none';
+        this.updateUI();
+        this.showToast(data.reason || '对手离开，对局已保留');
+        return;
+      }
+
       // 检查是否还在游戏中（可能已重连）
       if (game.isPlaying && game.gameMode !== 'ai') {
         // 如果还在对局中，可能是误报，尝试重连
@@ -608,34 +625,58 @@ class UI {
       game.gameMode = 'create';
       this.saveRoomInfo(data.roomId, 1);
 
-      // 立即清空棋盘显示
-      game.board = Array(15).fill(null).map(() => Array(15).fill(0));
-      game.moveHistory = [];
-      game.lastMove = null;
-      game.winner = null;
-      game.isPlaying = false;
-      this.drawBoard();
+      // 检查是否保留对局
+      if (data.preserveGame && data.isPlaying) {
+        // 保留对局状态
+        game.board = data.board;
+        game.moveHistory = data.moveHistory || [];
+        game.currentPlayer = data.currentPlayer;
+        game.isPlaying = true;
+        game.lastMove = game.moveHistory.length > 0 ? game.moveHistory[game.moveHistory.length - 1] : null;
+        this.drawBoard();
 
-      // 重置准备状态
-      document.getElementById('myReadyStatus').textContent = '未准备';
-      document.getElementById('myReadyStatus').style.color = 'var(--text-muted)';
-      document.getElementById('opponentReadyStatus').textContent = '未准备';
-      document.getElementById('opponentReadyStatus').style.color = 'var(--text-muted)';
-      document.getElementById('readyBtn').disabled = false;
-      document.getElementById('readyBtn').textContent = '准备开始';
+        // 显示对局保留提示和重新开始按钮
+        this.roomPanel.style.display = 'none';
+        this.roomInfoSection.style.display = 'block';
+        document.getElementById('displayRoomId').textContent = data.roomId;
+        document.getElementById('inviteSection').style.display = 'block';
+        document.getElementById('readySection').style.display = 'none';
+        const inviteUrl = `${window.location.origin}/room/${data.roomId}`;
+        document.getElementById('inviteLink').value = inviteUrl;
 
-      // 在左侧面板显示邀请信息
-      this.roomPanel.style.display = 'none';
-      this.roomInfoSection.style.display = 'block';
-      document.getElementById('displayRoomId').textContent = data.roomId;
-      document.getElementById('inviteSection').style.display = 'block';
-      document.getElementById('readySection').style.display = 'none';
-      const inviteUrl = `${window.location.origin}/room/${data.roomId}`;
-      document.getElementById('inviteLink').value = inviteUrl;
+        this.opponentCard.style.display = 'none';
+        this.updateUI();
+        this.showToast(data.reason || '你已成为新房主，对局已保留');
+      } else {
+        // 不保留对局，重置状态
+        game.board = Array(15).fill(null).map(() => Array(15).fill(0));
+        game.moveHistory = [];
+        game.lastMove = null;
+        game.winner = null;
+        game.isPlaying = false;
+        this.drawBoard();
 
-      this.opponentCard.style.display = 'none';
-      this.updateUI();
-      this.showToast(data.reason || '你已成为新房主');
+        // 重置准备状态
+        document.getElementById('myReadyStatus').textContent = '未准备';
+        document.getElementById('myReadyStatus').style.color = 'var(--text-muted)';
+        document.getElementById('opponentReadyStatus').textContent = '未准备';
+        document.getElementById('opponentReadyStatus').style.color = 'var(--text-muted)';
+        document.getElementById('readyBtn').disabled = false;
+        document.getElementById('readyBtn').textContent = '准备开始';
+
+        // 在左侧面板显示邀请信息
+        this.roomPanel.style.display = 'none';
+        this.roomInfoSection.style.display = 'block';
+        document.getElementById('displayRoomId').textContent = data.roomId;
+        document.getElementById('inviteSection').style.display = 'block';
+        document.getElementById('readySection').style.display = 'none';
+        const inviteUrl = `${window.location.origin}/room/${data.roomId}`;
+        document.getElementById('inviteLink').value = inviteUrl;
+
+        this.opponentCard.style.display = 'none';
+        this.updateUI();
+        this.showToast(data.reason || '你已成为新房主');
+      }
     });
 
     socketManager.on('socketError', (data) => {

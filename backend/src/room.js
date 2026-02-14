@@ -448,33 +448,40 @@ class RoomManager {
     const opponent = isHost ? room.guest : room.host;
 
     if (isHost && opponent) {
-      // 房主离开，guest 变为新房主
+      // 房主离开，guest 变为新房主，保留对局状态
       room.host = opponent;
       room.guest = null;
       opponent.isHost = true;
       opponent.playerColor = 1;
-      room.status = 'waiting';
+      // 保持游戏状态，只重置准备状态
       room.hostReady = false;
       room.guestReady = false;
-      // 重置棋盘数据
-      room.board = Array(15).fill(null).map(() => Array(15).fill(0));
-      room.moveHistory = [];
-      room.currentPlayer = 1;
-      room.winner = null;
 
-      // 通知新房主
+      // 通知新房主，保留对局
       opponent.emit('became_host', {
         roomId,
-        reason: '房主离开，你已成为新房主'
+        reason: '房主离开，你已成为新房主，对局已保留',
+        preserveGame: true,
+        board: room.board,
+        moveHistory: room.moveHistory,
+        currentPlayer: room.currentPlayer,
+        isPlaying: room.status === 'playing'
       });
     } else if (!isHost && opponent) {
-      // Guest 离开，通知房主
+      // Guest 离开，房主保留对局
       room.guest = null;
-      room.status = 'waiting';
+      // 保持游戏状态，只重置准备状态
       room.hostReady = false;
       room.guestReady = false;
+
+      // 通知房主，保留对局
       opponent.emit('player_left', {
-        reason: '对手离开'
+        reason: '对手离开，对局已保留',
+        preserveGame: true,
+        board: room.board,
+        moveHistory: room.moveHistory,
+        currentPlayer: room.currentPlayer,
+        isPlaying: room.status === 'playing'
       });
     } else {
       // 两边都不在，清理房间
