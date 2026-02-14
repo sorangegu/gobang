@@ -362,6 +362,10 @@ class UI {
         // 重连失败，清除本地存储
         this.clearRoomInfo();
         this.showToast(data.error || '重连失败');
+        // 如果是创建房间模式，��连失败后创建新房间
+        if (this.initMode.type === 'create') {
+          setTimeout(() => this.createRoom(), 500);
+        }
       }
     });
 
