@@ -391,8 +391,8 @@ body.pre-init[data-initial-mode="multiplayer"] .mode-display {
 .player-card {
   display: flex;
   align-items: center;
-  gap: 16px;
-  padding: 16px;
+  gap: 12px;
+  padding: 12px 16px;
   background-color: var(--bg-primary);
   border-radius: var(--radius);
   border: 1px solid var(--border-color);
@@ -423,12 +423,14 @@ body.pre-init[data-initial-mode="multiplayer"] .mode-display {
 .player-status {
   display: flex;
   flex-direction: column;
-  min-height: 32px;
+  justify-content: center;
+  min-height: 40px;
 }
 
 .player-label {
-  font-size: 14px;
+  font-size: 16px;
   font-weight: 500;
+  line-height: 1.2;
 }
 
 .player-turn {
@@ -437,6 +439,7 @@ body.pre-init[data-initial-mode="multiplayer"] .mode-display {
   animation: pulse 1.5s infinite;
   height: 14px;
   visibility: hidden;
+  line-height: 1.2;
 }
 
 .player-turn.visible {
