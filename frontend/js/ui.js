@@ -684,6 +684,7 @@ class UI {
       // 有保存的房间，显示房间信息但不自动重连
       game.gameMode = savedRoom.isHost ? 'create' : 'join';
       game.myColor = savedRoom.playerColor;
+      game.roomId = savedRoom.roomId;
       // 清空棋盘显示
       game.board = Array(15).fill(null).map(() => Array(15).fill(0));
       game.lastMove = null;
@@ -697,7 +698,7 @@ class UI {
       document.getElementById('inviteLink').value = inviteUrl;
       document.getElementById('multiplayerSelect').style.display = 'none';
       this.opponentCard.style.display = 'none';
-      this.updateModeUI('multiplayer');
+      this.updateModeUI('room');
       // 更新 URL
       window.history.pushState({}, '', `/room/${savedRoom.roomId}`);
       this.drawBoard();
