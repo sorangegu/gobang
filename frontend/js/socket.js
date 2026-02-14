@@ -118,6 +118,11 @@ class SocketManager {
       this.emit('opponentReconnected', data);
     });
 
+    // 成为新房主
+    this.socket.on('became_host', (data) => {
+      this.emit('becameHost', data);
+    });
+
     // 错误
     this.socket.on('error', (data) => {
       this.emit('socketError', data);

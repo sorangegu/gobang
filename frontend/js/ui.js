@@ -36,9 +36,19 @@ class UI {
       // 加载完棋局后再绘制棋盘
       this.drawBoard();
     } else if (this.initMode.type === 'create') {
-      // 创建房间模式
-      game.init('create');
-      this.updateModeUI('create');
+      // 创建房间模式：先检查是否有保存的房间信息
+      const savedRoom = this.getValidSavedRoom();
+      if (savedRoom && savedRoom.isHost) {
+        // 有保存的房间信息且是房主，尝试重连
+        game.init('create');
+        game.myColor = savedRoom.playerColor;
+        this.pendingReconnect = savedRoom;
+        this.drawBoard();
+      } else {
+        // 没有保存的房间信息或不是房主，创建新房间
+        game.init('create');
+        this.updateModeUI('create');
+      }
     } else if (this.initMode.type === 'join') {
       // 加入房间模式（显示输入框）
       game.init('join');
@@ -440,6 +450,28 @@ class UI {
 
     socketManager.on('opponentReconnected', () => {
       this.showToast('对手已重连');
+    });
+
+    socketManager.on('becameHost', (data) => {
+      // 成为新房主
+      game.isHost = true;
+      game.myColor = 1;
+      game.gameMode = 'create';
+      this.saveRoomInfo(data.roomId, 1);
+
+      // 显示创建房间面板（带邀请链接）
+      this.roomPanel.style.display = 'block';
+      document.getElementById('createSection').style.display = 'block';
+      document.getElementById('joinSection').style.display = 'none';
+      document.getElementById('roomIdDisplay').textContent = data.roomId;
+      const inviteUrl = `${window.location.origin}/room/${data.roomId}`;
+      document.getElementById('inviteLink').value = inviteUrl;
+      document.getElementById('displayRoomId').textContent = data.roomId;
+
+      this.opponentCard.style.display = 'none';
+      this.roomInfoSection.style.display = 'block';
+      this.updateUI();
+      this.showToast(data.reason || '你已成为新房主');
     });
 
     socketManager.on('socketError', (data) => {

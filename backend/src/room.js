@@ -462,16 +462,37 @@ class RoomManager {
     const room = this.rooms.get(roomId);
     if (!room) return;
 
-    const opponent = socket.id === room.host.id ? room.guest : room.host;
+    const isHost = socket.id === room.host.id;
+    const opponent = isHost ? room.guest : room.host;
 
-    if (opponent) {
+    if (isHost && opponent) {
+      // 房主离开，guest 变为新房主
+      room.host = opponent;
+      room.guest = null;
+      opponent.isHost = true;
+      opponent.playerColor = 1;
+      room.status = 'waiting';
+
+      // 通知新房主
+      opponent.emit('became_host', {
+        roomId,
+        reason: '房主离开，你已成为新房主'
+      });
+    } else if (!isHost && opponent) {
+      // Guest 离开，通知房主
+      room.guest = null;
+      room.status = 'waiting';
       opponent.emit('player_left', {
         reason: '对手离开'
       });
+    } else {
+      // 两边都不在，清理房间
+      this.rooms.delete(roomId);
     }
 
-    // 清理房间
-    this.rooms.delete(roomId);
+    socket.roomId = null;
+    socket.isHost = false;
+    socket.playerColor = null;
   }
 
   // 处理断开连接
