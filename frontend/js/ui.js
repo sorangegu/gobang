@@ -68,13 +68,7 @@ class UI {
   detectModeFromURL() {
     const path = window.location.pathname;
 
-    // /room/XXXXXX - 具体房间
-    const roomMatch = path.match(/^\/room\/([A-Z0-9]{6})$/i);
-    if (roomMatch) {
-      return { type: 'room', roomId: roomMatch[1].toUpperCase() };
-    }
-
-    // /room/create - 创建房间
+    // /room/create - 创建房间（必须先于房间号匹配）
     if (path === '/room/create') {
       return { type: 'create' };
     }
@@ -82,6 +76,12 @@ class UI {
     // /room/join - 加入房间
     if (path === '/room/join') {
       return { type: 'join' };
+    }
+
+    // /room/XXXXXX - 具体房间
+    const roomMatch = path.match(/^\/room\/([A-Z0-9]{6})$/i);
+    if (roomMatch) {
+      return { type: 'room', roomId: roomMatch[1].toUpperCase() };
     }
 
     // / 或 /ai - 人机对战（默认）
