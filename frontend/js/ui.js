@@ -21,8 +21,14 @@ class UI {
     // 初始化游戏
     game.init('ai');
     game.myColor = 1;
-    game.isPlaying = true;
-    game.board = Array(15).fill(null).map(() => Array(15).fill(0));
+
+    // 尝试加载保存的游戏状态
+    const loaded = game.loadGame();
+    if (!loaded) {
+      // 如果没有保存的游戏，初始化新游戏
+      game.isPlaying = true;
+      game.board = Array(15).fill(null).map(() => Array(15).fill(0));
+    }
 
     this.drawBoard();
     this.updateUI();
@@ -548,6 +554,7 @@ class UI {
     // 检查胜利
     if (game.checkWin(cellX, cellY, game.myColor)) {
       this.showGameOver(game.myColor);
+      game.clearSavedGame(); // 游戏结束，清除保存的状态
       return;
     }
 
@@ -593,11 +600,13 @@ class UI {
     // 检查胜利
     if (game.checkWin(bestPoint.x, bestPoint.y, 2)) {
       this.showGameOver(2);
+      game.clearSavedGame(); // 游戏结束，清除保存的状态
       return;
     }
 
     // 切换回玩家
     game.switchPlayer();
+    game.saveGame(); // 保存游戏状态
     this.updateUI();
   }
 
@@ -647,6 +656,7 @@ class UI {
       if (game.moveHistory.length > 0) {
         game.undoMove();
         game.undoMove(); // 悔两步 (玩家+AI)
+        game.saveGame(); // 保存游戏状态
         this.drawBoard();
         this.updateUI();
       }
@@ -656,6 +666,7 @@ class UI {
   // 处理重新开始
   handleRestart() {
     game.reset();
+    game.clearSavedGame(); // 清除保存的游戏状态
     this.drawBoard();
     this.updateUI();
   }

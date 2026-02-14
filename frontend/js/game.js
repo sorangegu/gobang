@@ -159,6 +159,52 @@ class Game {
   getOpponentName() {
     return this.getPlayerName(3 - this.myColor);
   }
+
+  // 保存游戏状态到 localStorage
+  saveGame() {
+    // 只在 AI 模式且有落子时保存
+    if (this.gameMode !== 'ai' || this.moveHistory.length === 0) return;
+
+    const gameState = {
+      board: this.board,
+      currentPlayer: this.currentPlayer,
+      myColor: this.myColor,
+      moveHistory: this.moveHistory,
+      lastMove: this.lastMove,
+      winner: this.winner
+    };
+
+    localStorage.setItem('gomoku_game_state', JSON.stringify(gameState));
+  }
+
+  // 从 localStorage 加载游戏状态
+  loadGame() {
+    // 只在 AI 模式下恢复
+    if (this.gameMode !== 'ai') return false;
+
+    const saved = localStorage.getItem('gomoku_game_state');
+    if (!saved) return false;
+
+    try {
+      const gameState = JSON.parse(saved);
+      this.board = gameState.board;
+      this.currentPlayer = gameState.currentPlayer;
+      this.myColor = gameState.myColor;
+      this.moveHistory = gameState.moveHistory;
+      this.lastMove = gameState.lastMove;
+      this.winner = gameState.winner;
+      this.isPlaying = true;
+      return true;
+    } catch (e) {
+      console.error('加载游戏状态失败:', e);
+      return false;
+    }
+  }
+
+  // 清除保存的游戏状态
+  clearSavedGame() {
+    localStorage.removeItem('gomoku_game_state');
+  }
 }
 
 // 全局实例

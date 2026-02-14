@@ -762,10 +762,8 @@ body {
     box-sizing: border-box;
   }
 
-  /* 手机端棋盘初始尺寸，与 JavaScript 计算一致 */
+  /* 手机端棋盘：尺寸由 JavaScript 动态计算 */
   #board {
-    width: 360px;
-    height: 360px;
     max-width: 100%;
   }
 
@@ -837,11 +835,7 @@ body {
     max-width: calc(100vw - 12px);
   }
 
-  /* 极小屏幕棋盘初始尺寸 */
-  #board {
-    width: 320px;
-    height: 320px;
-  }
+  /* 极小屏幕棋盘：尺寸由 JavaScript 动态计算 */
 }
 
 /* 横屏手机优化 */
