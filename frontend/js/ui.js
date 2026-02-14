@@ -732,6 +732,8 @@ class UI {
     document.getElementById('joinInputSection').style.display = 'none';
     this.opponentCard.style.display = 'none';
     this.updateModeUI('multiplayer');
+    // 更新 URL
+    window.history.pushState({}, '', '/room');
     this.drawBoard();
     this.updateUI();
   }
