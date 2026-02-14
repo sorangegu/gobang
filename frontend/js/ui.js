@@ -581,8 +581,8 @@ class UI {
   handleModeChange(mode) {
     if (mode === 'ai') {
       this.clearRoomInfo();
-      game.reset();
-      this.startAIGame();
+      // 恢复人机对战状态（不是重置）
+      this.resumeAIGame();
       // 更新 URL
       window.history.pushState({}, '', '/');
     } else if (mode === 'multiplayer') {
@@ -595,7 +595,19 @@ class UI {
 
   // 显示玩家对战选择
   showMultiplayerSelect() {
-    // 不重置游戏，保留人机对战状态
+    // 如果是人机对战模式，先保存当前状态
+    if (game.gameMode === 'ai' && game.isPlaying) {
+      game.saveGame();
+    }
+
+    // 清空棋盘��示
+    game.board = Array(15).fill(null).map(() => Array(15).fill(0));
+    game.isPlaying = false;
+    game.winner = null;
+    game.currentPlayer = 1;
+    game.moveHistory = [];
+    game.lastMove = null;
+
     this.roomInfoSection.style.display = 'none';
     document.getElementById('multiplayerSelect').style.display = 'block';
     document.getElementById('joinInputSection').style.display = 'none';
@@ -603,6 +615,33 @@ class UI {
     this.updateModeUI('multiplayer');
     this.drawBoard();
     this.updateUI();
+  }
+
+  // 恢复人机对战状态
+  resumeAIGame() {
+    game.init('ai');
+    game.myColor = 1;
+
+    // 尝试加载保存的游戏状态
+    const loaded = game.loadGame();
+    if (!loaded) {
+      // 没有保存的状态，开始新游戏
+      game.isPlaying = true;
+      game.board = Array(15).fill(null).map(() => Array(15).fill(0));
+      game.winner = null;
+      game.currentPlayer = 1;
+      game.moveHistory = [];
+      game.lastMove = null;
+    }
+
+    this.roomPanel.style.display = 'none';
+    document.getElementById('multiplayerSelect').style.display = 'none';
+    this.opponentCard.style.display = 'flex';
+    this.opponentCard.querySelector('.player-label').textContent = 'AI (白方)';
+    this.roomInfoSection.style.display = 'none';
+    this.updateModeUI('ai');
+    this.updateUI();
+    this.drawBoard();
   }
 
   // 创建房间
