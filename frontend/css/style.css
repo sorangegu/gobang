@@ -813,38 +813,73 @@ body.pre-init[data-initial-mode="multiplayer"] .mode-display {
 @media (max-width: 768px) {
   :root {
     --board-size: 340px;
+    --mobile-header-height: 44px;
+    --mobile-nav-height: 44px;
+    --mobile-info-height: 70px;
+    --mobile-room-height: 40px;
   }
 
+  /* 隐藏顶部导航栏，改为下方导航 */
   .navbar {
-    padding: 0 12px;
-    height: 50px;
-  }
-
-  .logo {
-    font-size: 20px;
-  }
-
-  .nav-center {
-    gap: 4px;
-  }
-
-  .nav-btn {
-    padding: 6px 10px;
-    font-size: 12px;
-  }
-
-  .nav-right {
     display: none;
   }
 
   .main-content {
     padding: 8px;
+    padding-top: 4px;
   }
 
   .game-container {
     flex-direction: column;
     align-items: center;
-    gap: 8px;
+    gap: 6px;
+    width: 100%;
+  }
+
+  /* 手机端主标题 - 放在最上方 */
+  .mobile-header {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    height: var(--mobile-header-height);
+    width: 100%;
+  }
+
+  .mobile-title {
+    font-size: 20px;
+    font-weight: 700;
+    color: var(--accent);
+    letter-spacing: 3px;
+  }
+
+  /* 手机端导航 - 放在标题下方 */
+  .mobile-nav {
+    display: flex;
+    justify-content: center;
+    gap: 12px;
+    height: var(--mobile-nav-height);
+    width: 100%;
+    padding: 0 12px;
+  }
+
+  .mobile-nav-btn {
+    flex: 1;
+    max-width: 140px;
+    padding: 8px 16px;
+    background-color: var(--bg-secondary);
+    border: 1px solid var(--border-color);
+    border-radius: var(--radius);
+    color: var(--text-secondary);
+    font-size: 14px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 150ms ease;
+  }
+
+  .mobile-nav-btn.active {
+    background-color: var(--accent);
+    border-color: var(--accent);
+    color: white;
   }
 
   /* 房间面板优化 */
@@ -875,35 +910,45 @@ body.pre-init[data-initial-mode="multiplayer"] .mode-display {
     font-size: 13px;
   }
 
-  /* 手机端顶部简化信息栏 - 紧凑横向布局 */
+  /* 手机端侧边栏 - 改为水平信息栏 */
   .side-panel {
     width: 100%;
     height: auto;
-    min-height: auto;
-    padding: 6px 12px;
-    flex-direction: column;
-    align-items: stretch;
-    gap: 5px;
+    min-height: var(--mobile-info-height);
+    padding: 6px 10px;
+    flex-direction: row;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 4px;
+    order: 2; /* 放在棋盘上方 */
+  }
+
+  /* 隐藏侧边栏标题（已在mobile-header显示） */
+  .side-panel-header {
+    display: none;
   }
 
   .player-info {
     flex-direction: row;
     margin-bottom: 0;
-    gap: 6px;
+    gap: 4px;
     justify-content: space-between;
+    width: 100%;
+    flex: 1;
   }
 
   .player-card {
-    padding: 6px 10px;
+    padding: 4px 8px;
     flex: 1;
-    gap: 8px;
+    gap: 6px;
     transition: none;
     align-items: center;
+    min-width: 0;
   }
 
   .player-stone {
-    width: 28px;
-    height: 28px;
+    width: 24px;
+    height: 24px;
     flex-shrink: 0;
   }
 
@@ -913,41 +958,51 @@ body.pre-init[data-initial-mode="multiplayer"] .mode-display {
     display: flex;
     flex-direction: column;
     justify-content: center;
+    min-height: auto;
   }
 
   .player-label {
-    font-size: 12px;
+    font-size: 11px;
     white-space: nowrap;
     overflow: hidden;
     text-overflow: ellipsis;
   }
 
   .player-turn {
-    font-size: 10px;
+    font-size: 9px;
   }
 
   .game-info {
     margin-bottom: 0;
     display: flex;
     flex-direction: row;
-    justify-content: space-between;
+    justify-content: center;
     align-items: center;
-    padding: 5px 10px;
+    padding: 4px 8px;
     background-color: var(--bg-primary);
     border-radius: var(--radius);
+    width: 100%;
+    gap: 16px;
   }
 
   .info-row {
     padding: 0;
-    font-size: 12px;
+    font-size: 11px;
     border-bottom: none;
     display: flex;
     align-items: center;
     gap: 4px;
+    min-height: auto;
   }
 
   .info-row span:first-child {
     color: var(--text-secondary);
+    min-width: auto;
+  }
+
+  .info-row span:last-child {
+    min-width: auto;
+    font-weight: 500;
   }
 
   .game-actions {
@@ -1054,20 +1109,22 @@ body.pre-init[data-initial-mode="multiplayer"] .mode-display {
     display: none;
   }
 
-  /* 棋盘适配 */
+  /* 棋盘适配 - 固定位置 */
   .board-wrapper {
-    padding: 10px;
-    max-width: calc(100vw - 24px);
+    padding: 8px;
+    max-width: calc(100vw - 20px);
     box-sizing: border-box;
-    /* 防止布局抖动 */
     width: fit-content;
     margin: 0 auto;
+    order: 3; /* 确保棋盘在信息栏下方 */
+    /* 固定棋盘位置，不受上方内容影响 */
+    position: relative;
   }
 
   /* 手机端棋盘默认尺寸，防止刷新时闪烁 */
   #board {
-    width: 340px;
-    height: 340px;
+    width: var(--board-size);
+    height: var(--board-size);
     max-width: 100%;
     background-color: #deb887;
   }

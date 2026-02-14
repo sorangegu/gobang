@@ -159,8 +159,20 @@ class UI {
 
   // 更新模式相关的 UI
   updateModeUI(mode) {
-    // 更新导航按钮状态
+    // 更新桌面端导航按钮状态
     this.navBtns.forEach(btn => {
+      const btnMode = btn.dataset.mode;
+      btn.classList.toggle('active',
+        (mode === 'ai' && btnMode === 'ai') ||
+        (mode === 'multiplayer' && btnMode === 'multiplayer') ||
+        (mode === 'create' && btnMode === 'multiplayer') ||
+        (mode === 'join' && btnMode === 'multiplayer') ||
+        (mode === 'room' && btnMode === 'multiplayer')
+      );
+    });
+
+    // 更新移动端导航按钮状态
+    document.querySelectorAll('.mobile-nav-btn').forEach(btn => {
       const btnMode = btn.dataset.mode;
       btn.classList.toggle('active',
         (mode === 'ai' && btnMode === 'ai') ||
@@ -285,9 +297,20 @@ class UI {
     // 主题切换
     this.themeToggle.addEventListener('click', () => this.toggleTheme());
 
-    // 模式选择
+    // 模式选择（桌面端导航）
     this.navBtns.forEach(btn => {
       btn.addEventListener('click', () => this.handleModeChange(btn.dataset.mode));
+    });
+
+    // 移动端导航按钮
+    document.querySelectorAll('.mobile-nav-btn').forEach(btn => {
+      btn.addEventListener('click', () => {
+        // 更新按钮状态
+        document.querySelectorAll('.mobile-nav-btn').forEach(b => b.classList.remove('active'));
+        btn.classList.add('active');
+        // 处理模式切换
+        this.handleModeChange(btn.dataset.mode);
+      });
     });
 
     // 悔棋
