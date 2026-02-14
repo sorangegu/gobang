@@ -773,7 +773,7 @@ class UI {
     // 检查是否有保存的房间
     const savedRoom = this.getValidSavedRoom();
     if (savedRoom) {
-      // 有保存的房间，显示房间信息但不自动重连
+      // 有保存的房间，设置待重连
       game.gameMode = savedRoom.isHost ? 'create' : 'join';
       game.myColor = savedRoom.playerColor;
       game.roomId = savedRoom.roomId;
@@ -795,6 +795,8 @@ class UI {
       window.history.pushState({}, '', `/room/${savedRoom.roomId}`);
       this.drawBoard();
       this.updateUI();
+      // 发起重连
+      socketManager.reconnectRoom(savedRoom.roomId, savedRoom.playerColor);
       return;
     }
 
