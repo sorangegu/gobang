@@ -74,7 +74,12 @@ body {
 }
 
 .logo {
-  display: none;
+  display: block;
+  font-size: 24px;
+  font-weight: 700;
+  color: var(--accent);
+  position: absolute;
+  left: 24px;
 }
 
 .nav-center {
@@ -316,6 +321,12 @@ body.pre-init[data-initial-mode="multiplayer"] .mode-display {
   color: var(--accent);
   margin: 0;
   letter-spacing: 2px;
+}
+
+/* PC端隐藏移动端专用元素 */
+.mobile-header,
+.mobile-nav {
+  display: none;
 }
 
 /* 移动端侧边栏标题 - 更紧凑 */
