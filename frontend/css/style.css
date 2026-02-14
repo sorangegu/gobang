@@ -509,19 +509,9 @@ body.pre-init[data-initial-mode="multiplayer"] .mode-display {
 #board {
   display: block;
   cursor: pointer;
-  /* 桌面端默认尺寸（与 JavaScript 计算一致：cellSize*14 + padding*2 = 560+44） */
   width: 604px;
   height: 604px;
-  /* 背景色匹配棋盘颜色，防止刷新时闪烁 */
   background-color: #deb887;
-}
-
-body.pre-init #board {
-  background-image:
-    linear-gradient(var(--grid-color) 1px, transparent 1px),
-    linear-gradient(90deg, var(--grid-color) 1px, transparent 1px);
-  background-size: calc((var(--board-size) - (var(--board-padding) * 2)) / 14) calc((var(--board-size) - (var(--board-padding) * 2)) / 14);
-  background-position: var(--board-padding) var(--board-padding);
 }
 
 /* ===== 按钮样式 ===== */
