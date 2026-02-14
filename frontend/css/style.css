@@ -703,10 +703,10 @@ body.pre-init[data-initial-mode="multiplayer"] .mode-display {
     width: 100%;
     height: auto;
     min-height: auto;
-    padding: 10px 12px;
+    padding: 8px 12px;
     flex-direction: column;
     align-items: stretch;
-    gap: 8px;
+    gap: 6px;
   }
 
   .player-info {
@@ -717,7 +717,7 @@ body.pre-init[data-initial-mode="multiplayer"] .mode-display {
   }
 
   .player-card {
-    padding: 8px 10px;
+    padding: 6px 10px;
     flex: 1;
     gap: 8px;
     transition: none;
@@ -751,7 +751,7 @@ body.pre-init[data-initial-mode="multiplayer"] .mode-display {
     flex-direction: row;
     justify-content: space-between;
     align-items: center;
-    padding: 6px 10px;
+    padding: 5px 10px;
     background-color: var(--bg-primary);
     border-radius: var(--radius);
   }
@@ -773,11 +773,12 @@ body.pre-init[data-initial-mode="multiplayer"] .mode-display {
     flex-direction: row;
     gap: 6px;
     justify-content: center;
+    padding: 2px 0;
   }
 
   .btn-action {
-    padding: 6px 12px;
-    font-size: 12px;
+    padding: 5px 12px;
+    font-size: 11px;
   }
 
   .room-info-section {
@@ -816,36 +817,30 @@ body.pre-init[data-initial-mode="multiplayer"] .mode-display {
     background-position: 10px 10px;
   }
 
-  /* 玩家对战选择面板优化 - 更紧凑 */
+  /* 玩家对战选择面板优化 - 超紧凑单行布局 */
   .multiplayer-select {
     display: flex;
     flex-direction: row;
-    flex-wrap: wrap;
-    gap: 6px;
-    padding: 8px;
+    gap: 8px;
+    padding: 6px 8px;
     background-color: var(--bg-primary);
     border-radius: var(--radius);
     align-items: center;
+    justify-content: center;
   }
 
   .multiplayer-select h3 {
-    width: 100%;
-    text-align: center;
-    margin-bottom: 4px;
-    font-size: 12px;
-    color: var(--text-primary);
-    font-weight: 500;
+    display: none;
   }
 
   .multiplayer-select .btn-action {
-    flex: 1;
-    min-width: 100px;
-    padding: 6px 10px;
+    padding: 5px 12px;
     font-size: 11px;
     font-weight: 500;
     background-color: var(--bg-secondary);
     border: 1px solid var(--border-color);
     margin-bottom: 0;
+    white-space: nowrap;
   }
 
   .multiplayer-select .btn-action:hover {
@@ -960,19 +955,17 @@ body.pre-init[data-initial-mode="multiplayer"] .mode-display {
 
   /* 极小屏幕玩家对战按钮更紧凑 */
   .multiplayer-select {
-    padding: 6px;
-    gap: 4px;
+    padding: 4px 6px;
+    gap: 6px;
   }
 
   .multiplayer-select h3 {
-    font-size: 11px;
-    margin-bottom: 2px;
+    display: none;
   }
 
   .multiplayer-select .btn-action {
-    padding: 5px 8px;
+    padding: 4px 10px;
     font-size: 10px;
-    min-width: 80px;
   }
 }
 
