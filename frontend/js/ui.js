@@ -35,33 +35,11 @@ class UI {
       this.updateModeUI('ai');
       // 加载完棋局后再绘制棋盘
       this.drawBoard();
-    } else if (this.initMode.type === 'create') {
-      // 创建房间模式：先检查是否有保存的房间信息
-      const savedRoom = this.getValidSavedRoom();
-      if (savedRoom && savedRoom.isHost) {
-        // 有保存的房间信息且是房主，尝试重连
-        game.init('create');
-        game.myColor = savedRoom.playerColor;
-        this.pendingReconnect = savedRoom;
-        this.drawBoard();
-      } else {
-        // 没有保存的房间信息或不是房主，创建新房间
-        game.init('create');
-        // 立即显示面板（邀请链接稍后填充）
-        this.roomInfoSection.style.display = 'block';
-        document.getElementById('inviteSection').style.display = 'block';
-        document.getElementById('joinSectionPanel').style.display = 'none';
-        this.opponentCard.style.display = 'none';
-        this.updateModeUI('create');
-      }
-    } else if (this.initMode.type === 'join') {
-      // 加入房间模式：立即显示输入框
-      game.init('join');
-      this.roomInfoSection.style.display = 'block';
-      document.getElementById('inviteSection').style.display = 'none';
-      document.getElementById('joinSectionPanel').style.display = 'block';
-      this.opponentCard.style.display = 'none';
-      this.updateModeUI('join');
+    } else if (this.initMode.type === 'multiplayer') {
+      // 玩家对战选择页面
+      game.init('ai');
+      this.updateModeUI('multiplayer');
+      this.drawBoard();
     } else if (this.initMode.type === 'room') {
       // 具体房间：检查重连还是新加入
       const savedRoom = this.getValidSavedRoom();
@@ -87,23 +65,18 @@ class UI {
   detectModeFromURL() {
     const path = window.location.pathname;
 
-    // /room/create - 创建房间（必须先于房间号匹配）
-    if (path === '/room/create') {
-      return { type: 'create' };
-    }
-
-    // /room/join - 加入房间
-    if (path === '/room/join') {
-      return { type: 'join' };
-    }
-
     // /room/XXXXXX - 具体房间
     const roomMatch = path.match(/^\/room\/([A-Z0-9]{6})$/i);
     if (roomMatch) {
       return { type: 'room', roomId: roomMatch[1].toUpperCase() };
     }
 
-    // / 或 /ai - 人机对战（默认）
+    // /room - 玩家对战选择页面
+    if (path === '/room' || path === '/room/') {
+      return { type: 'multiplayer' };
+    }
+
+    // / 或其他 - 人机对战（默认）
     return { type: 'ai' };
   }
 
@@ -129,17 +102,24 @@ class UI {
       const btnMode = btn.dataset.mode;
       btn.classList.toggle('active',
         (mode === 'ai' && btnMode === 'ai') ||
-        (mode === 'create' && btnMode === 'create') ||
-        (mode === 'join' && btnMode === 'join') ||
-        (mode === 'room' && btnMode === 'join')
+        (mode === 'multiplayer' && btnMode === 'multiplayer') ||
+        (mode === 'create' && btnMode === 'multiplayer') ||
+        (mode === 'join' && btnMode === 'multiplayer') ||
+        (mode === 'room' && btnMode === 'multiplayer')
       );
     });
 
     if (mode === 'ai') {
       this.roomPanel.style.display = 'none';
       this.roomInfoSection.style.display = 'none';
+      document.getElementById('multiplayerSelect').style.display = 'none';
       this.opponentCard.style.display = 'flex';
       this.opponentCard.querySelector('.player-label').textContent = 'AI (白方)';
+    } else if (mode === 'multiplayer') {
+      this.roomPanel.style.display = 'none';
+      this.roomInfoSection.style.display = 'none';
+      document.getElementById('multiplayerSelect').style.display = 'block';
+      this.opponentCard.style.display = 'none';
     } else if (mode === 'create' || mode === 'join' || mode === 'room') {
       // create/join/room 模式的面板在 DOMContentLoaded 中处理
       this.opponentCard.style.display = 'none';
@@ -280,8 +260,15 @@ class UI {
     // 离开房间
     this.leaveRoomBtn.addEventListener('click', () => this.handleLeaveRoom());
 
-    // 加入房间按钮（左侧面板）
-    document.getElementById('joinRoomBtnPanel')?.addEventListener('click', () => this.joinRoomFromPanel());
+    // 创建房间按钮
+    document.getElementById('createRoomBtn')?.addEventListener('click', () => this.createRoom());
+
+    // 显示加入房间输入框
+    document.getElementById('showJoinBtn')?.addEventListener('click', () => {
+      document.getElementById('joinInputSection').style.display = 'block';
+    });
+
+    // 加入房间按钮
     document.getElementById('joinRoomBtnPanel')?.addEventListener('click', () => this.joinRoomFromPanel());
     document.getElementById('roomIdInputPanel')?.addEventListener('keypress', (e) => {
       if (e.key === 'Enter') this.joinRoomFromPanel();
@@ -590,21 +577,31 @@ class UI {
     ctx.fill();
   }
 
-  // 处理模式切换 - 通过 URL 导航
+  // 处理模式切换
   handleModeChange(mode) {
     if (mode === 'ai') {
       this.clearRoomInfo();
+      game.reset();
+      this.startAIGame();
+      // 更新 URL
       window.history.pushState({}, '', '/');
-      location.reload();
-    } else if (mode === 'create') {
-      this.clearRoomInfo();  // 主动创建房间时清除之前的房间信息
-      window.history.pushState({}, '', '/room/create');
-      location.reload();
-    } else if (mode === 'join') {
-      this.clearRoomInfo();  // 主动加入房间时清除之前的房间信息
-      window.history.pushState({}, '', '/room/join');
-      location.reload();
+    } else if (mode === 'multiplayer') {
+      // 显示玩家对战选择面板
+      this.showMultiplayerSelect();
+      // 更新 URL
+      window.history.pushState({}, '', '/room');
     }
+  }
+
+  // 显示玩家对战选择
+  showMultiplayerSelect() {
+    game.reset();
+    this.roomInfoSection.style.display = 'none';
+    document.getElementById('multiplayerSelect').style.display = 'block';
+    document.getElementById('joinInputSection').style.display = 'none';
+    this.opponentCard.style.display = 'none';
+    this.drawBoard();
+    this.updateUI();
   }
 
   // 创建房间
@@ -614,8 +611,8 @@ class UI {
 
     socketManager.createRoom();
 
-    // 在左侧面板显示等待信息
-    this.roomPanel.style.display = 'none';
+    // 隐藏选择面板，显示房间信息
+    document.getElementById('multiplayerSelect').style.display = 'none';
     this.roomInfoSection.style.display = 'block';
     document.getElementById('inviteSection').style.display = 'block';
 
@@ -628,11 +625,10 @@ class UI {
     game.gameMode = 'join';
     game.isPlaying = false;
 
-    // 隐藏顶部面板，显示左侧面板
-    this.roomPanel.style.display = 'none';
+    // 隐藏选择面板，显示房间信息
+    document.getElementById('multiplayerSelect').style.display = 'none';
     this.roomInfoSection.style.display = 'block';
     document.getElementById('inviteSection').style.display = 'none';
-    document.getElementById('joinSectionPanel').style.display = 'block';
 
     this.opponentCard.style.display = 'none';
     this.updateUI();
@@ -1004,10 +1000,6 @@ document.addEventListener('DOMContentLoaded', async () => {
     // 处理待加入的房间（URL 邀请链接）
     socketManager.joinRoom(ui.pendingRoomId);
     ui.pendingRoomId = null;
-  } else if (ui.initMode.type === 'create') {
-    // 创建房间模式：创建新房间
-    ui.createRoom();
-  } else if (ui.initMode.type === 'join') {
-    // 加入房间模式（输入框已在构造函数中显示）
   }
+  // multiplayer 模式不需要额外处理，已在构造函数中显示选择面板
 });

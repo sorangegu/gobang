@@ -12,8 +12,7 @@
     <div class="logo">五子棋</div>
     <div class="nav-center">
       <button class="nav-btn active" data-mode="ai">人机对战</button>
-      <button class="nav-btn" data-mode="create">创建房间</button>
-      <button class="nav-btn" data-mode="join">加入房间</button>
+      <button class="nav-btn" data-mode="multiplayer">玩家对战</button>
     </div>
     <div class="nav-right">
       <button class="theme-toggle" id="themeToggle" title="切换主题">
@@ -64,6 +63,19 @@
           <button class="btn-action" id="restartBtn" disabled>重新开始</button>
         </div>
 
+        <!-- 玩家对战选择 -->
+        <div class="multiplayer-select" id="multiplayerSelect" style="display: none;">
+          <h3 style="margin-bottom: 12px; font-size: 14px; color: var(--text-primary);">玩家对战</h3>
+          <button class="btn-action" id="createRoomBtn" style="width: 100%; margin-bottom: 8px;">创建新房间</button>
+          <button class="btn-action" id="showJoinBtn" style="width: 100%;">加入房间</button>
+          <div class="join-input-section" id="joinInputSection" style="display: none; margin-top: 12px;">
+            <div style="display: flex; gap: 6px;">
+              <input type="text" id="roomIdInputPanel" placeholder="输入房间号" maxlength="6" style="flex: 1; padding: 6px 10px; background-color: var(--bg-primary); border: 1px solid var(--border-color); border-radius: var(--radius); color: var(--text-primary); font-size: 13px; text-transform: uppercase; letter-spacing: 2px; text-align: center;">
+              <button class="btn-primary" id="joinRoomBtnPanel" style="padding: 6px 12px; font-size: 12px;">加入</button>
+            </div>
+          </div>
+        </div>
+
         <!-- 房间信息 -->
         <div class="room-info-section" id="roomInfoSection" style="display: none;">
           <div class="info-row">
@@ -78,14 +90,6 @@
               <button class="btn-copy" id="copyInviteLink" style="padding: 6px 12px; font-size: 12px;">复制</button>
             </div>
             <p class="waiting-text" style="margin-top: 10px; font-size: 12px;">等待对手加入...</p>
-          </div>
-          <!-- 加入房间输入 -->
-          <div class="join-section" id="joinSectionPanel" style="display: none; margin-top: 12px;">
-            <div style="margin-bottom: 6px; color: var(--text-secondary); font-size: 13px;">加入房间:</div>
-            <div style="display: flex; gap: 6px;">
-              <input type="text" id="roomIdInputPanel" placeholder="输入房间号" maxlength="6" style="flex: 1; padding: 6px 10px; background-color: var(--bg-primary); border: 1px solid var(--border-color); border-radius: var(--radius); color: var(--text-primary); font-size: 13px; text-transform: uppercase; letter-spacing: 2px; text-align: center;">
-              <button class="btn-primary" id="joinRoomBtnPanel" style="padding: 6px 12px; font-size: 12px;">加入</button>
-            </div>
           </div>
           <button class="btn-action" id="leaveRoomBtn" style="width: 100%; margin-top: 12px;">离开房间</button>
         </div>
