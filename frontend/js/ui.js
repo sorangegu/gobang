@@ -23,29 +23,18 @@ class UI {
 
     // 根据模式初始化
     if (this.initMode.type === 'ai') {
-      // 检查是否有保存的房间，如果有则重连
-      const savedRoom = this.getValidSavedRoom();
-      if (savedRoom) {
-        // 有保存的房间，尝试重连
-        game.init(savedRoom.isHost ? 'create' : 'join');
-        game.myColor = savedRoom.playerColor;
-        this.pendingReconnect = savedRoom;
-        this.updateModeUI('room');
-        this.drawBoard();
-      } else {
-        // 人机模式：加载保存的进度
-        game.init('ai');
-        game.myColor = 1;
-        // 尝试加载保存的游戏状态
-        const loaded = game.loadGame();
-        if (!loaded) {
-          game.isPlaying = true;
-          game.board = Array(15).fill(null).map(() => Array(15).fill(0));
-        }
-        this.updateModeUI('ai');
-        // 加载完棋局后再绘制棋盘
-        this.drawBoard();
+      // 人机模式：加载保存的进度
+      game.init('ai');
+      game.myColor = 1;
+      // 尝试加载保存的游戏状态
+      const loaded = game.loadGame();
+      if (!loaded) {
+        game.isPlaying = true;
+        game.board = Array(15).fill(null).map(() => Array(15).fill(0));
       }
+      this.updateModeUI('ai');
+      // 加载完棋局后再绘制棋盘
+      this.drawBoard();
     } else if (this.initMode.type === 'multiplayer') {
       // 玩家对战选择页面：检查是否有保存的房间，保持房间状态（不自动重连）
       const savedRoom = this.getValidSavedRoom();
@@ -685,28 +674,25 @@ class UI {
     // 检查是否有保存的房间
     const savedRoom = this.getValidSavedRoom();
     if (savedRoom) {
-      // 有保存的房间，尝试恢复房间状态
+      // 有保存的房间，显示房间信息但不自动重连
       game.gameMode = savedRoom.isHost ? 'create' : 'join';
       game.myColor = savedRoom.playerColor;
-      // 清空棋盘显示（等待重连后恢复）
+      // 清空棋盘显示
       game.board = Array(15).fill(null).map(() => Array(15).fill(0));
       game.lastMove = null;
       game.moveHistory = [];
-      this.pendingReconnect = savedRoom;
-
-      // 等待 socket 连接后重连
-      socketManager.waitForConnection().then(() => {
-        if (this.pendingReconnect) {
-          socketManager.reconnectRoom(this.pendingReconnect.roomId, this.pendingReconnect.playerColor);
-          this.pendingReconnect = null;
-        }
-      });
 
       // 显示房间信息面板
       this.roomInfoSection.style.display = 'block';
+      document.getElementById('displayRoomId').textContent = savedRoom.roomId;
+      document.getElementById('inviteSection').style.display = 'block';
+      const inviteUrl = `${window.location.origin}/room/${savedRoom.roomId}`;
+      document.getElementById('inviteLink').value = inviteUrl;
       document.getElementById('multiplayerSelect').style.display = 'none';
       this.opponentCard.style.display = 'none';
       this.updateModeUI('multiplayer');
+      // 更新 URL
+      window.history.pushState({}, '', `/room/${savedRoom.roomId}`);
       this.drawBoard();
       this.updateUI();
       return;
