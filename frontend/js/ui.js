@@ -622,6 +622,10 @@ class UI {
       // 有保存的房间，尝试恢复房间状态
       game.gameMode = savedRoom.isHost ? 'create' : 'join';
       game.myColor = savedRoom.playerColor;
+      // 清空棋盘显示（等待重连后恢复）
+      game.board = Array(15).fill(null).map(() => Array(15).fill(0));
+      game.lastMove = null;
+      game.moveHistory = [];
       this.pendingReconnect = savedRoom;
 
       // 等待 socket 连接后重连
