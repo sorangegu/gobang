@@ -703,10 +703,10 @@ body.pre-init[data-initial-mode="multiplayer"] .mode-display {
     width: 100%;
     height: auto;
     min-height: auto;
-    padding: 8px 12px;
+    padding: 6px 12px;
     flex-direction: column;
     align-items: stretch;
-    gap: 6px;
+    gap: 5px;
   }
 
   .player-info {
@@ -817,30 +817,27 @@ body.pre-init[data-initial-mode="multiplayer"] .mode-display {
     background-position: 10px 10px;
   }
 
-  /* 玩家对战选择面板优化 - 超紧凑单行布局 */
+  /* 玩家对战选择面板 - 左右排列 */
   .multiplayer-select {
     display: flex;
     flex-direction: row;
     gap: 8px;
-    padding: 6px 8px;
+    padding: 5px 8px;
     background-color: var(--bg-primary);
     border-radius: var(--radius);
     align-items: center;
     justify-content: center;
   }
 
-  .multiplayer-select h3 {
-    display: none;
-  }
-
   .multiplayer-select .btn-action {
-    padding: 5px 12px;
+    flex: 1;
+    padding: 5px 8px;
     font-size: 11px;
     font-weight: 500;
     background-color: var(--bg-secondary);
     border: 1px solid var(--border-color);
-    margin-bottom: 0;
     white-space: nowrap;
+    text-align: center;
   }
 
   .multiplayer-select .btn-action:hover {
@@ -850,7 +847,7 @@ body.pre-init[data-initial-mode="multiplayer"] .mode-display {
 
   .multiplayer-select .join-input-section {
     width: 100%;
-    margin-top: 4px;
+    margin-top: 6px;
   }
 
   .multiplayer-select .join-input-section input {
@@ -959,12 +956,8 @@ body.pre-init[data-initial-mode="multiplayer"] .mode-display {
     gap: 6px;
   }
 
-  .multiplayer-select h3 {
-    display: none;
-  }
-
   .multiplayer-select .btn-action {
-    padding: 4px 10px;
+    padding: 4px 6px;
     font-size: 10px;
   }
 }
