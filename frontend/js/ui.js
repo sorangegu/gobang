@@ -992,23 +992,19 @@ document.addEventListener('DOMContentLoaded', async () => {
   // 等待 socket 连接成功
   await socketManager.waitForConnection();
 
-  // 根据初始化模式执行相应操作
-  if (ui.initMode.type === 'create') {
-    // 创建房间模式：如果是重连，会在构造函数中处理；否则立即创建新房间
-    const savedRoom = ui.getValidSavedRoom();
-    if (!savedRoom || !savedRoom.isHost) {
-      // 没有保存的房间信息，创建新房间
-      ui.createRoom();
-    }
-  } else if (ui.initMode.type === 'join' && !ui.pendingRoomId) {
-    // 加入房间模式（输入框已在构造函数中显示）
+  // 根据初始化模式执行相应操作（注意：重连逻辑优先）
+  if (ui.pendingReconnect) {
+    // 处理待重连的房间
+    socketManager.reconnectRoom(ui.pendingReconnect.roomId, ui.pendingReconnect.playerColor);
+    ui.pendingReconnect = null;
   } else if (ui.pendingRoomId) {
     // 处理待加入的房间（URL 邀请链接）
     socketManager.joinRoom(ui.pendingRoomId);
     ui.pendingRoomId = null;
-  } else if (ui.pendingReconnect) {
-    // 处理待重连的房间
-    socketManager.reconnectRoom(ui.pendingReconnect.roomId, ui.pendingReconnect.playerColor);
-    ui.pendingReconnect = null;
+  } else if (ui.initMode.type === 'create') {
+    // 创建房间模式：创建新房间
+    ui.createRoom();
+  } else if (ui.initMode.type === 'join') {
+    // 加入房间模式（输入框已在构造函数中显示）
   }
 });
