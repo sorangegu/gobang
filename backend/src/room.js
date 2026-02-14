@@ -80,7 +80,10 @@ class RoomManager {
       return { success: false, error: '房间不存在' };
     }
 
-    if (room.status !== 'waiting') {
+    // 检查是否是重新加入（房间进行中但缺少玩家）
+    const isRejoining = room.status === 'playing' && !room.guest;
+
+    if (room.status !== 'waiting' && !isRejoining) {
       return { success: false, error: '房间已开始游戏' };
     }
 
@@ -89,7 +92,10 @@ class RoomManager {
     }
 
     room.guest = socket;
-    // 状态保持为 waiting，等待双方准备
+    // 如果是重新加入，保持 playing 状态
+    if (!isRejoining) {
+      room.status = 'waiting';
+    }
     socket.join(roomId);
     socket.roomId = roomId;
     socket.isHost = false;
@@ -99,7 +105,8 @@ class RoomManager {
     room.host.emit('player_joined', {
       success: true,
       roomId,
-      playerColor: 2
+      playerColor: 2,
+      isRejoining
     });
 
     // 通过回调返回结果给加入者
@@ -107,7 +114,12 @@ class RoomManager {
       success: true,
       roomId,
       isHost: false,
-      playerColor: 2
+      playerColor: 2,
+      isRejoining,
+      board: room.board,
+      moveHistory: room.moveHistory,
+      currentPlayer: room.currentPlayer,
+      isPlaying: room.status === 'playing'
     };
   }
 

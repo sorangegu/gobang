@@ -386,21 +386,39 @@ class UI {
         game.setRoomInfo(data.roomId, false);
         game.gameMode = 'join';
         game.myColor = data.playerColor || 2;
-        game.reset();
         document.getElementById('displayRoomId').textContent = data.roomId;
         this.roomPanel.style.display = 'none';
         this.opponentCard.style.display = 'flex';
         this.opponentCard.querySelector('.player-label').textContent = '对手 (黑方)';
         this.playerCard.querySelector('.player-label').textContent = '你 (白方)';
         this.roomInfoSection.style.display = 'block';
-        // 显示准备区域
-        document.getElementById('inviteSection').style.display = 'none';
-        document.getElementById('readySection').style.display = 'block';
-        // 重置准备状态
-        document.getElementById('myReadyStatus').textContent = '未准备';
-        document.getElementById('myReadyStatus').style.color = 'var(--text-muted)';
-        document.getElementById('opponentReadyStatus').textContent = '未准备';
-        document.getElementById('opponentReadyStatus').style.color = 'var(--text-muted)';
+
+        // 检查是否是重新加入进行中对局
+        if (data.isRejoining && data.isPlaying) {
+          // 恢复对局状态
+          game.board = data.board;
+          game.moveHistory = data.moveHistory || [];
+          game.currentPlayer = data.currentPlayer;
+          game.isPlaying = true;
+          game.lastMove = game.moveHistory.length > 0 ? game.moveHistory[game.moveHistory.length - 1] : null;
+          this.drawBoard();
+
+          // 隐藏准备区域，显示对局
+          document.getElementById('inviteSection').style.display = 'none';
+          document.getElementById('readySection').style.display = 'none';
+          this.showToast('重新加入对局成功！');
+        } else {
+          // 新加入，重置状态
+          game.reset();
+          // 显示准备区域
+          document.getElementById('inviteSection').style.display = 'none';
+          document.getElementById('readySection').style.display = 'block';
+          // 重置准备状态
+          document.getElementById('myReadyStatus').textContent = '未准备';
+          document.getElementById('myReadyStatus').style.color = 'var(--text-muted)';
+          document.getElementById('opponentReadyStatus').textContent = '未准备';
+          document.getElementById('opponentReadyStatus').style.color = 'var(--text-muted)';
+        }
         document.getElementById('readyBtn').disabled = false;
         document.getElementById('readyBtn').textContent = '准备开始';
         this.drawBoard();
@@ -480,20 +498,32 @@ class UI {
       this.opponentCard.querySelector('.player-label').textContent = '对手 (白方)';
       game.myColor = 1;
       game.gameMode = 'create';
-      game.reset();
-      // 显示准备区域
-      document.getElementById('inviteSection').style.display = 'none';
-      document.getElementById('readySection').style.display = 'block';
-      // 重置准备状态
-      document.getElementById('myReadyStatus').textContent = '未准备';
-      document.getElementById('myReadyStatus').style.color = 'var(--text-muted)';
-      document.getElementById('opponentReadyStatus').textContent = '未准备';
-      document.getElementById('opponentReadyStatus').style.color = 'var(--text-muted)';
-      document.getElementById('readyBtn').disabled = false;
-      document.getElementById('readyBtn').textContent = '准备开始';
-      this.drawBoard();
-      this.updateUI();
-      this.showToast('对手已加入，请准备开始游戏');
+
+      // 检查是否是重新加入进行中对局
+      if (data.isRejoining && game.isPlaying) {
+        // 恢复对局，隐藏准备区域
+        document.getElementById('inviteSection').style.display = 'none';
+        document.getElementById('readySection').style.display = 'none';
+        this.drawBoard();
+        this.updateUI();
+        this.showToast('对手重新加入，继续对局！');
+      } else {
+        // 新玩家加入，重置状态
+        game.reset();
+        // 显示准备区域
+        document.getElementById('inviteSection').style.display = 'none';
+        document.getElementById('readySection').style.display = 'block';
+        // 重置准备状态
+        document.getElementById('myReadyStatus').textContent = '未准备';
+        document.getElementById('myReadyStatus').style.color = 'var(--text-muted)';
+        document.getElementById('opponentReadyStatus').textContent = '未准备';
+        document.getElementById('opponentReadyStatus').style.color = 'var(--text-muted)';
+        document.getElementById('readyBtn').disabled = false;
+        document.getElementById('readyBtn').textContent = '准备开始';
+        this.drawBoard();
+        this.updateUI();
+        this.showToast('对手已加入，请准备开始游戏');
+      }
     });
 
     socketManager.on('gameStart', (data) => {
