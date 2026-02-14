@@ -831,12 +831,16 @@ body.pre-init[data-initial-mode="multiplayer"] .mode-display {
     justify-content: center;
   }
 
-  /* 移动端房间信息 - 紧凑模式 */
+  /* 移动端房间信息 - 紧凑模式（仅在显示时应用） */
   .room-info-section {
-    display: block !important;
     margin-top: 0;
     padding-top: 6px;
     border-top: 1px solid var(--border-color);
+  }
+
+  .room-info-section[style*="display: block"],
+  .room-info-section:not([style*="display: none"]) {
+    display: block;
   }
 
   .room-info-section .info-row {
