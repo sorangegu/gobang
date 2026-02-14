@@ -667,8 +667,7 @@ class UI {
     } else if (mode === 'multiplayer') {
       // 显示玩家对战选择面板
       this.showMultiplayerSelect();
-      // 更新 URL
-      window.history.pushState({}, '', '/room');
+      // URL 由 showMultiplayerSelect 内部根据是否有房间来决定
     }
   }
 
