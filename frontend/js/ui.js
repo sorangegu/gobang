@@ -595,7 +595,7 @@ class UI {
 
   // 显示玩家对战选择
   showMultiplayerSelect() {
-    game.reset();
+    // 不重置游戏，保留人机对战状态
     this.roomInfoSection.style.display = 'none';
     document.getElementById('multiplayerSelect').style.display = 'block';
     document.getElementById('joinInputSection').style.display = 'none';
