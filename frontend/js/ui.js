@@ -658,9 +658,11 @@ class UI {
     game.reset();
 
     this.roomPanel.style.display = 'none';
+    document.getElementById('multiplayerSelect').style.display = 'none';
     this.opponentCard.style.display = 'flex';
     this.opponentCard.querySelector('.player-label').textContent = 'AI (白方)';
     this.roomInfoSection.style.display = 'none';
+    this.updateModeUI('ai');
     this.updateUI();
     this.drawBoard();
   }
