@@ -953,17 +953,23 @@ class UI {
 
   // 处理离开房间
   handleLeaveRoom() {
+    // 如果在玩家对战模式中，通知服务器离开房间
     if (game.gameMode !== 'ai') {
       socketManager.leaveRoom();
     }
+
+    // 清理房间信息
     this.clearRoomInfo();
-    // 重置游戏状态
+
+    // 重置游戏状态（但保持在玩家对战模式）
     game.reset();
-    // 重置到人机模式
-    this.startAIGame();
-    this.navBtns.forEach(btn => {
-      btn.classList.toggle('active', btn.dataset.mode === 'ai');
-    });
+
+    // 显示玩家对战选择面板，而不是切换到人机模式
+    this.showMultiplayerSelect();
+
+    // 导航按钮保持当前状态（玩家对战），不强制切换到人机
+    // 这样用户离开房间后仍然在玩家对战页面
+
     this.showToast('已离开房间');
   }
 
