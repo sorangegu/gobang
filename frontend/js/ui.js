@@ -56,16 +56,21 @@ class UI {
       } else {
         // 没有保存的房间，显示玩家对战选择页面
         console.log('[DEBUG] No saved room, showing multiplayer select');
-        game.init('ai');
-        game.gameMode = 'multiplayer';  // 设置为 multiplayer 模式
+        // 直接设置游戏状态，不调用 game.init('ai')
+        game.gameMode = 'multiplayer';
+        game.board = Array(15).fill(null).map(() => Array(15).fill(0));
+        game.currentPlayer = 1;
+        game.isPlaying = false;
+        game.moveHistory = [];
+        game.winner = null;
+        game.lastMove = null;
         this.roomPanel.style.display = 'none';
         this.roomInfoSection.style.display = 'none';
         document.getElementById('multiplayerSelect').style.display = 'block';
         this.opponentCard.style.display = 'none';
         this.updateModeUI('multiplayer');
+        this.drawBoard();
       }
-      console.log('[DEBUG] About to drawBoard');
-      this.drawBoard();
     } else if (this.initMode.type === 'room') {
       // 具体房间：检查是否有保存的房间信息
       const savedRoom = this.getValidSavedRoom();
@@ -1029,6 +1034,8 @@ class UI {
     // 更新模式显示
     if (game.gameMode === 'ai') {
       this.gameModeDisplay.textContent = '人机对战';
+    } else if (game.gameMode === 'multiplayer') {
+      this.gameModeDisplay.textContent = '玩家对战';
     } else if (game.gameMode === 'create') {
       this.gameModeDisplay.textContent = '玩家对战 (房主)';
     } else if (game.gameMode === 'join') {
