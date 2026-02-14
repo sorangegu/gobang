@@ -104,6 +104,7 @@ class UI {
 
     this.updateUI();
     this.updateStats();
+    document.body.classList.remove('pre-init');
   }
 
   // 从 URL 检测当前模式

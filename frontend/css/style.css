@@ -30,6 +30,8 @@ body {
   --stone-black: #1a1a1a;
   --stone-white: #f5f5f5;
   --last-move-color: #e94560;
+  --board-size: 604px;
+  --board-padding: 22px;
 
   /* 其他 */
   --shadow: 0 4px 6px rgba(0, 0, 0, 0.3);
@@ -114,6 +116,36 @@ body {
   height: 2px;
   background-color: var(--accent);
   border-radius: 1px;
+}
+
+body.pre-init[data-initial-mode="ai"] .nav-btn[data-mode="ai"],
+body.pre-init[data-initial-mode="multiplayer"] .nav-btn[data-mode="multiplayer"] {
+  color: var(--accent);
+}
+
+body.pre-init[data-initial-mode="ai"] .nav-btn[data-mode="ai"]::after,
+body.pre-init[data-initial-mode="multiplayer"] .nav-btn[data-mode="multiplayer"]::after {
+  content: '';
+  position: absolute;
+  bottom: 0;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 20px;
+  height: 2px;
+  background-color: var(--accent);
+  border-radius: 1px;
+}
+
+body.pre-init[data-initial-mode="multiplayer"] #opponentCard {
+  display: none;
+}
+
+body.pre-init[data-initial-mode="multiplayer"] #multiplayerSelect {
+  display: block;
+}
+
+body.pre-init[data-initial-mode="multiplayer"] .mode-display {
+  visibility: hidden;
 }
 
 .nav-right {
@@ -484,6 +516,14 @@ body {
   background-color: #deb887;
 }
 
+body.pre-init #board {
+  background-image:
+    linear-gradient(var(--grid-color) 1px, transparent 1px),
+    linear-gradient(90deg, var(--grid-color) 1px, transparent 1px);
+  background-size: calc((var(--board-size) - (var(--board-padding) * 2)) / 14) calc((var(--board-size) - (var(--board-padding) * 2)) / 14);
+  background-position: var(--board-padding) var(--board-padding);
+}
+
 /* ===== 按钮样式 ===== */
 .btn-primary,
 .btn-secondary {
@@ -604,6 +644,10 @@ body {
 
 /* ===== 响应式 ===== */
 @media (max-width: 768px) {
+  :root {
+    --board-size: 340px;
+  }
+
   .navbar {
     padding: 0 12px;
     height: 50px;
@@ -774,6 +818,7 @@ body {
     background-color: #deb887;
   }
 
+
   /* 禁用过渡动画，避免抖动 */
   .player-card,
   .game-info,
@@ -783,6 +828,10 @@ body {
 }
 
 @media (max-width: 400px) {
+  :root {
+    --board-size: 304px;
+  }
+
   .navbar {
     height: 44px;
   }

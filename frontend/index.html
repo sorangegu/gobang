@@ -6,12 +6,19 @@
   <title>五子棋在线</title>
   <link rel="stylesheet" href="/css/style.css">
 </head>
-<body>
+<body class="pre-init">
+  <script>
+    (function() {
+      var path = window.location.pathname;
+      var isRoom = path === '/room' || path === '/room/' || /^\/room\/[A-Z0-9]{6}$/i.test(path);
+      document.body.dataset.initialMode = isRoom ? 'multiplayer' : 'ai';
+    })();
+  </script>
   <!-- 顶部导航 -->
   <header class="navbar">
     <div class="logo">五子棋</div>
     <div class="nav-center">
-      <button class="nav-btn active" data-mode="ai">人机对战</button>
+      <button class="nav-btn" data-mode="ai">人机对战</button>
       <button class="nav-btn" data-mode="multiplayer">玩家对战</button>
     </div>
     <div class="nav-right">
