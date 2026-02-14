@@ -760,11 +760,18 @@ body {
     padding: 10px;
     max-width: calc(100vw - 24px);
     box-sizing: border-box;
+    /* 防止布局抖动 */
+    width: fit-content;
+    margin: 0 auto;
   }
 
-  /* 手机端棋盘：尺寸由 JavaScript 动态计算 */
+  /* 手机端棋盘默认尺寸，防止刷新时闪烁 */
   #board {
+    width: 340px;
+    height: 340px;
     max-width: 100%;
+    /* 背景色匹配棋盘颜色 */
+    background-color: #deb887;
   }
 
   /* 禁用过渡动画，避免抖动 */
@@ -835,7 +842,13 @@ body {
     max-width: calc(100vw - 12px);
   }
 
-  /* 极小屏幕棋盘：尺寸由 JavaScript 动态计算 */
+  /* 极小屏幕棋盘默认尺寸 */
+  #board {
+    width: 304px;
+    height: 304px;
+    /* 背景色匹配棋盘颜色 */
+    background-color: #deb887;
+  }
 }
 
 /* 横屏手机优化 */
