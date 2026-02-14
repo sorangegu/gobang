@@ -561,6 +561,14 @@ class UI {
       game.gameMode = 'create';
       this.saveRoomInfo(data.roomId, 1);
 
+      // 立即清空棋盘显示
+      game.board = Array(15).fill(null).map(() => Array(15).fill(0));
+      game.moveHistory = [];
+      game.lastMove = null;
+      game.winner = null;
+      game.isPlaying = false;
+      this.drawBoard();
+
       // 在左侧面板显示邀请信息
       this.roomPanel.style.display = 'none';
       this.roomInfoSection.style.display = 'block';
