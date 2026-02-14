@@ -160,12 +160,14 @@ class UI {
       this.roomPanel.style.display = 'none';
       this.roomInfoSection.style.display = 'none';
       document.getElementById('multiplayerSelect').style.display = 'none';
+      document.getElementById('gameActions').style.display = 'flex';
       this.opponentCard.style.display = 'flex';
       this.opponentCard.querySelector('.player-label').textContent = 'AI (白方)';
     } else if (mode === 'multiplayer') {
       this.roomPanel.style.display = 'none';
       this.roomInfoSection.style.display = 'none';
       document.getElementById('multiplayerSelect').style.display = 'block';
+      document.getElementById('gameActions').style.display = 'none';
       this.opponentCard.style.display = 'none';
     } else if (mode === 'create' || mode === 'join' || mode === 'room') {
       // create/join/room 模式的面板在 DOMContentLoaded 中处理

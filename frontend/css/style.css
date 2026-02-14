@@ -721,6 +721,7 @@ body.pre-init[data-initial-mode="multiplayer"] .mode-display {
     flex: 1;
     gap: 8px;
     transition: none;
+    align-items: center;
   }
 
   .player-stone {
@@ -732,6 +733,9 @@ body.pre-init[data-initial-mode="multiplayer"] .mode-display {
   .player-status {
     flex: 1;
     min-width: 0;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
   }
 
   .player-label {
@@ -776,9 +780,15 @@ body.pre-init[data-initial-mode="multiplayer"] .mode-display {
     padding: 2px 0;
   }
 
-  .btn-action {
-    padding: 5px 12px;
+  .game-actions .btn-action {
+    flex: 1;
+    min-width: 0;
+    padding: 6px 8px;
     font-size: 11px;
+    height: 32px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
   }
 
   .room-info-section {
@@ -817,30 +827,36 @@ body.pre-init[data-initial-mode="multiplayer"] .mode-display {
     background-position: 10px 10px;
   }
 
-  /* 玩家对战选择面板 - 左右排列 */
+  /* 玩家对战选择面板 */
   .multiplayer-select {
-    display: flex;
-    flex-direction: row;
-    gap: 8px;
-    padding: 5px 8px;
-    background-color: var(--bg-primary);
-    border-radius: var(--radius);
-    align-items: center;
-    justify-content: center;
+    padding: 0;
+    background-color: transparent;
   }
 
-  .multiplayer-select .btn-action {
+  .multiplayer-select .multiplayer-actions {
+    display: flex;
+    flex-direction: row;
+    gap: 6px;
+    justify-content: center;
+    padding: 2px 0;
+  }
+
+  .multiplayer-select .multiplayer-actions .btn-action {
     flex: 1;
-    padding: 5px 8px;
+    min-width: 0;
+    padding: 6px 8px;
     font-size: 11px;
     font-weight: 500;
     background-color: var(--bg-secondary);
     border: 1px solid var(--border-color);
     white-space: nowrap;
-    text-align: center;
+    height: 32px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
   }
 
-  .multiplayer-select .btn-action:hover {
+  .multiplayer-select .multiplayer-actions .btn-action:hover {
     background-color: var(--accent);
     border-color: var(--accent);
   }
@@ -951,14 +967,16 @@ body.pre-init[data-initial-mode="multiplayer"] .mode-display {
   }
 
   /* 极小屏幕玩家对战按钮更紧凑 */
-  .multiplayer-select {
-    padding: 4px 6px;
-    gap: 6px;
-  }
-
-  .multiplayer-select .btn-action {
+  .multiplayer-select .multiplayer-actions .btn-action {
     padding: 4px 6px;
     font-size: 10px;
+    height: 28px;
+  }
+
+  .game-actions .btn-action {
+    padding: 4px 6px;
+    font-size: 10px;
+    height: 28px;
   }
 }
 
