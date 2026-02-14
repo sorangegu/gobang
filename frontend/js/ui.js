@@ -47,11 +47,20 @@ class UI {
       } else {
         // 没有保存的房间信息或不是房主，创建新房间
         game.init('create');
+        // 立即显示面板（邀请链接稍后填充）
+        this.roomInfoSection.style.display = 'block';
+        document.getElementById('inviteSection').style.display = 'block';
+        document.getElementById('joinSectionPanel').style.display = 'none';
+        this.opponentCard.style.display = 'none';
         this.updateModeUI('create');
       }
     } else if (this.initMode.type === 'join') {
-      // 加入房间模式（显示输入框）
+      // 加入房间模式：立即显示输入框
       game.init('join');
+      this.roomInfoSection.style.display = 'block';
+      document.getElementById('inviteSection').style.display = 'none';
+      document.getElementById('joinSectionPanel').style.display = 'block';
+      this.opponentCard.style.display = 'none';
       this.updateModeUI('join');
     } else if (this.initMode.type === 'room') {
       // 具体房间：检查重连还是新加入
@@ -995,11 +1004,14 @@ document.addEventListener('DOMContentLoaded', async () => {
 
   // 根据初始化模式执行相应操作
   if (ui.initMode.type === 'create') {
-    // 创建房间模式：自动创建房间
-    ui.createRoom();
+    // 创建房间模式：如果是重连，会在构造函数中处理；否则立即创建新房间
+    const savedRoom = ui.getValidSavedRoom();
+    if (!savedRoom || !savedRoom.isHost) {
+      // 没有保存的房间信息，创建新房间
+      ui.createRoom();
+    }
   } else if (ui.initMode.type === 'join' && !ui.pendingRoomId) {
-    // 加入房间模式（显示输入框）
-    ui.showJoinPanel();
+    // 加入房间模式（输入框已在构造函数中显示）
   } else if (ui.pendingRoomId) {
     // 处理待加入的房间（URL 邀请链接）
     socketManager.joinRoom(ui.pendingRoomId);
