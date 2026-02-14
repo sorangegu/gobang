@@ -318,6 +318,19 @@ body.pre-init[data-initial-mode="multiplayer"] .mode-display {
   letter-spacing: 2px;
 }
 
+/* 移动端侧边栏标题 - 更紧凑 */
+@media (max-width: 768px) {
+  .side-panel-header {
+    margin-bottom: 6px;
+    padding-bottom: 6px;
+  }
+
+  .game-title {
+    font-size: 16px;
+    letter-spacing: 1px;
+  }
+}
+
 /* ===== 右侧装饰面板 ===== */
 .decor-panel {
   width: 300px;
@@ -818,8 +831,64 @@ body.pre-init[data-initial-mode="multiplayer"] .mode-display {
     justify-content: center;
   }
 
+  /* 移动端房间信息 - 紧凑模式 */
   .room-info-section {
-    display: none;
+    display: block !important;
+    margin-top: 0;
+    padding-top: 6px;
+    border-top: 1px solid var(--border-color);
+  }
+
+  .room-info-section .info-row {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    gap: 8px;
+    padding: 4px 0;
+    font-size: 12px;
+  }
+
+  .room-info-section .info-row span:first-child {
+    min-width: auto;
+    text-align: center;
+  }
+
+  .room-info-section .info-row span:last-child {
+    min-width: auto;
+    font-weight: 600;
+    color: var(--accent);
+  }
+
+  .room-info-section .btn-copy {
+    padding: 2px 6px;
+    font-size: 10px;
+    height: 20px;
+    line-height: 1;
+  }
+
+  .invite-section {
+    margin-top: 6px !important;
+  }
+
+  .invite-section > div:first-child {
+    display: none; /* 隐藏"邀请链接:"标签 */
+  }
+
+  .invite-section input {
+    padding: 4px 8px;
+    font-size: 11px;
+  }
+
+  .waiting-text {
+    margin-top: 4px !important;
+    font-size: 11px !important;
+  }
+
+  #leaveRoomBtn {
+    margin-top: 6px !important;
+    padding: 6px;
+    font-size: 12px;
+    height: 32px;
   }
 
   /* 隐藏右侧装饰面板 */
