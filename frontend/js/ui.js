@@ -57,15 +57,21 @@ class UI {
       }
       this.drawBoard();
     } else if (this.initMode.type === 'room') {
-      // 具体房间：检查重连还是新加入
+      // 具体房间：检查是否有保存的房间信息
       const savedRoom = this.getValidSavedRoom();
       if (savedRoom && savedRoom.roomId === this.initMode.roomId) {
-        // 重连
+        // 有保存的房间信息，显示房间状态（不自动重连）
         game.init(savedRoom.isHost ? 'create' : 'join');
         game.myColor = savedRoom.playerColor;
-        this.pendingReconnect = savedRoom;
+        game.roomId = savedRoom.roomId;
+        // 显示房间信息
+        this.roomInfoSection.style.display = 'block';
+        document.getElementById('displayRoomId').textContent = savedRoom.roomId;
+        document.getElementById('inviteSection').style.display = 'block';
+        const inviteUrl = `${window.location.origin}/room/${savedRoom.roomId}`;
+        document.getElementById('inviteLink').value = inviteUrl;
       } else {
-        // 新加入
+        // 没有保存的房间信息或房间ID不匹配，尝试新加入
         game.init('join');
         this.pendingRoomId = this.initMode.roomId;
       }
@@ -324,6 +330,8 @@ class UI {
         document.getElementById('inviteLink').value = inviteUrl;
         game.setRoomInfo(data.roomId, true);
         this.saveRoomInfo(data.roomId, 1);
+        // 更新 URL 为房间页
+        window.history.pushState({}, '', `/room/${data.roomId}`);
       } else {
         this.showToast(data.error || '创建房间失败');
       }
