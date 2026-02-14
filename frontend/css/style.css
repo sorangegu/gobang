@@ -477,9 +477,11 @@ body {
 #board {
   display: block;
   cursor: pointer;
-  /* 桌面端默认尺寸 */
-  width: 582px;
-  height: 582px;
+  /* 桌面端默认尺寸（与 JavaScript 计算一致：cellSize*14 + padding*2 = 560+44） */
+  width: 604px;
+  height: 604px;
+  /* 背景色匹配棋盘颜色，防止刷新时闪烁 */
+  background-color: #deb887;
 }
 
 /* ===== 按钮样式 ===== */
@@ -725,6 +727,7 @@ body {
     font-size: 12px;
     border-bottom: none;
     display: flex;
+    align-items: center;
     gap: 4px;
   }
 
