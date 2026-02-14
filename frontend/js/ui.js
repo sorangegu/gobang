@@ -45,15 +45,23 @@ class UI {
     const cssWidth = parseFloat(computedStyle.width);
     const cssHeight = parseFloat(computedStyle.height);
 
-    // 使用 CSS 设置的尺寸
-    const canvasSize = cssWidth || cssHeight || 604;
+    // 使用 CSS 设置的尺寸，如果无效则使用默认值
+    let canvasSize;
+    if (cssWidth > 0 && cssHeight > 0) {
+      canvasSize = Math.min(cssWidth, cssHeight);
+    } else if (window.innerWidth <= 768) {
+      canvasSize = window.innerWidth <= 400 ? 304 : 340;
+    } else {
+      canvasSize = 604;
+    }
 
     // 根据最终尺寸计算格子大小
     this.cellSize = (canvasSize - padding * 2) / (boardSize - 1);
 
     canvas.width = canvasSize * dpr;
     canvas.height = canvasSize * dpr;
-    // 不再修改 style.width/height，保持 CSS 设置的值
+    canvas.style.width = canvasSize + 'px';
+    canvas.style.height = canvasSize + 'px';
 
     // 保存 dpr 供后续使用
     this.dpr = dpr;
