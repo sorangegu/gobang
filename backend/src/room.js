@@ -456,6 +456,11 @@ class RoomManager {
       room.status = 'waiting';
       room.hostReady = false;
       room.guestReady = false;
+      // 重置棋盘数据
+      room.board = Array(15).fill(null).map(() => Array(15).fill(0));
+      room.moveHistory = [];
+      room.currentPlayer = 1;
+      room.winner = null;
 
       // 通知新房主
       opponent.emit('became_host', {
