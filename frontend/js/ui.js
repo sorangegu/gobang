@@ -22,10 +22,27 @@ class UI {
     game.init('ai');
     game.myColor = 1;
 
-    // 尝试加载保存的游戏状态
-    const loaded = game.loadGame();
-    if (!loaded) {
-      // 如果没有保存的游戏，初始化新游戏
+    // 检查是否有多人房间信息，如果有则不加载人机进度
+    const savedRoom = localStorage.getItem('gobang-room');
+    const hasValidRoom = savedRoom && (() => {
+      try {
+        const roomData = JSON.parse(savedRoom);
+        return roomData.roomId && roomData.playerColor && Date.now() - roomData.timestamp < 5 * 60 * 1000;
+      } catch (e) {
+        return false;
+      }
+    })();
+
+    // 只有在没有多人房间信息时才加载人机进度
+    if (!hasValidRoom) {
+      const loaded = game.loadGame();
+      if (!loaded) {
+        // 如果没有保存的游戏，初始化新游戏
+        game.isPlaying = true;
+        game.board = Array(15).fill(null).map(() => Array(15).fill(0));
+      }
+    } else {
+      // 有多人房间信息，初始化空棋盘等待重连
       game.isPlaying = true;
       game.board = Array(15).fill(null).map(() => Array(15).fill(0));
     }
@@ -510,6 +527,11 @@ class UI {
 
   // 开始人机对战
   startAIGame() {
+    // 清除多人房间信息
+    this.clearRoomInfo();
+    // 清除人机保存的游戏进度
+    game.clearSavedGame();
+
     game.init('ai');
     game.myColor = 1;
     game.isPlaying = true;
@@ -518,6 +540,7 @@ class UI {
     this.roomPanel.style.display = 'none';
     this.opponentCard.style.display = 'flex';
     this.opponentCard.querySelector('.player-label').textContent = 'AI (白方)';
+    this.roomInfoSection.style.display = 'none';
     this.updateUI();
     this.drawBoard();
   }
