@@ -23,18 +23,29 @@ class UI {
 
     // 根据模式初始化
     if (this.initMode.type === 'ai') {
-      // 人机模式：加载保存的进度
-      game.init('ai');
-      game.myColor = 1;
-      // 尝试加载保存的游戏状态
-      const loaded = game.loadGame();
-      if (!loaded) {
-        game.isPlaying = true;
-        game.board = Array(15).fill(null).map(() => Array(15).fill(0));
+      // 检查是否有保存的房间，如果有则重连
+      const savedRoom = this.getValidSavedRoom();
+      if (savedRoom) {
+        // 有保存的房间，尝试重连
+        game.init(savedRoom.isHost ? 'create' : 'join');
+        game.myColor = savedRoom.playerColor;
+        this.pendingReconnect = savedRoom;
+        this.updateModeUI('room');
+        this.drawBoard();
+      } else {
+        // 人机模式：加载保存的进度
+        game.init('ai');
+        game.myColor = 1;
+        // 尝试加载保存的游戏状态
+        const loaded = game.loadGame();
+        if (!loaded) {
+          game.isPlaying = true;
+          game.board = Array(15).fill(null).map(() => Array(15).fill(0));
+        }
+        this.updateModeUI('ai');
+        // 加载完棋局后再绘制棋盘
+        this.drawBoard();
       }
-      this.updateModeUI('ai');
-      // 加载完棋局后再绘制棋盘
-      this.drawBoard();
     } else if (this.initMode.type === 'multiplayer') {
       // 玩家对战选择页面
       game.init('ai');
@@ -288,6 +299,9 @@ class UI {
       this.showToast('邀请链接已复制');
     });
 
+    // 准备按钮
+    document.getElementById('readyBtn')?.addEventListener('click', () => this.handleReady());
+
     // 初始化Socket监听
     this.initSocketListeners();
   }
@@ -299,6 +313,7 @@ class UI {
         // 在左侧面板显示房间信息
         document.getElementById('displayRoomId').textContent = data.roomId;
         document.getElementById('inviteSection').style.display = 'block';
+        document.getElementById('readySection').style.display = 'none';
         const inviteUrl = `${window.location.origin}/room/${data.roomId}`;
         document.getElementById('inviteLink').value = inviteUrl;
         game.setRoomInfo(data.roomId, true);
@@ -320,6 +335,11 @@ class UI {
         this.opponentCard.querySelector('.player-label').textContent = '对手 (黑方)';
         this.playerCard.querySelector('.player-label').textContent = '你 (白方)';
         this.roomInfoSection.style.display = 'block';
+        // 显示准备区域
+        document.getElementById('inviteSection').style.display = 'none';
+        document.getElementById('readySection').style.display = 'block';
+        document.getElementById('myReadyStatus').textContent = '未准备';
+        document.getElementById('opponentReadyStatus').textContent = '未准备';
         this.drawBoard();
         this.updateUI();
         this.saveRoomInfo(data.roomId, data.playerColor || 2);
@@ -347,9 +367,11 @@ class UI {
           this.opponentCard.querySelector('.player-label').textContent = data.isHost ? '对手 (白方)' : '对手 (黑方)';
           this.playerCard.querySelector('.player-label').textContent = data.isHost ? '你 (黑方)' : '你 (白方)';
           document.getElementById('inviteSection').style.display = 'none';
+          document.getElementById('readySection').style.display = 'none';
         } else {
-          // 等待中，显示邀请链接
+          // 等待中，显示准备区域或邀请链接
           this.opponentCard.style.display = 'none';
+          document.getElementById('readySection').style.display = 'none';
           if (data.isHost) {
             document.getElementById('inviteSection').style.display = 'block';
             const inviteUrl = `${window.location.origin}/room/${data.roomId}`;
@@ -380,9 +402,14 @@ class UI {
       game.myColor = 1;
       game.gameMode = 'create';
       game.reset();
+      // 显示准备区域
+      document.getElementById('inviteSection').style.display = 'none';
+      document.getElementById('readySection').style.display = 'block';
+      document.getElementById('myReadyStatus').textContent = '未准备';
+      document.getElementById('opponentReadyStatus').textContent = '未准备';
       this.drawBoard();
       this.updateUI();
-      this.showToast('对手已加入，游戏开始！');
+      this.showToast('对手已加入，请准备开始游戏');
     });
 
     socketManager.on('gameStart', (data) => {
@@ -390,6 +417,8 @@ class UI {
       game.board = data.board || Array(15).fill(null).map(() => Array(15).fill(0));
       game.currentPlayer = data.currentPlayer || 1;
       this.opponentCard.style.display = 'flex';
+      // 隐藏准备区域
+      document.getElementById('readySection').style.display = 'none';
       this.drawBoard();
       this.updateUI();
       this.showToast('游戏开始！');
@@ -483,6 +512,7 @@ class UI {
       this.roomInfoSection.style.display = 'block';
       document.getElementById('displayRoomId').textContent = data.roomId;
       document.getElementById('inviteSection').style.display = 'block';
+      document.getElementById('readySection').style.display = 'none';
       const inviteUrl = `${window.location.origin}/room/${data.roomId}`;
       document.getElementById('inviteLink').value = inviteUrl;
 
@@ -493,6 +523,25 @@ class UI {
 
     socketManager.on('socketError', (data) => {
       this.showToast(data.error || '发生错误');
+    });
+
+    socketManager.on('opponentReady', (data) => {
+      // 对手准备了
+      document.getElementById('opponentReadyStatus').textContent = '已准备';
+      document.getElementById('opponentReadyStatus').style.color = 'var(--success-color)';
+      this.showToast('对手已准备');
+    });
+
+    socketManager.on('playerReadyResult', (data) => {
+      if (data.success) {
+        // 自己准备了
+        document.getElementById('myReadyStatus').textContent = '已准备';
+        document.getElementById('myReadyStatus').style.color = 'var(--success-color)';
+        document.getElementById('readyBtn').disabled = true;
+        document.getElementById('readyBtn').textContent = '等待对手准备...';
+      } else {
+        this.showToast(data.error || '准备失败');
+      }
     });
   }
 
@@ -908,12 +957,19 @@ class UI {
       socketManager.leaveRoom();
     }
     this.clearRoomInfo();
+    // 重置游戏状态
+    game.reset();
     // 重置到人机模式
     this.startAIGame();
     this.navBtns.forEach(btn => {
       btn.classList.toggle('active', btn.dataset.mode === 'ai');
     });
     this.showToast('已离开房间');
+  }
+
+  // 处理准备
+  handleReady() {
+    socketManager.playerReady();
   }
 
   // 清理房间信息

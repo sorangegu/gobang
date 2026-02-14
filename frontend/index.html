@@ -91,6 +91,18 @@
             </div>
             <p class="waiting-text" style="margin-top: 10px; font-size: 12px;">等待对手加入...</p>
           </div>
+          <!-- 准备状态 -->
+          <div class="ready-section" id="readySection" style="display: none; margin-top: 12px;">
+            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 8px;">
+              <span style="color: var(--text-secondary); font-size: 13px;">你的状态:</span>
+              <span id="myReadyStatus" style="color: var(--text-muted); font-size: 13px;">未准备</span>
+            </div>
+            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 12px;">
+              <span style="color: var(--text-secondary); font-size: 13px;">对手状态:</span>
+              <span id="opponentReadyStatus" style="color: var(--text-muted); font-size: 13px;">未准备</span>
+            </div>
+            <button class="btn-primary" id="readyBtn" style="width: 100%;">准备开始</button>
+          </div>
           <button class="btn-action" id="leaveRoomBtn" style="width: 100%; margin-top: 12px;">离开房间</button>
         </div>
       </aside>

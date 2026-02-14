@@ -76,6 +76,12 @@ io.on('connection', (socket) => {
     roomManager.leaveRoom(socket);
   });
 
+  // 玩家准备
+  socket.on('player_ready', (callback) => {
+    const result = roomManager.playerReady(socket);
+    if (callback) callback(result);
+  });
+
   // 重连房间
   socket.on('reconnect_room', (data, callback) => {
     const result = roomManager.reconnectRoom(socket, data.roomId, data.playerColor);

@@ -123,6 +123,11 @@ class SocketManager {
       this.emit('becameHost', data);
     });
 
+    // 对手准备
+    this.socket.on('opponent_ready', (data) => {
+      this.emit('opponentReady', data);
+    });
+
     // 错误
     this.socket.on('error', (data) => {
       this.emit('socketError', data);
@@ -182,6 +187,13 @@ class SocketManager {
   // 离开房间
   leaveRoom() {
     this.socket.emit('leave_room');
+  }
+
+  // 玩家准备
+  playerReady() {
+    this.socket.emit('player_ready', (response) => {
+      this.emit('playerReadyResult', response);
+    });
   }
 
   // 重连房间

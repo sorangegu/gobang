@@ -15,13 +15,15 @@ class Room {
     this.roomId = roomId;
     this.host = hostSocket;
     this.guest = null;
-    this.status = 'waiting'; // waiting, playing, finished
+    this.status = 'waiting'; // waiting, ready, playing, finished
     this.board = Array(15).fill(null).map(() => Array(15).fill(0));
     this.currentPlayer = 1; // 1: 黑棋, 2: 白棋
     this.moveHistory = [];
     this.undoRequested = false;
     this.restartRequested = false;
     this.winner = null;
+    this.hostReady = false;
+    this.guestReady = false;
   }
 
   getPlayerColor(socket) {
@@ -32,6 +34,10 @@ class Room {
 
   isFull() {
     return this.guest !== null;
+  }
+
+  isBothReady() {
+    return this.hostReady && this.guestReady;
   }
 }
 
@@ -83,8 +89,7 @@ class RoomManager {
     }
 
     room.guest = socket;
-    room.status = 'playing';
-
+    // 状态保持为 waiting，等待双方准备
     socket.join(roomId);
     socket.roomId = roomId;
     socket.isHost = false;
@@ -95,13 +100,6 @@ class RoomManager {
       success: true,
       roomId,
       playerColor: 2
-    });
-
-    // 通知双方游戏开始
-    this.io.to(roomId).emit('game_start', {
-      roomId,
-      currentPlayer: room.currentPlayer,
-      board: room.board
     });
 
     // 通过回调返回结果给加入者
@@ -456,6 +454,8 @@ class RoomManager {
       opponent.isHost = true;
       opponent.playerColor = 1;
       room.status = 'waiting';
+      room.hostReady = false;
+      room.guestReady = false;
 
       // 通知新房主
       opponent.emit('became_host', {
@@ -466,6 +466,8 @@ class RoomManager {
       // Guest 离开，通知房主
       room.guest = null;
       room.status = 'waiting';
+      room.hostReady = false;
+      room.guestReady = false;
       opponent.emit('player_left', {
         reason: '对手离开'
       });
@@ -477,6 +479,47 @@ class RoomManager {
     socket.roomId = null;
     socket.isHost = false;
     socket.playerColor = null;
+  }
+
+  // 玩家准备
+  playerReady(socket) {
+    const roomId = socket.roomId;
+    if (!roomId || roomId.startsWith('ai_')) {
+      return { success: false, error: '无效房间' };
+    }
+
+    const room = this.rooms.get(roomId);
+    if (!room) return { success: false, error: '房间不存在' };
+    if (room.status !== 'waiting') return { success: false, error: '游戏已开始' };
+
+    const isHost = socket.id === room.host.id;
+
+    if (isHost) {
+      room.hostReady = true;
+    } else {
+      room.guestReady = true;
+    }
+
+    // 通知对手
+    const opponent = isHost ? room.guest : room.host;
+    if (opponent) {
+      opponent.emit('opponent_ready', {
+        playerColor: isHost ? 1 : 2
+      });
+    }
+
+    // 检查双方是否都准备好了
+    if (room.isBothReady()) {
+      room.status = 'playing';
+      // 通知双方游戏开始
+      this.io.to(roomId).emit('game_start', {
+        roomId,
+        currentPlayer: room.currentPlayer,
+        board: room.board
+      });
+    }
+
+    return { success: true, hostReady: room.hostReady, guestReady: room.guestReady };
   }
 
   // 处理断开连接
