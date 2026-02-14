@@ -87,8 +87,10 @@ class UI {
         document.getElementById('inviteLink').value = inviteUrl;
         this.updateModeUI('room');
       } else {
-        // 没有保存的房间信息，重定向到玩家对战选择页面
-        window.history.replaceState({}, '', '/room');
+        // 没有保存的房间信息，但是通过邀请链接进来的，设置待加入房间
+        console.log('[DEBUG] 通过邀请链接进入，设置待加入房间:', this.initMode.roomId);
+        this.pendingRoomId = this.initMode.roomId;
+        // 显示玩家对战选择页面
         game.gameMode = 'multiplayer';
         game.board = Array(15).fill(null).map(() => Array(15).fill(0));
         game.currentPlayer = 1;
@@ -96,8 +98,11 @@ class UI {
         game.moveHistory = [];
         game.winner = null;
         game.lastMove = null;
-        this.updateModeUI('multiplayer');
+        this.roomPanel.style.display = 'none';
+        this.roomInfoSection.style.display = 'none';
         document.getElementById('multiplayerSelect').style.display = 'block';
+        this.opponentCard.style.display = 'none';
+        this.updateModeUI('multiplayer');
       }
       this.drawBoard();
     }
