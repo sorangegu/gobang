@@ -693,6 +693,14 @@ class UI {
 
         game.setRoomInfo(data.roomId, data.isHost);
         game.myColor = data.playerColor;
+        // Fix: Explicitly set game mode to 'room' so logic (like clicks) works correctly
+        game.gameMode = 'room';
+
+        // Restore initMode so UI logic works if we leave/refresh
+        this.initMode = {
+          type: data.isHost ? 'create' : 'join',
+          roomId: data.roomId
+        };
 
         if (data.status === 'playing' && data.opponentOnline) {
           // 正在游戏中且对手在线，显示对手
@@ -736,6 +744,8 @@ class UI {
           }
         }
 
+        // Force UI update to room mode
+        this.updateModeUI('room');
         this.drawBoard();
         this.updateUI();
         this.updateBoardOverlay();
