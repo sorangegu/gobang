@@ -1222,9 +1222,9 @@ class UI {
     document.getElementById('multiplayerSelect').style.display = 'block';
     this.updateModeUI('multiplayer');
 
-    // 更新 URL
-    if (window.location.pathname !== '/multiplayer') {
-      window.history.pushState({}, '', '/multiplayer');
+    // 更新 URL (Fix: match game.js check for /room)
+    if (window.location.pathname !== '/room') {
+      window.history.pushState({}, '', '/room');
     }
     this.drawBoard();
     this.updateUI();
