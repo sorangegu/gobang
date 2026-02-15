@@ -636,6 +636,9 @@ class UI {
 
         // 显示创建成功的提示
         this.showToast('房间已创建！请分享邀请链接给对手');
+
+        // 确保UI模式正确
+        this.updateModeUI('room');
       } else {
         this.showToast(data.error || '创建房间失败');
       }
@@ -657,24 +660,26 @@ class UI {
         game.board = data.board || Array(15).fill(null).map(() => Array(15).fill(0));
         game.moveHistory = data.moveHistory || [];
         game.currentPlayer = data.currentPlayer || 1;
-        game.isPlaying = data.isPlaying === true;
-        game.winner = null;
-        game.lastMove = game.moveHistory.length > 0 ? game.moveHistory[game.moveHistory.length - 1] : null;
+        game.isPlaying = data.isPlaying;
 
+        // Sync ready state
         this.mpOpponentPresent = true;
-        this.mpMyReady = false;
-        this.mpOpponentReady = false;
 
-        // Hide legacy ready area; use the board overlay instead.
-        document.getElementById('inviteSection').style.display = 'none';
-        document.getElementById('readySection').style.display = 'none';
-
-        document.getElementById('readyBtn').disabled = false;
-        document.getElementById('readyBtn').textContent = '准备开始';
+        this.updateModeUI('room'); // Establish room UI explicitly
         this.drawBoard();
-        this.updateUI();
-        this.saveRoomInfo(data.roomId, data.playerColor || 2);
-        this.updateBoardOverlay();
+
+        // Use board overlay if waiting
+        if (!game.isPlaying) {
+          this.updateBoardOverlay();
+        } else {
+          this.setBoardOverlayVisible(false);
+        }
+
+        // 更新 URL 为房间页
+        window.history.pushState({}, '', `/room/${data.roomId}`);
+        this.saveRoomInfo(data.roomId, 2);
+
+        this.showToast('加入房间成功！');
       } else {
         this.showToast(data.error || '加入房间失败');
       }
@@ -682,24 +687,12 @@ class UI {
 
     socketManager.on('roomReconnected', (data) => {
       if (data.success) {
-        game.setRoomInfo(data.roomId, data.isHost);
-        game.gameMode = data.isHost ? 'create' : 'join';
-        game.myColor = data.playerColor;
-        game.board = data.board;
-        game.currentPlayer = data.currentPlayer;
-        game.moveHistory = data.moveHistory || [];
-        game.lastMove = game.moveHistory.length > 0 ? game.moveHistory[game.moveHistory.length - 1] : null;
-        game.isPlaying = data.status === 'playing';
-        game.winner = null;
-        this.updateRoomIdDisplay(data.roomId);
+        this.pendingReconnect = null;
         this.roomPanel.style.display = 'none';
-        document.getElementById('multiplayerSelect').style.display = 'none';
         this.roomInfoSection.style.display = 'block';
 
-        this.mpOpponentPresent = !!data.opponentOnline;
-        // Reconnect doesn't carry ready state; treat as not ready until the user clicks.
-        this.mpMyReady = false;
-        this.mpOpponentReady = false;
+        game.setRoomInfo(data.roomId, data.isHost);
+        game.myColor = data.playerColor;
 
         if (data.status === 'playing' && data.opponentOnline) {
           // 正在游戏中且对手在线，显示对手
@@ -1155,13 +1148,9 @@ class UI {
   // 处理模式切换
   handleModeChange(mode) {
     if (mode === 'ai') {
-      // Leaving multiplayer view: exit the room so multiplayer state doesn't leak into AI.
-      if (game.gameMode !== 'ai' && game.roomId) {
-        socketManager.leaveRoom();
-        this.clearRoomInfo(); // user can re-join later by room id/link
-        this.resetMultiplayerReadyState();
-        this.setBoardOverlayVisible(false);
-      }
+      // Switching to AI mode:
+      // We do NOT leave the room on the server to preserve the session.
+      // We just locally switch the view and state to AI.
 
       this.resumeAIGame();
       // 更新 URL
@@ -1183,52 +1172,32 @@ class UI {
     // 检查是否有保存的房间
     const savedRoom = this.getValidSavedRoom();
     if (savedRoom) {
-      // 有保存的房间，设置待重连
-      game.gameMode = savedRoom.isHost ? 'create' : 'join';
-      game.myColor = savedRoom.playerColor;
-      game.roomId = savedRoom.roomId;
-      game.isPlaying = false;
-      game.winner = null;
-      // 清空棋盘显示
-      game.board = Array(15).fill(null).map(() => Array(15).fill(0));
-      game.lastMove = null;
-      game.moveHistory = [];
-
-      // 显示房间信息面板
-      this.roomInfoSection.style.display = 'block';
-      this.updateRoomIdDisplay(savedRoom.roomId);
-      // 桌面端：显示邀请链接区域（重连成功后会更新）
-      document.getElementById('inviteSection').style.display = 'block';
-      const inviteUrl = `${window.location.origin}/room/${savedRoom.roomId}`;
-      document.getElementById('inviteLink').value = inviteUrl;
-      document.getElementById('multiplayerSelect').style.display = 'none';
-      this.opponentCard.style.display = 'flex';
-      this.opponentCard.querySelector('.player-label').textContent = '重连中...';
-      this.updateModeUI('room');
-      // 更新 URL
-      window.history.pushState({}, '', `/room/${savedRoom.roomId}`);
-      this.drawBoard();
-      this.updateUI();
-      // 发起重连
+      // 有保存的房间，尝试重连以同步状态
+      console.log('[DEBUG] Found saved room, attempting reconnect...', savedRoom);
       socketManager.reconnectRoom(savedRoom.roomId, savedRoom.playerColor);
       return;
     }
 
     // 没有保存的房间，显示选择面板
-    // 清空棋盘显示
+    this.roomPanel.style.display = 'none';
+    this.roomInfoSection.style.display = 'none';
+
+    // Reset game state for clean multiplayer selection
+    game.gameMode = 'multiplayer';
     game.board = Array(15).fill(null).map(() => Array(15).fill(0));
-    game.isPlaying = false;
-    game.winner = null;
     game.currentPlayer = 1;
+    game.isPlaying = false;
     game.moveHistory = [];
+    game.winner = null;
     game.lastMove = null;
 
-    this.roomInfoSection.style.display = 'none';
     document.getElementById('multiplayerSelect').style.display = 'block';
-    document.getElementById('joinInputSection').style.display = 'none';
     this.updateModeUI('multiplayer');
+
     // 更新 URL
-    window.history.pushState({}, '', '/room');
+    if (window.location.pathname !== '/multiplayer') {
+      window.history.pushState({}, '', '/multiplayer');
+    }
     this.drawBoard();
     this.updateUI();
   }
