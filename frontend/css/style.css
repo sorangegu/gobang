@@ -1058,7 +1058,7 @@ body.pre-init[data-initial-mode="multiplayer"] .mode-display {
   }
 
   body[data-game-status="playing"] .room-info-section {
-    display: flex;
+    display: none;
   }
 
   body[data-game-status="playing"] .invite-section,
@@ -1088,8 +1088,14 @@ body.pre-init[data-initial-mode="multiplayer"] .mode-display {
     display: flex !important;
   }
 
+  /* pre-init状态下，根据初始模式显示对应的按钮区域 */
   body.pre-init[data-initial-mode="ai"] .game-actions {
     display: flex !important;
+  }
+
+  body.pre-init[data-initial-mode="ai"] .multiplayer-select,
+  body.pre-init[data-initial-mode="ai"] .room-info-section {
+    display: none !important;
   }
 
   body.pre-init[data-initial-mode="multiplayer"] .multiplayer-select {
@@ -1097,6 +1103,20 @@ body.pre-init[data-initial-mode="multiplayer"] .mode-display {
   }
 
   body.pre-init[data-initial-mode="multiplayer"] .multiplayer-select .game-actions.multiplayer-actions {
+    display: flex !important;
+  }
+
+  body.pre-init[data-initial-mode="multiplayer"] .game-actions:not(.multiplayer-actions),
+  body.pre-init[data-initial-mode="multiplayer"] .room-info-section {
+    display: none !important;
+  }
+
+  /* 游戏开始后，确保隐藏multiplayer-select（优先级高于pre-init） */
+  body[data-game-status="playing"].pre-init .multiplayer-select {
+    display: none !important;
+  }
+
+  body[data-game-status="playing"].pre-init .game-actions {
     display: flex !important;
   }
 
