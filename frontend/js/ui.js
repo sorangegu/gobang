@@ -1477,6 +1477,9 @@ class UI {
     if (game.gameMode === 'ai') {
       game.reset();
       game.clearSavedGame(); // 清除保存的游戏状态
+      // 确保隐藏房间信息框
+      this.roomInfoSection.style.display = 'none';
+      this.updateModeUI('ai');
       this.drawBoard();
       this.updateUI();
       return;
