@@ -818,7 +818,7 @@ body.pre-init[data-initial-mode="multiplayer"] .mode-display {
 /* ===== 响应式 ===== */
 @media (max-width: 768px) {
   :root {
-    --board-size: 340px;
+    --board-size: calc(100vw - 20px);
     --mobile-header-height: 44px;
     --mobile-nav-height: 44px;
     --mobile-info-height: 70px;
@@ -916,17 +916,18 @@ body.pre-init[data-initial-mode="multiplayer"] .mode-display {
     font-size: 13px;
   }
 
-  /* 手机端侧边栏 - 改为水平信息栏 */
+  /* 手机端侧边栏 - 改为垂直堆叠信息栏 (两行) */
   .side-panel {
     width: 100%;
     height: auto;
     min-height: auto;
-    padding: 4px 10px;
-    flex-direction: row;
-    flex-wrap: wrap;
-    align-items: center;
-    gap: 4px;
+    padding: 8px 12px;
+    flex-direction: column;
+    align-items: stretch;
+    gap: 8px;
     order: 2; /* 放在棋盘上方 */
+    background-color: var(--bg-secondary);
+    border-bottom: 1px solid var(--border-color);
   }
 
   /* 隐藏侧边栏标题（已在mobile-header显示） */
@@ -937,24 +938,25 @@ body.pre-init[data-initial-mode="multiplayer"] .mode-display {
   .player-info {
     flex-direction: row;
     margin-bottom: 0;
-    gap: 4px;
+    gap: 8px;
     justify-content: space-between;
     width: 100%;
     flex: 1;
   }
 
   .player-card {
-    padding: 4px 8px;
+    padding: 6px 10px;
     flex: 1;
-    gap: 6px;
+    gap: 8px;
     transition: none;
     align-items: center;
     min-width: 0;
+    background-color: var(--bg-primary);
   }
 
   .player-stone {
-    width: 24px;
-    height: 24px;
+    width: 28px;
+    height: 28px;
     flex-shrink: 0;
   }
 
@@ -968,14 +970,16 @@ body.pre-init[data-initial-mode="multiplayer"] .mode-display {
   }
 
   .player-label {
-    font-size: 11px;
+    font-size: 13px;
     white-space: nowrap;
     overflow: hidden;
     text-overflow: ellipsis;
+    font-weight: 500;
   }
 
   .player-turn {
-    font-size: 9px;
+    font-size: 11px;
+    margin-top: 2px;
   }
 
   /* 隐藏游戏信息区域（当前回合、对局模式），使布局更简洁 */
@@ -985,27 +989,33 @@ body.pre-init[data-initial-mode="multiplayer"] .mode-display {
 
   .game-actions {
     flex-direction: row;
-    gap: 6px;
+    gap: 8px;
     justify-content: center;
-    padding: 2px 0;
+    padding: 0;
+    width: 100%;
   }
 
   .game-actions .btn-action {
     flex: 1;
-    min-width: 0;
-    padding: 6px 8px;
-    font-size: 11px;
-    height: 32px;
+    min-width: 80px;
+    padding: 0 12px;
+    font-size: 13px;
+    height: 36px;
     display: flex;
     align-items: center;
     justify-content: center;
+    white-space: nowrap;
   }
 
   /* 移动端房间信息 - 紧凑模式（仅在显示时应用） */
   .room-info-section {
     margin-top: 0;
-    padding-top: 6px;
-    border-top: 1px solid var(--border-color);
+    padding: 10px;
+    border-top: none;
+    background-color: var(--bg-secondary);
+    border-bottom: 1px solid var(--border-color);
+    margin-bottom: 8px;
+    border-radius: var(--radius);
   }
 
   .room-info-section[style*="display: block"],
@@ -1015,30 +1025,31 @@ body.pre-init[data-initial-mode="multiplayer"] .mode-display {
 
   /* 移动端房间操作栏 */
   .room-action-bar {
-    padding: 6px 10px;
+    padding: 8px 12px;
+    margin-bottom: 8px;
   }
 
   .room-label {
-    font-size: 11px;
+    font-size: 12px;
   }
 
   .room-code {
-    font-size: 14px;
+    font-size: 16px;
   }
 
   .btn-icon {
-    width: 28px;
-    height: 28px;
+    width: 32px;
+    height: 32px;
   }
 
   .btn-icon svg {
-    width: 14px;
-    height: 14px;
+    width: 16px;
+    height: 16px;
   }
 
   .invite-section {
-    margin-top: 6px;
-    padding: 6px 10px;
+    margin-top: 8px;
+    padding: 10px 12px;
   }
 
   .invite-link-row input {
@@ -1089,20 +1100,24 @@ body.pre-init[data-initial-mode="multiplayer"] .mode-display {
 
   /* 棋盘适配 - 固定位置 */
   .board-wrapper {
-    padding: 8px;
-    max-width: calc(100vw - 20px);
+    padding: 10px;
+    width: calc(100vw - 20px);
+    max-width: 604px;
     box-sizing: border-box;
-    width: fit-content;
     margin: 0 auto;
     order: 3; /* 确保棋盘在信息栏下方 */
     /* 固定棋盘位置，不受上方内容影响 */
     position: relative;
+    display: flex;
+    justify-content: center;
+    align-items: center;
   }
 
   /* 手机端棋盘默认尺寸，防止刷新时闪烁 */
   #board {
-    width: var(--board-size);
-    height: var(--board-size);
+    width: 100%;
+    height: auto;
+    aspect-ratio: 1/1;
     max-width: 100%;
     background-color: #deb887;
   }
@@ -1112,7 +1127,7 @@ body.pre-init[data-initial-mode="multiplayer"] .mode-display {
     background-image:
       linear-gradient(#8b7355 1px, transparent 1px),
       linear-gradient(90deg, #8b7355 1px, transparent 1px);
-    background-size: 22.86px 22.86px;
+    background-size: calc((100vw - 40px) / 14) calc((100vw - 40px) / 14);
     background-position: 10px 10px;
   }
 
@@ -1125,21 +1140,22 @@ body.pre-init[data-initial-mode="multiplayer"] .mode-display {
   .multiplayer-select .multiplayer-actions {
     display: flex;
     flex-direction: row;
-    gap: 6px;
+    gap: 8px;
     justify-content: center;
-    padding: 2px 0;
+    padding: 0;
+    width: 100%;
   }
 
   .multiplayer-select .multiplayer-actions .btn-action {
     flex: 1;
-    min-width: 0;
-    padding: 6px 8px;
-    font-size: 11px;
+    min-width: 80px;
+    padding: 0 12px;
+    font-size: 13px;
     font-weight: 500;
     background-color: var(--bg-secondary);
     border: 1px solid var(--border-color);
     white-space: nowrap;
-    height: 32px;
+    height: 36px;
     display: flex;
     align-items: center;
     justify-content: center;
@@ -1177,7 +1193,7 @@ body.pre-init[data-initial-mode="multiplayer"] .mode-display {
 
 @media (max-width: 400px) {
   :root {
-    --board-size: 304px;
+    --board-size: calc(100vw - 16px);
   }
 
   .navbar {
@@ -1229,8 +1245,8 @@ body.pre-init[data-initial-mode="multiplayer"] .mode-display {
   }
 
   .btn-action {
-    padding: 5px 10px;
-    font-size: 11px;
+    padding: 0 10px;
+    font-size: 12px;
   }
 
   /* 极小屏幕棋盘适配 */
@@ -1241,8 +1257,8 @@ body.pre-init[data-initial-mode="multiplayer"] .mode-display {
 
   /* 极小屏幕棋盘默认尺寸 */
   #board {
-    width: 304px;
-    height: 304px;
+    width: 100%;
+    height: auto;
     background-color: #deb887;
   }
 

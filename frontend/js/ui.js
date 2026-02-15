@@ -210,8 +210,9 @@ class UI {
     let canvasSize;
     let padding;
     if (window.innerWidth <= 768) {
-      canvasSize = window.innerWidth <= 400 ? 304 : 340;
-      padding = window.innerWidth <= 400 ? 8 : 10;
+      // 动态计算尺寸：屏幕宽度减去内边距，最大限制 604px
+      canvasSize = Math.min(window.innerWidth - 20, 604);
+      padding = canvasSize <= 320 ? 8 : 10;
     } else {
       canvasSize = 604;
       padding = 22;
