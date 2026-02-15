@@ -197,8 +197,12 @@ class UI {
       document.getElementById('gameActions').style.display = 'none';
       this.opponentCard.style.display = 'none';
     } else if (mode === 'create' || mode === 'join' || mode === 'room') {
-      // create/join/room 模式的面板在 DOMContentLoaded 中处理
-      this.opponentCard.style.display = 'none';
+      // create/join/room 模式：隐藏人机操作和选择面板，显示房间信息
+      this.roomPanel.style.display = 'none';
+      document.getElementById('multiplayerSelect').style.display = 'none';
+      document.getElementById('gameActions').style.display = 'none';
+      this.roomInfoSection.style.display = 'block';
+      this.opponentCard.style.display = 'flex';
     }
   }
 

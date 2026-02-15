@@ -895,7 +895,7 @@ body.pre-init[data-initial-mode="multiplayer"] .mode-display {
   .mobile-nav {
     display: flex;
     justify-content: center;
-    gap: 12px;
+    gap: 8px;
     height: var(--mobile-nav-height);
     width: 100%;
     padding: 0 12px;
@@ -903,12 +903,13 @@ body.pre-init[data-initial-mode="multiplayer"] .mode-display {
 
   .mobile-nav-btn {
     flex: 1;
-    max-width: 140px;
     padding: 8px 16px;
-    background-color: var(--bg-secondary);
-    border: 1px solid var(--border-color);
-    border-radius: var(--radius);
-    color: var(--text-secondary);
+    background: rgba(255, 255, 255, 0.12);
+    backdrop-filter: blur(12px);
+    -webkit-backdrop-filter: blur(12px);
+    border: 1px solid rgba(255, 255, 255, 0.08);
+    border-radius: 999px;
+    color: rgba(255, 255, 255, 0.8);
     font-size: 14px;
     font-weight: 600;
     cursor: pointer;
@@ -983,14 +984,12 @@ body.pre-init[data-initial-mode="multiplayer"] .mode-display {
   /* 统一控制区域容器 */
   .control-area {
     width: 100%;
-    height: 48px;
-    min-height: 48px;
+    min-height: 44px;
     display: flex;
     align-items: center;
     position: relative;
     z-index: 20;
     background: transparent;
-    /* 确保透明 */
     border: none;
     padding: 0;
   }
@@ -1008,7 +1007,7 @@ body.pre-init[data-initial-mode="multiplayer"] .mode-display {
     /* 胶囊圆角 */
     color: #fff !important;
     box-shadow: 0 2px 6px rgba(0, 0, 0, 0.05);
-    transition: all 0.2sease;
+    transition: all 0.2s ease;
   }
 
   .control-area .btn-action:active,
@@ -1046,20 +1045,22 @@ body.pre-init[data-initial-mode="multiplayer"] .mode-display {
   /* 移动端游戏操作按钮 - 水平排列 */
   .game-actions,
   .multiplayer-actions {
+    display: flex;
     flex-direction: row;
     width: 100%;
     gap: 8px;
-    height: 100%;
+    align-items: center;
   }
 
-  .game-actions .btn-action {
+  .game-actions .btn-action,
+  .multiplayer-actions .btn-action {
     flex: 1;
-    height: 36px;
-    /* 统一按钮高度 */
-    padding: 0;
+    height: 40px;
+    padding: 0 12px;
     display: flex;
     align-items: center;
     justify-content: center;
+    font-size: 14px;
   }
 
   /* 房间信息 - 改回正常流布局，因为在control-area内 */
@@ -1067,7 +1068,6 @@ body.pre-init[data-initial-mode="multiplayer"] .mode-display {
     order: unset;
     margin-top: 0;
     width: 100%;
-    height: 100%;
     border: none;
     padding: 0;
     display: flex;
@@ -1075,16 +1075,28 @@ body.pre-init[data-initial-mode="multiplayer"] .mode-display {
     gap: 8px;
   }
 
-  /* 单行房间栏 - 自适应宽度 */
+  /* 单行房间栏 - 全宽 */
   .room-action-bar {
-    flex: 1;
-    height: 100%;
+    width: 100%;
+    display: flex;
+    align-items: center;
+    gap: 8px;
     padding: 0;
     margin: 0;
     background: transparent;
     border: none;
-    min-width: 0;
-    /* 允许收缩 */
+  }
+
+  /* 房间号盒子占据剩余空间 */
+  .room-action-bar .room-id-box {
+    flex: 1;
+  }
+
+  /* 房间按钮区域 */
+  .room-action-bar .room-actions {
+    display: flex;
+    gap: 6px;
+    flex-shrink: 0;
   }
 
   /* 准备区域 - 流式布局，不覆盖 */
