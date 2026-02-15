@@ -639,6 +639,7 @@ class UI {
 
         game.setRoomInfo(data.roomId, true);
         this.saveRoomInfo(data.roomId, 1);
+        console.log('[DEBUG] roomCreated - 已保存房间信息:', localStorage.getItem('gobang-room'));
         // 更新 URL 为房间页
         window.history.pushState({}, '', `/room/${data.roomId}`);
 
