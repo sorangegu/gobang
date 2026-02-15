@@ -227,18 +227,31 @@ class UI {
 
   // 获取有效的保存房间信息
   getValidSavedRoom() {
-    const savedRoom = localStorage.getItem('gobang-room');
-    if (!savedRoom) return null;
+    const saved = localStorage.getItem('gobang-room');
+    if (!saved) return null;
 
     try {
-      const roomData = JSON.parse(savedRoom);
-      // 只要有房间号和玩家颜色就返回，不限制时间
-      if (roomData.roomId && roomData.playerColor) {
-        return roomData;
+      const roomInfo = JSON.parse(saved);
+      // Basic validation
+      if (roomInfo && roomInfo.roomId && (roomInfo.playerColor === 1 || roomInfo.playerColor === 2)) {
+        // Check if it's too old (e.g., > 24 hours) - optional, but good for cleanup
+        const timestamp = roomInfo.timestamp || 0;
+        const now = Date.now();
+        if (now - timestamp > 24 * 60 * 60 * 1000) {
+          console.log('[DEBUG] Saved room is too old, ignoring.');
+          localStorage.removeItem('gobang-room');
+          return null;
+        }
+        return roomInfo;
+      } else {
+        console.warn('[DEBUG] Invalid saved room structure:', roomInfo);
+        // Don't auto-clear immediately in case of minor format issues, just return null
+        return null;
       }
-    } catch (e) { }
-    localStorage.removeItem('gobang-room');
-    return null;
+    } catch (e) {
+      console.error('Error parsing saved room:', e);
+      return null;
+    }
   }
 
   // 更新模式相关的 UI
