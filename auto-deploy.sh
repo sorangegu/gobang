@@ -74,7 +74,7 @@ cp -r frontend/* $FRONTEND_PATH/
 
 # 重启后端容器
 echo "🔄 重启后端容器..."
-cd $DEPLOY_PATH/backend
+cd $DEPLOY_PATH
 docker-compose down
 docker-compose up -d --build
 

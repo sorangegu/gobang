@@ -1365,6 +1365,10 @@ class UI {
     // 启用/禁用按钮
     this.undoBtn.disabled = game.moveHistory.length === 0;
     this.restartBtn.disabled = !game.isPlaying;
+
+    // Subtle affordance: only show pointer when the user can place a stone.
+    const canInteract = game.isPlaying && game.winner === null && isMyTurn;
+    this.canvas.style.cursor = canInteract ? 'pointer' : 'default';
   }
 
   // 显示游戏结束

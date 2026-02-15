@@ -67,7 +67,10 @@ body {
   --accent: #e94560;
   --text-primary: #eaeaea;
   --text-secondary: #a0a0a0;
+  --text-muted: #7f8ea3;
   --border-color: #2d3748;
+  --success-color: #2ecc71;
+  --danger-color: #dc3545;
 
   /* 棋盘颜色 (原木色，保持不变) */
   --board-color: #deb887;
@@ -93,8 +96,11 @@ body {
   --accent: #e94560;
   --text-primary: #333333;
   --text-secondary: #666666;
+  --text-muted: #888888;
   --border-color: #e0e0e0;
   --shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+  --success-color: #1f9d55;
+  --danger-color: #dc3545;
 }
 
 body {
@@ -119,64 +125,59 @@ body {
 }
 
 .logo {
-  display: none;
+  display: block;
+  position: absolute;
+  left: 24px;
+  font-weight: 800;
+  letter-spacing: 2px;
+  color: var(--accent);
+  user-select: none;
 }
 
 .nav-center {
   display: flex;
-  gap: 8px;
+  gap: 10px;
 }
 
 .nav-btn {
-  padding: 10px 20px;
-  background: transparent;
-  border: none;
+  height: 40px;
+  padding: 0 16px;
+  background-color: var(--bg-primary);
+  border: 1px solid var(--border-color);
+  border-radius: 999px;
   color: var(--text-secondary);
-  font-size: 16px;
+  font-size: 14px;
   font-weight: 600;
   cursor: pointer;
-  border-radius: var(--radius);
   transition: all 150ms ease;
   position: relative;
 }
 
 .nav-btn:hover {
   color: var(--text-primary);
-  background-color: rgba(255, 255, 255, 0.05);
+  border-color: rgba(233, 69, 96, 0.5);
 }
 
 .nav-btn.active {
-  color: var(--accent);
+  color: #ffffff;
+  background-color: var(--accent);
+  border-color: var(--accent);
 }
 
 .nav-btn.active::after {
-  content: '';
-  position: absolute;
-  bottom: 0;
-  left: 50%;
-  transform: translateX(-50%);
-  width: 20px;
-  height: 2px;
-  background-color: var(--accent);
-  border-radius: 1px;
+  display: none;
 }
 
 body.pre-init[data-initial-mode="ai"] .nav-btn[data-mode="ai"],
 body.pre-init[data-initial-mode="multiplayer"] .nav-btn[data-mode="multiplayer"] {
-  color: var(--accent);
+  color: #ffffff;
+  background-color: var(--accent);
+  border-color: var(--accent);
 }
 
 body.pre-init[data-initial-mode="ai"] .nav-btn[data-mode="ai"]::after,
 body.pre-init[data-initial-mode="multiplayer"] .nav-btn[data-mode="multiplayer"]::after {
-  content: '';
-  position: absolute;
-  bottom: 0;
-  left: 50%;
-  transform: translateX(-50%);
-  width: 20px;
-  height: 2px;
-  background-color: var(--accent);
-  border-radius: 1px;
+  display: none;
 }
 
 body.pre-init[data-initial-mode="multiplayer"] #opponentCard .player-label {
@@ -216,6 +217,10 @@ body.pre-init[data-initial-mode="multiplayer"] .mode-display {
 
 .theme-toggle:hover {
   background-color: rgba(255, 255, 255, 0.05);
+}
+
+[data-theme="light"] .theme-toggle:hover {
+  background-color: rgba(0, 0, 0, 0.04);
 }
 
 .theme-icon {
@@ -342,6 +347,37 @@ body.pre-init[data-initial-mode="multiplayer"] .mode-display {
   margin: 0 auto;
 }
 
+/* Smaller desktops: keep the layout clean and avoid horizontal overflow. */
+@media (max-width: 1280px) {
+  .decor-panel {
+    display: none;
+  }
+
+  .game-container {
+    gap: 24px;
+    max-width: 980px;
+  }
+}
+
+/* Narrow windows/tablets: stack panels while keeping the desktop navbar. */
+@media (max-width: 1100px) {
+  .main-content {
+    padding: 16px;
+  }
+
+  .game-container {
+    flex-direction: column;
+    align-items: center;
+    gap: 16px;
+    width: 100%;
+  }
+
+  .side-panel {
+    width: min(680px, 100%);
+    height: auto;
+  }
+}
+
 /* ===== 侧边信息面板 ===== */
 .side-panel {
   width: 300px;
@@ -353,6 +389,8 @@ body.pre-init[data-initial-mode="multiplayer"] .mode-display {
   transition: background-color var(--transition), border-color var(--transition);
   display: flex;
   flex-direction: column;
+  overflow-y: auto;
+  overscroll-behavior: contain;
 }
 
 /* 桌面端 side-panel-main 默认占满 */
@@ -589,6 +627,7 @@ body.pre-init[data-initial-mode="multiplayer"] .mode-display {
 .btn-action:hover:not(:disabled) {
   background-color: var(--accent);
   border-color: var(--accent);
+  color: #ffffff;
 }
 
 .btn-action:disabled {
@@ -713,8 +752,8 @@ body.pre-init[data-initial-mode="multiplayer"] .mode-display {
 }
 
 .btn-icon.btn-leave:hover {
-  background-color: #dc3545;
-  border-color: #dc3545;
+  background-color: var(--danger-color);
+  border-color: var(--danger-color);
 }
 
 /* 邀请链接区域 */
@@ -797,7 +836,7 @@ body.pre-init[data-initial-mode="multiplayer"] .mode-display {
 /* ===== 棋盘区域 ===== */
 .board-wrapper {
   background-color: var(--board-color);
-  border-radius: 4px;
+  border-radius: var(--radius-lg);
   box-shadow: var(--shadow), 0 0 0 4px #8b7355;
   padding: 22px;
   transition: transform 200ms ease;
@@ -844,6 +883,10 @@ body.pre-init[data-initial-mode="multiplayer"] .mode-display {
 
 .btn-secondary:hover {
   background-color: rgba(255, 255, 255, 0.05);
+}
+
+[data-theme="light"] .btn-secondary:hover {
+  background-color: rgba(0, 0, 0, 0.04);
 }
 
 .btn-copy {
@@ -927,7 +970,7 @@ body.pre-init[data-initial-mode="multiplayer"] .mode-display {
 /* ===== 通知 ===== */
 .toast {
   position: fixed;
-  bottom: 24px;
+  bottom: calc(24px + env(safe-area-inset-bottom));
   left: 50%;
   transform: translateX(-50%);
   background-color: var(--bg-secondary);
@@ -969,6 +1012,9 @@ body.pre-init[data-initial-mode="multiplayer"] .mode-display {
   .main-content {
     padding: 6px 10px;
     padding-top: 8px;
+    padding-left: calc(10px + env(safe-area-inset-left));
+    padding-right: calc(10px + env(safe-area-inset-right));
+    padding-bottom: calc(6px + env(safe-area-inset-bottom));
     min-height: auto;
   }
 
@@ -1079,13 +1125,6 @@ body.pre-init[data-initial-mode="multiplayer"] .mode-display {
     flex-direction: column;
     gap: 4px;
     height: auto;
-  }
-
-  /* 玩家卡片 - 与PC端一致 */
-  .side-panel-main .player-card {
-    background-color: var(--bg-primary);
-    border: 1px solid var(--border-color);
-    border-radius: var(--radius);
   }
 
   /* 统一控制区域容器 */
@@ -1388,14 +1427,17 @@ body.pre-init[data-initial-mode="multiplayer"] .mode-display {
   }
 
   .player-status {
-    flex: 1;
+    /* On mobile, keep the icon+text as a centered group (no flex-grow). */
+    flex: 0 1 auto;
     min-width: 0;
+    max-width: calc(100% - 24px - 10px);
     display: flex;
     flex-direction: column;
     justify-content: center;
-    align-items: flex-start;
+    align-items: center;
     min-height: auto;
     gap: 0;
+    text-align: center;
   }
 
   .player-label {
@@ -1412,6 +1454,12 @@ body.pre-init[data-initial-mode="multiplayer"] .mode-display {
     margin-top: 1px;
     line-height: 1.2;
     height: 13px;
+    /* When hidden, don't reserve vertical space on mobile. */
+    display: none;
+  }
+
+  .player-turn.visible {
+    display: block;
   }
 
   /* 隐藏游戏信息区域（当前回合、对局模式），使布局更简洁 */
@@ -1419,17 +1467,11 @@ body.pre-init[data-initial-mode="multiplayer"] .mode-display {
     display: none;
   }
 
-  /* 移动端房间信息 - 紧凑弹出层方式 */
+  /* Mobile: room details show as an overlay under the action bar. */
   .room-info-section {
-    margin-top: 0;
-    padding: 0;
-    background: transparent;
-    border: none;
-    width: 100%;
     position: relative;
   }
 
-  /* 手机端显示房间信息按钮 */
   .btn-room-info {
     display: flex;
     flex: 1;
@@ -1437,23 +1479,14 @@ body.pre-init[data-initial-mode="multiplayer"] .mode-display {
     border-radius: 10px;
     font-size: 14px;
     font-weight: 500;
-  }
-
-  /* 手机端房间操作栏 - 按钮横向排列 */
-  .room-action-bar {
-    width: 100%;
-    display: flex;
-    align-items: center;
-    gap: 8px;
-    padding: 0;
-    margin: 0;
-    height: auto;
     background: transparent;
     border: none;
-    border-radius: 0;
+    padding: 0 10px;
+    align-items: center;
+    justify-content: flex-start;
+    min-width: 0;
   }
 
-  /* 手机端房间详情弹出层 - 绝对定位，不影响布局 */
   .room-detail-popup {
     position: absolute;
     top: 100%;
@@ -1468,9 +1501,9 @@ body.pre-init[data-initial-mode="multiplayer"] .mode-display {
     box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
   }
 
-  .room-detail-header {
-    padding-bottom: 8px;
-    margin-bottom: 8px;
+  .btn-icon svg {
+    width: 14px;
+    height: 14px;
   }
 
   .room-label {
@@ -1479,52 +1512,6 @@ body.pre-init[data-initial-mode="multiplayer"] .mode-display {
 
   .room-code {
     font-size: 17px;
-  }
-
-  .btn-icon svg {
-    width: 14px;
-    height: 14px;
-  }
-
-  .invite-section {
-    margin-top: 6px;
-    padding: 8px 10px;
-  }
-
-  .invite-link-row input {
-    padding: 4px 8px;
-    font-size: 11px;
-  }
-
-  .invite-link-row .btn-copy {
-    padding: 4px 10px;
-    font-size: 11px;
-  }
-
-  .waiting-text {
-    margin-top: 4px;
-    font-size: 11px;
-  }
-
-  .ready-status-row {
-    margin-bottom: 6px;
-  }
-
-  .ready-status-row:last-of-type {
-    margin-bottom: 10px;
-  }
-
-  .ready-label,
-  .ready-value {
-    font-size: 12px;
-  }
-
-  #readyBtn {
-    padding: 8px;
-    font-size: 13px;
-    padding: 6px;
-    font-size: 12px;
-    height: 32px;
   }
 
   /* 隐藏右侧装饰面板 */
@@ -1630,132 +1617,5 @@ body.pre-init[data-initial-mode="multiplayer"] .mode-display {
   /* 按钮交互 - 保持与PC端一致的颜色 */
   .btn-action:active {
     transform: scale(0.98);
-  }
-}
-
-@media (max-width: 400px) {
-  :root {
-    --board-size: calc(100vw - 16px);
-  }
-
-  .navbar {
-    height: 44px;
-  }
-
-  .logo {
-    font-size: 18px;
-  }
-
-  .nav-btn {
-    padding: 5px 8px;
-    font-size: 11px;
-  }
-
-  .main-content {
-    padding: 6px;
-  }
-
-  .side-panel {
-    padding: 8px 10px;
-    gap: 6px;
-  }
-
-  .player-card {
-    padding: 6px 8px;
-    transition: none;
-  }
-
-  .player-stone {
-    width: 24px;
-    height: 24px;
-  }
-
-  .player-label {
-    font-size: 11px;
-  }
-
-  .game-info {
-    padding: 4px 8px;
-  }
-
-  .info-row {
-    font-size: 11px;
-  }
-
-  .game-actions {
-    gap: 4px;
-  }
-
-  .btn-action {
-    padding: 0 10px;
-    font-size: 12px;
-  }
-
-  /* 极小屏幕棋盘适配 */
-  .board-wrapper {
-    padding: 8px;
-    max-width: calc(100vw - 12px);
-  }
-
-  /* 极小屏幕棋盘默认尺寸 */
-  #board {
-    width: calc(100vw - 32px) !important;
-    height: calc(100vw - 32px) !important;
-    background-color: #deb887;
-  }
-
-  /* 极小屏幕预加载状态背景网格 */
-  body.pre-init #board {
-    background-image:
-      linear-gradient(#8b7355 1px, transparent 1px),
-      linear-gradient(90deg, #8b7355 1px, transparent 1px);
-    background-size: 20.29px 20.29px;
-    background-position: 8px 8px;
-  }
-
-  /* 极小屏幕玩家对战按钮更紧凑 */
-  .multiplayer-select .multiplayer-actions .btn-action {
-    padding: 0 8px;
-    font-size: 12px;
-    height: 34px;
-  }
-
-  .game-actions .btn-action {
-    padding: 0 8px;
-    font-size: 12px;
-    height: 34px;
-  }
-  /* 极小屏幕按钮交互 */
-  .btn-action:active {
-    transform: scale(0.98);
-  }
-}
-
-/* 横屏手机优化 */
-@media (max-width: 768px) and (orientation: landscape) {
-  .side-panel {
-    position: fixed;
-    top: 50px;
-    right: 0;
-    width: 200px;
-    height: calc(100vh - 50px);
-    flex-direction: column;
-    padding: 12px;
-    z-index: 100;
-    background-color: var(--bg-secondary);
-    border-left: 1px solid var(--border-color);
-    overflow-y: auto;
-  }
-
-  .player-info {
-    flex-direction: column;
-  }
-
-  .game-actions {
-    flex-direction: column;
-  }
-
-  .board-wrapper {
-    margin-right: 200px;
   }
 }
