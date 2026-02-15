@@ -706,8 +706,8 @@ body[data-game-mode="multiplayer"] .room-info-section {
   display: none;
 }
 
-/* 桌面端有房间时显示房间信息section（仅room模式 - 覆盖上面的隐藏规则） */
-body[data-game-mode="room"] .room-info-section {
+/* 桌面端有房间时只显示PC端的房间信息section（在control-area内） */
+body[data-game-mode="room"] .control-area .room-info-section.room-info-desktop {
   display: block !important;
 }
 
