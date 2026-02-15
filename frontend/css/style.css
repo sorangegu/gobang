@@ -703,18 +703,6 @@ body[data-game-mode="room"] .room-action-bar {
   display: flex;
 }
 
-/* 桌面端默认隐藏房间信息section */
-body:not([data-game-status]) .room-info-section,
-body[data-game-mode="ai"] .room-info-section,
-body[data-game-mode="multiplayer"] .room-info-section {
-  display: none;
-}
-
-/* 桌面端有房间时只显示PC端的房间信息section（在control-area内） */
-body[data-game-mode="room"] .control-area .room-info-section.room-info-desktop {
-  display: block !important;
-}
-
 /* 房间信息按钮 (桌面端显示) */
 .btn-room-info {
   display: flex;
@@ -1448,7 +1436,6 @@ body:not([data-game-mode="ai"])[data-game-status="playing"] .room-code-preview {
     width: 100%;
     border: none;
     padding: 0;
-    display: flex;
     flex-direction: column;
     gap: 6px;
   }
