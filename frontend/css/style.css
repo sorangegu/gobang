@@ -1747,6 +1747,8 @@ body:not([data-game-mode="ai"])[data-game-status="playing"] .room-code-preview {
     width: 100% !important;
     min-width: 0 !important;
     flex: 0 0 auto !important;
+    min-height: var(--btn-height) !important;
+    max-height: var(--btn-height) !important;
   }
 
   .player-card.active {
