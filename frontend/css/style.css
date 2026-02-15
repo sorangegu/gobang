@@ -519,8 +519,8 @@ body.pre-init[data-initial-mode="multiplayer"] .mode-display {
   display: flex;
   align-items: center;
   justify-content: flex-start;
-  gap: 16px;
-  padding: 16px;
+  gap: 12px;
+  padding: 14px 16px;
   background-color: var(--bg-primary);
   border-radius: var(--radius);
   border: 1px solid var(--border-color);
@@ -535,10 +535,11 @@ body.pre-init[data-initial-mode="multiplayer"] .mode-display {
 }
 
 .player-stone {
-  width: 40px;
-  height: 40px;
+  width: 36px;
+  height: 36px;
   border-radius: 50%;
   box-shadow: var(--shadow);
+  flex-shrink: 0;
 }
 
 .player-stone.black {
@@ -554,7 +555,8 @@ body.pre-init[data-initial-mode="multiplayer"] .mode-display {
   display: flex;
   flex-direction: column;
   justify-content: center;
-  min-height: 40px;
+  align-items: flex-start;
+  min-height: 36px;
 }
 
 .player-label {
@@ -1357,14 +1359,14 @@ body[data-game-status="playing"] .room-code-preview {
   .game-actions .btn-action,
   .multiplayer-actions .btn-action {
     flex: 1;
-    height: 50px;
+    height: 44px;
     padding: 0 16px;
     display: flex;
     align-items: center;
     justify-content: center;
-    font-size: 15px;
+    font-size: 14px;
     font-weight: 600;
-    border-radius: 12px;
+    border-radius: 10px;
   }
 
   /* 房间信息 - 美观的卡片样式 */
