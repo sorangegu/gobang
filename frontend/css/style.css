@@ -341,18 +341,20 @@ body.pre-init[data-initial-mode="multiplayer"] .mode-display {
   margin: 0 auto;
 }
 
-/* Desktop: hide mobile room-info-section (under board) */
+/* ===== PC端 (宽度 > 768px) ===== */
+/* PC端：隐藏移动端房间信息（棋盘下方） */
 .game-container > .room-info-section {
-  display: none;
+  display: none !important;
 }
 
-/* Desktop: show room-info-section inside control-area */
-.control-area .room-info-section {
-  display: none;
-}
-
+/* PC端：默认隐藏房间信息section（control-area内） */
 .control-area .room-info-section.room-info-desktop {
-  display: block;
+  display: none;
+}
+
+/* PC端：有房间时显示房间信息 */
+body[data-game-mode="room"] .control-area .room-info-section.room-info-desktop {
+  display: block !important;
 }
 
 /* Smaller desktops: keep the layout clean and avoid horizontal overflow. */
@@ -1400,14 +1402,20 @@ body:not([data-game-mode="ai"])[data-game-status="playing"] .room-code-preview {
     display: none !important;
   }
 
-  /* Mobile: hide desktop room-info in side-panel */
+  /* ===== 移动端房间信息（完全独立） ===== */
+  /* 移动端：隐藏PC端房间信息 */
   .control-area .room-info-section.room-info-desktop {
+    display: none !important;
+  }
+
+  /* 移动端：默认隐藏移动端房间信息（棋盘下方） */
+  .game-container > .room-info-section {
     display: none;
   }
 
-  /* Mobile: show room-info-section under board */
-  .game-container > .room-info-section {
-    display: flex;
+  /* 移动端：有房间时显示移动端房间信息 */
+  body[data-game-mode="room"] .game-container > .room-info-section {
+    display: flex !important;
   }
 
   /* 玩家对战选择按钮仍然水平排列 */
