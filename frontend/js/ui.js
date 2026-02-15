@@ -188,6 +188,8 @@ class UI {
       document.getElementById('gameActions').style.display = 'flex';
       this.opponentCard.style.display = 'flex';
       this.opponentCard.querySelector('.player-label').textContent = 'AI (白方)';
+      // 人机模式：立即设置为playing状态
+      this.updateGameStatus('playing');
     } else if (mode === 'multiplayer') {
       this.roomPanel.style.display = 'none';
       this.roomInfoSection.style.display = 'none';
@@ -196,6 +198,8 @@ class UI {
       // 显示白棋卡片，标签设为"白方"
       this.opponentCard.style.display = 'flex';
       this.opponentCard.querySelector('.player-label').textContent = '白方';
+      // 多人对战选择页面，还未开始游戏
+      this.updateGameStatus(null);
     } else if (mode === 'create' || mode === 'join' || mode === 'room') {
       // create/join/room 模式：隐藏人机操作和选择面板，显示房间信息
       this.roomPanel.style.display = 'none';
@@ -203,6 +207,15 @@ class UI {
       document.getElementById('gameActions').style.display = 'none';
       this.roomInfoSection.style.display = 'block';
       this.opponentCard.style.display = 'flex';
+    }
+  }
+
+  // 更新游戏状态（用于控制UI显示）
+  updateGameStatus(status) {
+    if (status === 'playing') {
+      document.body.dataset.gameStatus = 'playing';
+    } else {
+      delete document.body.dataset.gameStatus;
     }
   }
 
@@ -598,6 +611,8 @@ class UI {
       this.opponentCard.style.display = 'flex';
       // 隐藏准备区域
       document.getElementById('readySection').style.display = 'none';
+      // 设置游戏状态为playing，隐藏房间文字，显示游戏操作按钮
+      this.updateGameStatus('playing');
       this.drawBoard();
       this.updateUI();
       this.showToast('游戏开始！');
@@ -652,6 +667,8 @@ class UI {
 
     socketManager.on('restartSuccess', () => {
       game.reset();
+      // 重新开始后游戏又开始了，设置为playing
+      this.updateGameStatus('playing');
       this.drawBoard();
       this.updateUI();
       this.hideModal(this.resultModal);
@@ -1321,6 +1338,9 @@ class UI {
   showGameOver(winner) {
     game.winner = winner;
     game.isPlaying = false;
+
+    // 清除playing状态，恢复显示房间信息
+    this.updateGameStatus(null);
 
     // 记录统计
     this.recordGame(winner);

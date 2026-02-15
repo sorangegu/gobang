@@ -1048,6 +1048,33 @@ body.pre-init[data-initial-mode="multiplayer"] .mode-display {
     gap: 8px;
   }
 
+  /* 游戏进行中：隐藏房间文字，保留按钮，显示游戏操作 */
+  body[data-game-status="playing"] .room-id-box {
+    display: none;
+  }
+
+  body[data-game-status="playing"] .room-action-bar {
+    justify-content: flex-end;
+  }
+
+  body[data-game-status="playing"] .room-info-section {
+    display: flex;
+  }
+
+  body[data-game-status="playing"] .invite-section,
+  body[data-game-status="playing"] .ready-section {
+    display: none;
+  }
+
+  body[data-game-status="playing"] .game-actions {
+    display: flex;
+  }
+
+  /* 游戏未开始：隐藏游戏操作，显示房间信息 */
+  body:not([data-game-status="playing"]) .game-actions {
+    display: none;
+  }
+
   /* 控制区域按钮 - 更美观的样式 */
   .control-area .btn-action,
   .control-area .btn-icon {
