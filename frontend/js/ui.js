@@ -49,7 +49,7 @@ class UI {
         window.history.replaceState({}, '', `/room/${savedRoom.roomId}`);
         this.updateModeUI('room');
         this.roomInfoSection.style.display = 'block';
-        document.getElementById('displayRoomId').textContent = savedRoom.roomId;
+        this.updateRoomIdDisplay(savedRoom.roomId);
         document.getElementById('inviteSection').style.display = 'none';
         const inviteUrl = `${window.location.origin}/room/${savedRoom.roomId}`;
         document.getElementById('inviteLink').value = inviteUrl;
@@ -85,7 +85,7 @@ class UI {
         game.roomId = savedRoom.roomId;
         // 显示房间信息
         this.roomInfoSection.style.display = 'block';
-        document.getElementById('displayRoomId').textContent = savedRoom.roomId;
+        this.updateRoomIdDisplay(savedRoom.roomId);
         document.getElementById('inviteSection').style.display = 'none';
         const inviteUrl = `${window.location.origin}/room/${savedRoom.roomId}`;
         document.getElementById('inviteLink').value = inviteUrl;
@@ -310,6 +310,15 @@ class UI {
     this.leaveRoomBtn = document.getElementById('leaveRoomBtn');
   }
 
+  // 更新房间号显示（同时更新详情和预览）
+  updateRoomIdDisplay(roomId) {
+    document.getElementById('displayRoomId').textContent = roomId;
+    const preview = document.getElementById('roomCodePreview');
+    if (preview) {
+      preview.textContent = roomId;
+    }
+  }
+
   // 初始化事件监听
   initEventListeners() {
     // 主题切换
@@ -429,6 +438,30 @@ class UI {
     // 准备按钮
     document.getElementById('readyBtn')?.addEventListener('click', () => this.handleReady());
 
+    // 房间信息按钮（手机端弹出层）
+    const showRoomInfoBtn = document.getElementById('showRoomInfoBtn');
+    if (showRoomInfoBtn) {
+      showRoomInfoBtn.addEventListener('click', (e) => {
+        e.stopPropagation();
+        const popup = document.getElementById('roomDetailPopup');
+        if (popup) {
+          const isVisible = popup.style.display === 'block';
+          popup.style.display = isVisible ? 'none' : 'block';
+        }
+      });
+    }
+
+    // 点击其他地方关闭房间详情弹出层
+    document.addEventListener('click', (e) => {
+      const popup = document.getElementById('roomDetailPopup');
+      const roomInfoSection = document.getElementById('roomInfoSection');
+      if (popup && popup.style.display === 'block') {
+        if (!roomInfoSection.contains(e.target)) {
+          popup.style.display = 'none';
+        }
+      }
+    });
+
     // 初始化Socket监听
     this.initSocketListeners();
   }
@@ -438,7 +471,7 @@ class UI {
     socketManager.on('roomCreated', (data) => {
       if (data.success) {
         // 在左侧面板显示房间信息
-        document.getElementById('displayRoomId').textContent = data.roomId;
+        this.updateRoomIdDisplay(data.roomId);
         document.getElementById('inviteSection').style.display = 'none'; // iOS 18 风格不再展开
         document.getElementById('readySection').style.display = 'none';
         const inviteUrl = `${window.location.origin}/room/${data.roomId}`;
@@ -462,7 +495,7 @@ class UI {
         game.setRoomInfo(data.roomId, false);
         game.gameMode = 'join';
         game.myColor = data.playerColor || 2;
-        document.getElementById('displayRoomId').textContent = data.roomId;
+        this.updateRoomIdDisplay(data.roomId);
         this.roomPanel.style.display = 'none';
         this.opponentCard.style.display = 'flex';
         this.opponentCard.querySelector('.player-label').textContent = '对手 (黑方)';
@@ -513,7 +546,7 @@ class UI {
         game.board = data.board;
         game.currentPlayer = data.currentPlayer;
         game.isPlaying = data.status === 'playing' && data.opponentOnline;
-        document.getElementById('displayRoomId').textContent = data.roomId;
+        this.updateRoomIdDisplay(data.roomId);
         this.roomPanel.style.display = 'none';
         document.getElementById('multiplayerSelect').style.display = 'none';
         this.roomInfoSection.style.display = 'block';
@@ -750,7 +783,7 @@ class UI {
         // 显示对局保留提示和重新开始按钮
         this.roomPanel.style.display = 'none';
         this.roomInfoSection.style.display = 'block';
-        document.getElementById('displayRoomId').textContent = data.roomId;
+        this.updateRoomIdDisplay(data.roomId);
         document.getElementById('inviteSection').style.display = 'none'; // iOS 18 风格不再展开
         document.getElementById('readySection').style.display = 'none';
         const inviteUrl = `${window.location.origin}/room/${data.roomId}`;
@@ -780,7 +813,7 @@ class UI {
         // 在左侧面板显示邀请信息
         this.roomPanel.style.display = 'none';
         this.roomInfoSection.style.display = 'block';
-        document.getElementById('displayRoomId').textContent = data.roomId;
+        this.updateRoomIdDisplay(data.roomId);
         document.getElementById('inviteSection').style.display = 'none'; // iOS 18 风格不再展开
         document.getElementById('readySection').style.display = 'none';
         const inviteUrl = `${window.location.origin}/room/${data.roomId}`;
@@ -950,7 +983,7 @@ class UI {
 
       // 显示房间信息面板
       this.roomInfoSection.style.display = 'block';
-      document.getElementById('displayRoomId').textContent = savedRoom.roomId;
+      this.updateRoomIdDisplay(savedRoom.roomId);
       document.getElementById('inviteSection').style.display = 'none'; // 不自动弹出邀请链接
       const inviteUrl = `${window.location.origin}/room/${savedRoom.roomId}`;
       document.getElementById('inviteLink').value = inviteUrl;
