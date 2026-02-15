@@ -741,13 +741,14 @@ class UI {
         this.updateBoardOverlay();
         this.showToast('重连成功！');
       } else {
-        // 重连失败，清除本地存储
-        this.clearRoomInfo();
-        this.showToast(data.error || '重连失败');
-        // 如果是创建房间模式，重连失败后创建新房间
-        if (this.initMode.type === 'create') {
-          setTimeout(() => this.createRoom(), 500);
-        }
+        // 重连失败（如房间已过期或服务重启）
+        console.log('[DEBUG] Reconnect failed:', data.error);
+        localStorage.removeItem('gobang-room');
+        this.pendingReconnect = null;
+        this.showToast('房间已失效，请重新创建或加入');
+
+        // Fallback to multiplayer selection screen
+        this.showMultiplayerSelect();
       }
     });
 
