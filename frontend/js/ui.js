@@ -702,6 +702,13 @@ class UI {
           roomId: data.roomId
         };
 
+        // Fix: Update game state from server data to overwrite any AI state
+        if (data.board) game.board = data.board;
+        if (data.moveHistory) game.moveHistory = data.moveHistory;
+        if (data.currentPlayer) game.currentPlayer = data.currentPlayer;
+        game.winner = null; // Clear any local winner state
+        game.lastMove = game.moveHistory.length > 0 ? game.moveHistory[game.moveHistory.length - 1] : null;
+
         if (data.status === 'playing' && data.opponentOnline) {
           // 正在游戏中且对手在线，显示对手
           this.opponentCard.style.display = 'flex';
@@ -1183,8 +1190,14 @@ class UI {
     // 检查是否有保存的房间
     const savedRoom = this.getValidSavedRoom();
     if (savedRoom) {
-      // 有保存的房间，尝试重连以同步状态
       console.log('[DEBUG] Found saved room, attempting reconnect...', savedRoom);
+
+      this.pendingReconnect = savedRoom;
+
+      // UX Improvement: Show loading state
+      this.showToast('正在恢复房间连接...', 2000);
+
+      // 尝试重连
       socketManager.reconnectRoom(savedRoom.roomId, savedRoom.playerColor);
       return;
     }
