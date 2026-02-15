@@ -783,6 +783,15 @@ class UI {
         }
         // 更新房间号显示
         this.updateRoomIdDisplay(data.roomId);
+
+        // 调试：检查 DOM 属性
+        console.log('[DEBUG] 重连后 DOM 状态:', {
+          gameMode: document.body.dataset.gameMode,
+          gameStatus: document.body.dataset.gameStatus,
+          roomInfoSectionDisplay: this.roomInfoSection.style.display,
+          multiplayerSelectDisplay: document.getElementById('multiplayerSelect').style.display
+        });
+
         // 更新 URL 为房间页面
         window.history.pushState({}, '', `/room/${data.roomId}`);
         this.drawBoard();
