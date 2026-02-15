@@ -912,14 +912,14 @@ body.pre-init[data-initial-mode="multiplayer"] .mode-display {
   }
 
   .main-content {
-    padding: 8px;
-    padding-top: 4px;
+    padding: 4px 8px;
+    padding-top: 2px;
   }
 
   .game-container {
     flex-direction: column;
     align-items: center;
-    gap: 6px;
+    gap: 4px;
     width: 100%;
     padding-bottom: calc(100vw - 10px);
   }
@@ -929,12 +929,12 @@ body.pre-init[data-initial-mode="multiplayer"] .mode-display {
     display: flex;
     align-items: center;
     justify-content: center;
-    height: var(--mobile-header-height);
+    height: 36px;
     width: 100%;
   }
 
   .mobile-title {
-    font-size: 20px;
+    font-size: 18px;
     font-weight: 700;
     color: var(--accent);
     letter-spacing: 3px;
@@ -945,7 +945,7 @@ body.pre-init[data-initial-mode="multiplayer"] .mode-display {
     display: flex;
     justify-content: center;
     gap: 8px;
-    height: var(--mobile-nav-height);
+    height: 36px;
     width: 100%;
     padding: 0 12px;
   }
@@ -1015,16 +1015,13 @@ body.pre-init[data-initial-mode="multiplayer"] .mode-display {
   .side-panel-main {
     width: 100%;
     order: 1;
-    /* 放在最上方 */
     background-color: transparent;
-    /* iOS 18 风格：去除背景 */
     border: none;
-    /* 去除边框 */
     box-shadow: none;
-    padding: 8px 12px;
+    padding: 4px 8px;
     display: flex;
     flex-direction: column;
-    gap: 8px;
+    gap: 6px;
     height: auto;
   }
 
@@ -1109,7 +1106,7 @@ body.pre-init[data-initial-mode="multiplayer"] .mode-display {
     flex-direction: row;
     width: 100%;
     gap: 8px;
-    align-items: center;
+    align-items: stretch;
   }
 
   .game-actions .btn-action,
@@ -1123,33 +1120,40 @@ body.pre-init[data-initial-mode="multiplayer"] .mode-display {
     font-size: 14px;
   }
 
-  /* 房间信息 - 在control-area内 */
+  /* 房间信息 - 与按钮高度一致 */
   .room-info-section {
     order: unset;
-    margin-top: 8px;
+    margin-top: 0;
     width: 100%;
     border: none;
     padding: 0;
     display: flex;
-    align-items: center;
-    gap: 8px;
+    flex-direction: column;
+    gap: 6px;
   }
 
-  /* 单行房间栏 - 全宽 */
+  /* 单行房间栏 - 与按钮高度一致 */
   .room-action-bar {
     width: 100%;
     display: flex;
-    align-items: center;
+    align-items: stretch;
     gap: 8px;
     padding: 0;
     margin: 0;
-    background: transparent;
-    border: none;
+    height: 40px;
   }
 
   /* 房间号盒子占据剩余空间 */
   .room-action-bar .room-id-box {
     flex: 1;
+    height: 40px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 0 12px;
+    background-color: var(--bg-primary);
+    border: 1px solid var(--border-color);
+    border-radius: var(--radius);
   }
 
   /* 房间按钮区域 */
@@ -1157,24 +1161,29 @@ body.pre-init[data-initial-mode="multiplayer"] .mode-display {
     display: flex;
     gap: 6px;
     flex-shrink: 0;
+    align-items: stretch;
   }
 
-  /* 准备区域 - 流式布局，不覆盖 */
+  .room-action-bar .room-actions .btn-icon {
+    width: 40px;
+    height: 40px;
+  }
+
+  /* 准备区域 - 流式布局 */
   .ready-section {
     position: relative;
     background: transparent;
     border: none;
     padding: 0;
     margin: 0;
-    width: auto;
-    flex-shrink: 0;
+    width: 100%;
   }
 
   #readyBtn {
     padding: 0 12px;
-    height: 32px;
-    font-size: 12px;
-    width: auto;
+    height: 40px;
+    font-size: 14px;
+    width: 100%;
     white-space: nowrap;
   }
 
@@ -1205,12 +1214,12 @@ body.pre-init[data-initial-mode="multiplayer"] .mode-display {
   }
 
   .player-card {
-    padding: 8px 12px;
+    padding: 6px 10px;
     flex: 1;
-    gap: 10px;
+    gap: 8px;
     transition: none;
     align-items: center;
-    justify-content: center;
+    justify-content: flex-start;
     min-width: 0;
     background-color: var(--bg-primary);
     -webkit-tap-highlight-color: transparent;
@@ -1223,8 +1232,8 @@ body.pre-init[data-initial-mode="multiplayer"] .mode-display {
   }
 
   .player-stone {
-    width: 28px;
-    height: 28px;
+    width: 26px;
+    height: 26px;
     flex-shrink: 0;
   }
 
@@ -1234,7 +1243,7 @@ body.pre-init[data-initial-mode="multiplayer"] .mode-display {
     display: flex;
     flex-direction: column;
     justify-content: center;
-    align-items: center;
+    align-items: flex-start;
     min-height: auto;
   }
 
@@ -1248,7 +1257,7 @@ body.pre-init[data-initial-mode="multiplayer"] .mode-display {
 
   .player-turn {
     font-size: 11px;
-    margin-top: 2px;
+    margin-top: 1px;
   }
 
   /* 隐藏游戏信息区域（当前回合、对局模式），使布局更简洁 */
@@ -1256,24 +1265,13 @@ body.pre-init[data-initial-mode="multiplayer"] .mode-display {
     display: none;
   }
 
-  /* 移动端房间信息 - 紧凑模式 */
+  /* 移动端房间信息 - 与按钮高度一致 */
   .room-info-section {
-    margin-top: 8px;
-    padding: 10px;
-    border-top: none;
-    background-color: var(--bg-secondary);
-    border: 1px solid var(--border-color);
-    border-radius: var(--radius);
+    margin-top: 0;
+    padding: 0;
+    background: transparent;
+    border: none;
     width: 100%;
-    box-sizing: border-box;
-  }
-
-  /* 移动端房间操作栏 */
-  .room-action-bar {
-    padding: 8px 12px;
-    margin-bottom: 8px;
-    background-color: var(--bg-primary);
-    border-radius: var(--radius);
   }
 
   .room-label {
@@ -1284,19 +1282,14 @@ body.pre-init[data-initial-mode="multiplayer"] .mode-display {
     font-size: 16px;
   }
 
-  .btn-icon {
-    width: 32px;
-    height: 32px;
-  }
-
   .btn-icon svg {
     width: 16px;
     height: 16px;
   }
 
   .invite-section {
-    margin-top: 8px;
-    padding: 10px 12px;
+    margin-top: 6px;
+    padding: 8px 10px;
   }
 
   .invite-link-row input {
@@ -1312,11 +1305,6 @@ body.pre-init[data-initial-mode="multiplayer"] .mode-display {
   .waiting-text {
     margin-top: 4px;
     font-size: 11px;
-  }
-
-  .ready-section {
-    margin-top: 6px;
-    padding: 10px;
   }
 
   .ready-status-row {
