@@ -148,9 +148,20 @@ class UI {
       return;
     }
 
+    // 没有对手时，显示等待加入的提示
     if (!this.mpOpponentPresent) {
-      this.setBoardOverlayVisible(false);
+      if (this.overlayTitle) this.overlayTitle.textContent = '等待对手';
+      if (this.overlayDesc) this.overlayDesc.textContent = '请分享邀请链接给对手';
+      if (this.overlayStartBtn) {
+        this.overlayStartBtn.style.display = 'none';
+      }
+      this.setBoardOverlayVisible(true);
       return;
+    }
+
+    // 有对手时，显示开始按钮
+    if (this.overlayStartBtn) {
+      this.overlayStartBtn.style.display = 'block';
     }
 
     if (this.overlayTitle) this.overlayTitle.textContent = '开始游戏';
@@ -508,9 +519,20 @@ class UI {
       this.showToast('房间号已复制');
     });
 
-    // 切换邀请链接显示 (改为直接复制)
+    // 切换邀请链接显示 (点击显示/隐藏邀请链接区域，同时复制)
     document.getElementById('toggleInviteLink')?.addEventListener('click', () => {
+      const inviteSection = document.getElementById('inviteSection');
       const inviteUrl = `${window.location.origin}/room/${document.getElementById('displayRoomId').textContent}`;
+      document.getElementById('inviteLink').value = inviteUrl;
+      
+      // 切换邀请链接区域的显示状态
+      if (inviteSection.style.display === 'none' || !inviteSection.style.display) {
+        inviteSection.style.display = 'block';
+      } else {
+        inviteSection.style.display = 'none';
+      }
+      
+      // 复制链接到剪贴板
       navigator.clipboard.writeText(inviteUrl);
       this.showToast('邀请链接已复制');
     });
@@ -564,7 +586,8 @@ class UI {
 
         // 在左侧面板显示房间信息
         this.updateRoomIdDisplay(data.roomId);
-        document.getElementById('inviteSection').style.display = 'none'; // iOS 18 风格不再展开
+        // 桌面端：显示邀请链接区域，方便用户复制
+        document.getElementById('inviteSection').style.display = 'block';
         document.getElementById('readySection').style.display = 'none';
         const inviteUrl = `${window.location.origin}/room/${data.roomId}`;
         document.getElementById('inviteLink').value = inviteUrl;
@@ -578,7 +601,11 @@ class UI {
         // 更新 URL 为房间页
         window.history.pushState({}, '', `/room/${data.roomId}`);
 
+        // 显示等待对手的 overlay
         this.updateBoardOverlay();
+        
+        // 显示创建成功的提示
+        this.showToast('房间已创建！请分享邀请链接给对手');
       } else {
         this.showToast(data.error || '创建房间失败');
       }
@@ -664,7 +691,8 @@ class UI {
             // 房主显示邀请链接
             this.opponentCard.style.display = 'flex';
             this.opponentCard.querySelector('.player-label').textContent = '等待加入...';
-            document.getElementById('inviteSection').style.display = 'none'; // iOS 18 风格不再展开
+            // 桌面端：显示邀请链接区域
+            document.getElementById('inviteSection').style.display = 'block';
             document.getElementById('readySection').style.display = 'none';
             const inviteUrl = `${window.location.origin}/room/${data.roomId}`;
             document.getElementById('inviteLink').value = inviteUrl;
@@ -903,7 +931,8 @@ class UI {
         this.roomPanel.style.display = 'none';
         this.roomInfoSection.style.display = 'block';
         this.updateRoomIdDisplay(data.roomId);
-        document.getElementById('inviteSection').style.display = 'none';
+        // 桌面端：显示邀请链接区域
+        document.getElementById('inviteSection').style.display = 'block';
         document.getElementById('readySection').style.display = 'none';
         const inviteUrl = `${window.location.origin}/room/${data.roomId}`;
         document.getElementById('inviteLink').value = inviteUrl;
@@ -933,7 +962,8 @@ class UI {
         this.roomPanel.style.display = 'none';
         this.roomInfoSection.style.display = 'block';
         this.updateRoomIdDisplay(data.roomId);
-        document.getElementById('inviteSection').style.display = 'none'; // iOS 18 风格不再展开
+        // 桌面端：显示邀请链接区域
+        document.getElementById('inviteSection').style.display = 'block';
         document.getElementById('readySection').style.display = 'none';
         const inviteUrl = `${window.location.origin}/room/${data.roomId}`;
         document.getElementById('inviteLink').value = inviteUrl;
@@ -1116,7 +1146,8 @@ class UI {
       // 显示房间信息面板
       this.roomInfoSection.style.display = 'block';
       this.updateRoomIdDisplay(savedRoom.roomId);
-      document.getElementById('inviteSection').style.display = 'none'; // 不自动弹出邀请链接
+      // 桌面端：显示邀请链接区域（重连成功后会更新）
+      document.getElementById('inviteSection').style.display = 'block';
       const inviteUrl = `${window.location.origin}/room/${savedRoom.roomId}`;
       document.getElementById('inviteLink').value = inviteUrl;
       document.getElementById('multiplayerSelect').style.display = 'none';
@@ -1191,7 +1222,8 @@ class UI {
     document.getElementById('multiplayerSelect').style.display = 'none';
     // 设置waiting状态，让CSS控制房间信息栏显示
     document.body.setAttribute('data-game-status', 'waiting');
-    document.getElementById('inviteSection').style.display = 'none'; // 不自动弹出邀请链接
+    // 桌面端：显示邀请链接区域（在 socket 回调中会设置）
+    document.getElementById('inviteSection').style.display = 'none';
 
     // 先显示对手卡片占位（等待socket回调更新文字）
     this.opponentCard.style.display = 'flex';
