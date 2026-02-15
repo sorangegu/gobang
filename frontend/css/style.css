@@ -654,6 +654,11 @@ body:not([data-game-status="playing"]) #gameActions {
   border-top: 1px solid var(--border-color);
 }
 
+/* 桌面端默认显示房间信息 */
+.room-info-section {
+  display: block;
+}
+
 /* 房间操作栏 - 一行布局 */
 .room-action-bar {
   display: flex;
@@ -663,6 +668,14 @@ body:not([data-game-status="playing"]) #gameActions {
   background-color: var(--bg-primary);
   border-radius: var(--radius);
   border: 1px solid var(--border-color);
+  margin-top: 16px;
+}
+
+/* 桌面端显示房间信息栏 */
+body:not([data-game-status]) .room-action-bar,
+body.pre-init[data-initial-mode="multiplayer"] .room-action-bar,
+body[data-game-status="waiting"] .room-action-bar {
+  display: flex;
 }
 
 /* 房间信息按钮 (PC端隐藏，手机端显示) */
