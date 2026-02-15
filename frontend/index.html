@@ -175,6 +175,14 @@
       <!-- 棋盘区域 -->
       <div class="board-wrapper">
         <canvas id="board"></canvas>
+        <!-- Multiplayer overlay: shown after both players join but before game starts -->
+        <div class="board-overlay" id="boardOverlay" style="display: none;">
+          <div class="overlay-card">
+            <h3 class="overlay-title" id="overlayTitle">开始游戏</h3>
+            <p class="overlay-desc" id="overlayDesc">双方点击开始后进入对局</p>
+            <button class="btn-primary overlay-btn" id="overlayStartBtn">开始游戏</button>
+          </div>
+        </div>
       </div>
 
       <!-- 右侧装饰面板 -->

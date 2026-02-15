@@ -14,6 +14,11 @@ class UI {
     // 初始化统计
     this.stats = this.loadStats();
 
+    // Multiplayer stage state (pre-start overlay)
+    this.mpOpponentPresent = false;
+    this.mpMyReady = false;
+    this.mpOpponentReady = false;
+
     this.initElements();
     this.initEventListeners();
     this.loadTheme();
@@ -118,6 +123,65 @@ class UI {
     this.updateUI();
     this.updateStats();
     document.body.classList.remove('pre-init');
+  }
+
+  setBoardOverlayVisible(visible) {
+    if (!this.boardOverlay) return;
+    this.boardOverlay.style.display = visible ? 'flex' : 'none';
+  }
+
+  resetMultiplayerReadyState() {
+    this.mpOpponentPresent = false;
+    this.mpMyReady = false;
+    this.mpOpponentReady = false;
+  }
+
+  updateBoardOverlay() {
+    // Only used for multiplayer rooms before game start.
+    if (!this.boardOverlay || game.gameMode === 'ai' || !game.roomId) {
+      this.setBoardOverlayVisible(false);
+      return;
+    }
+
+    if (game.isPlaying || game.winner !== null) {
+      this.setBoardOverlayVisible(false);
+      return;
+    }
+
+    if (!this.mpOpponentPresent) {
+      this.setBoardOverlayVisible(false);
+      return;
+    }
+
+    if (this.overlayTitle) this.overlayTitle.textContent = '开始游戏';
+
+    if (this.mpMyReady && !this.mpOpponentReady) {
+      if (this.overlayDesc) this.overlayDesc.textContent = '你已准备，等待对手开始...';
+      if (this.overlayStartBtn) {
+        this.overlayStartBtn.textContent = '等待对手...';
+        this.overlayStartBtn.disabled = true;
+      }
+    } else if (!this.mpMyReady && this.mpOpponentReady) {
+      if (this.overlayDesc) this.overlayDesc.textContent = '对手已准备，轮到你开始';
+      if (this.overlayStartBtn) {
+        this.overlayStartBtn.textContent = '开始游戏';
+        this.overlayStartBtn.disabled = false;
+      }
+    } else if (this.mpMyReady && this.mpOpponentReady) {
+      if (this.overlayDesc) this.overlayDesc.textContent = '双方已准备，正在开始...';
+      if (this.overlayStartBtn) {
+        this.overlayStartBtn.textContent = '正在开始...';
+        this.overlayStartBtn.disabled = true;
+      }
+    } else {
+      if (this.overlayDesc) this.overlayDesc.textContent = '双方点击开始后进入对局';
+      if (this.overlayStartBtn) {
+        this.overlayStartBtn.textContent = '开始游戏';
+        this.overlayStartBtn.disabled = false;
+      }
+    }
+
+    this.setBoardOverlayVisible(true);
   }
 
   // Multiplayer "waiting" state should NOT be treated as "playing".
@@ -320,6 +384,12 @@ class UI {
     this.resetStatsBtn = document.getElementById('resetStatsBtn');
     this.roomInfoSection = document.getElementById('roomInfoSection');
     this.leaveRoomBtn = document.getElementById('leaveRoomBtn');
+
+    // Board overlay (multiplayer pre-start)
+    this.boardOverlay = document.getElementById('boardOverlay');
+    this.overlayTitle = document.getElementById('overlayTitle');
+    this.overlayDesc = document.getElementById('overlayDesc');
+    this.overlayStartBtn = document.getElementById('overlayStartBtn');
   }
 
   // 更新房间号显示（同时更新详情和预览）
@@ -455,6 +525,9 @@ class UI {
     // 准备按钮
     document.getElementById('readyBtn')?.addEventListener('click', () => this.handleReady());
 
+    // Board overlay start button
+    this.overlayStartBtn?.addEventListener('click', () => this.handleReady());
+
     // 房间信息按钮（手机端弹出层）
     const showRoomInfoBtn = document.getElementById('showRoomInfoBtn');
     if (showRoomInfoBtn) {
@@ -487,6 +560,8 @@ class UI {
   initSocketListeners() {
     socketManager.on('roomCreated', (data) => {
       if (data.success) {
+        this.resetMultiplayerReadyState();
+
         // 在左侧面板显示房间信息
         this.updateRoomIdDisplay(data.roomId);
         document.getElementById('inviteSection').style.display = 'none'; // iOS 18 风格不再展开
@@ -502,6 +577,8 @@ class UI {
         this.saveRoomInfo(data.roomId, 1);
         // 更新 URL 为房间页
         window.history.pushState({}, '', `/room/${data.roomId}`);
+
+        this.updateBoardOverlay();
       } else {
         this.showToast(data.error || '创建房间失败');
       }
@@ -519,37 +596,28 @@ class UI {
         this.playerCard.querySelector('.player-label').textContent = '你 (白方)';
         this.roomInfoSection.style.display = 'block';
 
-        // 检查是否是重新加入进行中对局
-        if (data.isRejoining && data.isPlaying) {
-          // 恢复对局状态
-          game.board = data.board;
-          game.moveHistory = data.moveHistory || [];
-          game.currentPlayer = data.currentPlayer;
-          game.isPlaying = true;
-          game.lastMove = game.moveHistory.length > 0 ? game.moveHistory[game.moveHistory.length - 1] : null;
-          this.drawBoard();
+        // Join always receives a snapshot (may include existing record).
+        game.board = data.board || Array(15).fill(null).map(() => Array(15).fill(0));
+        game.moveHistory = data.moveHistory || [];
+        game.currentPlayer = data.currentPlayer || 1;
+        game.isPlaying = data.isPlaying === true;
+        game.winner = null;
+        game.lastMove = game.moveHistory.length > 0 ? game.moveHistory[game.moveHistory.length - 1] : null;
 
-          // 隐藏准备区域，显示对局
-          document.getElementById('inviteSection').style.display = 'none';
-          document.getElementById('readySection').style.display = 'none';
-          this.showToast('重新加入对局成功！');
-        } else {
-          // 新加入，重置状态
-          this.resetBoardToWaiting();
-          // 显示准备区域
-          document.getElementById('inviteSection').style.display = 'none';
-          document.getElementById('readySection').style.display = 'block';
-          // 重置准备状态
-          document.getElementById('myReadyStatus').textContent = '未准备';
-          document.getElementById('myReadyStatus').style.color = 'var(--text-muted)';
-          document.getElementById('opponentReadyStatus').textContent = '未准备';
-          document.getElementById('opponentReadyStatus').style.color = 'var(--text-muted)';
-        }
+        this.mpOpponentPresent = true;
+        this.mpMyReady = false;
+        this.mpOpponentReady = false;
+
+        // Hide legacy ready area; use the board overlay instead.
+        document.getElementById('inviteSection').style.display = 'none';
+        document.getElementById('readySection').style.display = 'none';
+
         document.getElementById('readyBtn').disabled = false;
         document.getElementById('readyBtn').textContent = '准备开始';
         this.drawBoard();
         this.updateUI();
         this.saveRoomInfo(data.roomId, data.playerColor || 2);
+        this.updateBoardOverlay();
       } else {
         this.showToast(data.error || '加入房间失败');
       }
@@ -562,11 +630,19 @@ class UI {
         game.myColor = data.playerColor;
         game.board = data.board;
         game.currentPlayer = data.currentPlayer;
-        game.isPlaying = data.status === 'playing' && data.opponentOnline;
+        game.moveHistory = data.moveHistory || [];
+        game.lastMove = game.moveHistory.length > 0 ? game.moveHistory[game.moveHistory.length - 1] : null;
+        game.isPlaying = data.status === 'playing';
+        game.winner = null;
         this.updateRoomIdDisplay(data.roomId);
         this.roomPanel.style.display = 'none';
         document.getElementById('multiplayerSelect').style.display = 'none';
         this.roomInfoSection.style.display = 'block';
+
+        this.mpOpponentPresent = !!data.opponentOnline;
+        // Reconnect doesn't carry ready state; treat as not ready until the user clicks.
+        this.mpMyReady = false;
+        this.mpOpponentReady = false;
 
         if (data.status === 'playing' && data.opponentOnline) {
           // 正在游戏中且对手在线，显示对手
@@ -595,19 +671,13 @@ class UI {
           } else {
             // 被邀玩家显示准备区域
             document.getElementById('inviteSection').style.display = 'none';
-            document.getElementById('readySection').style.display = 'block';
-            // 重置准备状态
-            document.getElementById('myReadyStatus').textContent = '未准备';
-            document.getElementById('myReadyStatus').style.color = 'var(--text-muted)';
-            document.getElementById('opponentReadyStatus').textContent = '未准备';
-            document.getElementById('opponentReadyStatus').style.color = 'var(--text-muted)';
-            document.getElementById('readyBtn').disabled = false;
-            document.getElementById('readyBtn').textContent = '准备开始';
+            document.getElementById('readySection').style.display = 'none';
           }
         }
 
         this.drawBoard();
         this.updateUI();
+        this.updateBoardOverlay();
         this.showToast('重连成功！');
       } else {
         // 重连失败，清除本地存储
@@ -636,20 +706,22 @@ class UI {
         this.updateUI();
         this.showToast('对手重新加入，继续对局！');
       } else {
-        // 新玩家加入，重置状态
-        this.resetBoardToWaiting();
-        // 显示准备区域
+        // 新玩家加入：保留对局记录，但需要双方重新点击开始
+        game.isPlaying = false;
+        game.winner = null;
+        game.lastMove = game.moveHistory.length > 0 ? game.moveHistory[game.moveHistory.length - 1] : null;
+
+        this.mpOpponentPresent = true;
+        this.mpMyReady = false;
+        this.mpOpponentReady = false;
+
+        // 显示准备（改为 overlay）
         document.getElementById('inviteSection').style.display = 'none';
-        document.getElementById('readySection').style.display = 'block';
-        // 重置准备状态
-        document.getElementById('myReadyStatus').textContent = '未准备';
-        document.getElementById('myReadyStatus').style.color = 'var(--text-muted)';
-        document.getElementById('opponentReadyStatus').textContent = '未准备';
-        document.getElementById('opponentReadyStatus').style.color = 'var(--text-muted)';
-        document.getElementById('readyBtn').disabled = false;
-        document.getElementById('readyBtn').textContent = '准备开始';
+        document.getElementById('readySection').style.display = 'none';
+
         this.drawBoard();
         this.updateUI();
+        this.updateBoardOverlay();
         this.showToast('对手已加入，请准备开始游戏');
       }
     });
@@ -663,6 +735,7 @@ class UI {
       document.getElementById('readySection').style.display = 'none';
       // 设置游戏状态为playing，隐藏房间文字，显示游戏操作按钮
       this.updateGameStatus('playing');
+      this.setBoardOverlayVisible(false);
       this.drawBoard();
       this.updateUI();
       this.showToast('游戏开始！');
@@ -746,17 +819,21 @@ class UI {
     });
 
     socketManager.on('playerLeft', (data) => {
-      // 检查是否保留对局
-      if (data.preserveGame && data.isPlaying) {
-        // 保留对局状态
-        game.board = data.board;
-        game.moveHistory = data.moveHistory || [];
-        game.currentPlayer = data.currentPlayer;
-        game.isPlaying = true;
+      // 对手离开：保留对局记录，但进入等待状态（需对手重新加入并双方开始）
+      if (data.preserveGame) {
+        game.board = data.board || game.board;
+        game.moveHistory = data.moveHistory || game.moveHistory || [];
+        game.currentPlayer = data.currentPlayer || game.currentPlayer || 1;
+        game.isPlaying = data.isPlaying === true; // leaving pauses, typically false
+        game.winner = null;
         game.lastMove = game.moveHistory.length > 0 ? game.moveHistory[game.moveHistory.length - 1] : null;
-        this.drawBoard();
 
-        // 显示对局保留提示
+        this.mpOpponentPresent = false;
+        this.mpMyReady = false;
+        this.mpOpponentReady = false;
+        this.setBoardOverlayVisible(false);
+
+        this.drawBoard();
         this.opponentCard.style.display = 'none';
         this.updateUI();
         this.showToast(data.reason || '对手离开，对局已保留');
@@ -789,10 +866,14 @@ class UI {
     });
 
     socketManager.on('opponentDisconnected', (data) => {
+      this.mpOpponentPresent = false;
+      this.updateBoardOverlay();
       this.showToast(data.reason || '对手断开连接');
     });
 
     socketManager.on('opponentReconnected', () => {
+      this.mpOpponentPresent = true;
+      this.updateBoardOverlay();
       this.showToast('对手已重连');
     });
 
@@ -803,21 +884,26 @@ class UI {
       game.gameMode = 'create';
       this.saveRoomInfo(data.roomId, 1);
 
-      // 检查是否保留对局
-      if (data.preserveGame && data.isPlaying) {
-        // 保留对局状态
-        game.board = data.board;
-        game.moveHistory = data.moveHistory || [];
-        game.currentPlayer = data.currentPlayer;
-        game.isPlaying = true;
+      if (data.preserveGame) {
+        // 房主转移：保留对局记录，但进入等待状态
+        game.board = data.board || game.board;
+        game.moveHistory = data.moveHistory || game.moveHistory || [];
+        game.currentPlayer = data.currentPlayer || game.currentPlayer || 1;
+        game.isPlaying = data.isPlaying === true;
+        game.winner = null;
         game.lastMove = game.moveHistory.length > 0 ? game.moveHistory[game.moveHistory.length - 1] : null;
+
+        this.mpOpponentPresent = false;
+        this.mpMyReady = false;
+        this.mpOpponentReady = false;
+        this.setBoardOverlayVisible(false);
+
         this.drawBoard();
 
-        // 显示对局保留提示和重新开始按钮
         this.roomPanel.style.display = 'none';
         this.roomInfoSection.style.display = 'block';
         this.updateRoomIdDisplay(data.roomId);
-        document.getElementById('inviteSection').style.display = 'none'; // iOS 18 风格不再展开
+        document.getElementById('inviteSection').style.display = 'none';
         document.getElementById('readySection').style.display = 'none';
         const inviteUrl = `${window.location.origin}/room/${data.roomId}`;
         document.getElementById('inviteLink').value = inviteUrl;
@@ -865,6 +951,8 @@ class UI {
 
     socketManager.on('opponentReady', (data) => {
       // 对手准备了
+      this.mpOpponentReady = true;
+      this.updateBoardOverlay();
       document.getElementById('opponentReadyStatus').textContent = '已准备';
       document.getElementById('opponentReadyStatus').style.color = 'var(--success-color)';
       this.showToast('对手已准备');
@@ -873,6 +961,8 @@ class UI {
     socketManager.on('playerReadyResult', (data) => {
       if (data.success) {
         // 自己准备了
+        this.mpMyReady = true;
+        this.updateBoardOverlay();
         document.getElementById('myReadyStatus').textContent = '已准备';
         document.getElementById('myReadyStatus').style.color = 'var(--success-color)';
         document.getElementById('readyBtn').disabled = true;
@@ -984,7 +1074,14 @@ class UI {
   // 处理模式切换
   handleModeChange(mode) {
     if (mode === 'ai') {
-      // 不清除房间信息，保留玩家对战状态
+      // Leaving multiplayer view: exit the room so multiplayer state doesn't leak into AI.
+      if (game.gameMode !== 'ai' && game.roomId) {
+        socketManager.leaveRoom();
+        this.clearRoomInfo(); // user can re-join later by room id/link
+        this.resetMultiplayerReadyState();
+        this.setBoardOverlayVisible(false);
+      }
+
       this.resumeAIGame();
       // 更新 URL
       window.history.pushState({}, '', '/');
@@ -1085,6 +1182,8 @@ class UI {
   createRoom() {
     game.gameMode = 'create';
     game.isPlaying = false;
+    this.resetMultiplayerReadyState();
+    this.setBoardOverlayVisible(false);
 
     socketManager.createRoom();
 
@@ -1105,6 +1204,8 @@ class UI {
   showJoinPanel() {
     game.gameMode = 'join';
     game.isPlaying = false;
+    this.resetMultiplayerReadyState();
+    this.setBoardOverlayVisible(false);
 
     // 隐藏选择面板，显示房间信息
     document.getElementById('multiplayerSelect').style.display = 'none';
@@ -1122,6 +1223,8 @@ class UI {
       this.showToast('请输入6位房间号');
       return;
     }
+    this.resetMultiplayerReadyState();
+    this.setBoardOverlayVisible(false);
     socketManager.joinRoom(roomId);
   }
 
@@ -1384,6 +1487,8 @@ class UI {
     game.isHost = false;
     localStorage.removeItem('gobang-room');
     this.roomInfoSection.style.display = 'none';
+    this.resetMultiplayerReadyState();
+    this.setBoardOverlayVisible(false);
   }
 
   // 保存房间信息到本地存储
@@ -1431,6 +1536,9 @@ class UI {
     // Subtle affordance: only show pointer when the user can place a stone.
     const canInteract = game.isPlaying && game.winner === null && isMyTurn;
     this.canvas.style.cursor = canInteract ? 'pointer' : 'default';
+
+    // Multiplayer pre-start overlay
+    this.updateBoardOverlay();
   }
 
   // 显示游戏结束

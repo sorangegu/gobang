@@ -465,7 +465,9 @@ class RoomManager {
       room.guest = null;
       opponent.isHost = true;
       opponent.playerColor = 1;
-      // 保持游戏状态，只重置准备状态
+      // Leaving should pause the game but keep the record.
+      if (room.status === 'playing') room.status = 'waiting';
+      // 保持对局记录，只重置准备状态
       room.hostReady = false;
       room.guestReady = false;
 
@@ -482,7 +484,8 @@ class RoomManager {
     } else if (!isHost && opponent) {
       // Guest 离开，房主保留对局
       room.guest = null;
-      // 保持游戏状态，只重置准备状态
+      if (room.status === 'playing') room.status = 'waiting';
+      // 保持对局记录，只重置准备状态
       room.hostReady = false;
       room.guestReady = false;
 
@@ -643,6 +646,7 @@ class RoomManager {
       isHost: socket.isHost,
       playerColor: socket.playerColor,
       board: room.board,
+      moveHistory: room.moveHistory,
       currentPlayer: room.currentPlayer,
       status: room.status,
       opponentOnline
