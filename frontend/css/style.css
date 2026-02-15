@@ -1128,7 +1128,7 @@ body:not([data-game-mode="ai"])[data-game-status="playing"] .room-code-preview {
     --mobile-nav-height: 44px;
     --mobile-info-height: 70px;
     --mobile-room-height: 44px;
-    --btn-height: 44px;
+    --btn-height: 40px;
     --btn-radius: 10px;
   }
 
