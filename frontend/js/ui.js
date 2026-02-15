@@ -701,10 +701,13 @@ class UI {
     });
 
     socketManager.on('roomReconnected', (data) => {
+      console.log('[DEBUG] roomReconnected 收到:', data);
       if (data.success) {
         this.pendingReconnect = null;
         this.roomPanel.style.display = 'none';
         this.roomInfoSection.style.display = 'block';
+        // 确保隐藏选择面板
+        document.getElementById('multiplayerSelect').style.display = 'none';
 
         game.setRoomInfo(data.roomId, data.isHost);
         game.myColor = data.playerColor;
@@ -772,6 +775,14 @@ class UI {
 
         // Force UI update to room mode
         this.updateModeUI('room');
+        // 设置正确的游戏状态
+        if (data.status === 'playing') {
+          this.updateGameStatus('playing');
+        } else {
+          this.updateGameStatus('waiting');
+        }
+        // 更新房间号显示
+        this.updateRoomIdDisplay(data.roomId);
         // 更新 URL 为房间页面
         window.history.pushState({}, '', `/room/${data.roomId}`);
         this.drawBoard();
