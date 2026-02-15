@@ -59,11 +59,11 @@ class UI {
         // 更新 URL 为房间页
         window.history.replaceState({}, '', `/room/${savedRoom.roomId}`);
         this.updateModeUI('room');
-        this.roomInfoSection.style.display = 'block';
+        this.setRoomInfoSectionDisplay('block');
         this.updateRoomIdDisplay(savedRoom.roomId);
-        document.getElementById('inviteSection').style.display = 'block';
+        this.setInviteSectionDisplay('block');
         const inviteUrl = `${window.location.origin}/room/${savedRoom.roomId}`;
-        document.getElementById('inviteLink').value = inviteUrl;
+        this.setInviteLinkValue(inviteUrl);
         // 设置待重连
         this.pendingReconnect = {
           roomId: savedRoom.roomId,
@@ -82,7 +82,7 @@ class UI {
         game.winner = null;
         game.lastMove = null;
         this.roomPanel.style.display = 'none';
-        this.roomInfoSection.style.display = 'none';
+        this.setRoomInfoSectionDisplay('none');
         document.getElementById('multiplayerSelect').style.display = 'block';
         this.updateModeUI('multiplayer');
         // 不需要再调用 drawBoard()，initCanvas 已经绘制过了
@@ -96,11 +96,11 @@ class UI {
         game.myColor = savedRoom.playerColor;
         game.roomId = savedRoom.roomId;
         // 显示房间信息
-        this.roomInfoSection.style.display = 'block';
+        this.setRoomInfoSectionDisplay('block');
         this.updateRoomIdDisplay(savedRoom.roomId);
-        document.getElementById('inviteSection').style.display = 'block';
+        this.setInviteSectionDisplay('block');
         const inviteUrl = `${window.location.origin}/room/${savedRoom.roomId}`;
-        document.getElementById('inviteLink').value = inviteUrl;
+        this.setInviteLinkValue(inviteUrl);
         this.updateModeUI('room');
         // 设置待重连
         this.pendingReconnect = {
@@ -120,7 +120,7 @@ class UI {
         game.winner = null;
         game.lastMove = null;
         this.roomPanel.style.display = 'none';
-        this.roomInfoSection.style.display = 'none';
+        this.setRoomInfoSectionDisplay('none');
         document.getElementById('multiplayerSelect').style.display = 'block';
         this.updateModeUI('multiplayer');
       }
@@ -293,7 +293,7 @@ class UI {
 
     if (mode === 'ai') {
       this.roomPanel.style.display = 'none';
-      this.roomInfoSection.style.display = 'none';
+      this.setRoomInfoSectionDisplay('none');
       document.getElementById('multiplayerSelect').style.display = 'none';
       // 不使用内联样式，让CSS根据data-game-status控制显示
       this.opponentCard.style.display = 'flex';
@@ -303,7 +303,7 @@ class UI {
       this.updateGameMode('ai');
     } else if (mode === 'multiplayer') {
       this.roomPanel.style.display = 'none';
-      this.roomInfoSection.style.display = 'none';
+      this.setRoomInfoSectionDisplay('none');
       document.getElementById('multiplayerSelect').style.display = 'block';
       // 不使用内联样式，让CSS根据data-game-status控制显示
       // 显示白棋卡片，标签设为"白方"
@@ -318,7 +318,7 @@ class UI {
       this.roomPanel.style.display = 'none';
       document.getElementById('multiplayerSelect').style.display = 'none';
       // 不使用内联样式，让CSS根据data-game-status控制显示
-      this.roomInfoSection.style.display = 'block';
+      this.setRoomInfoSectionDisplay('block');
       this.opponentCard.style.display = 'flex';
       this.updateGameMode('room');
     }
@@ -444,12 +444,102 @@ class UI {
     this.overlayStartBtn = document.getElementById('overlayStartBtn');
   }
 
-  // 更新房间号显示（同时更新详情和预览）
+  // 更���房间号显示（同时更新PC端和移动端）
   updateRoomIdDisplay(roomId) {
+    // 移动端
     document.getElementById('displayRoomId').textContent = roomId;
     const preview = document.getElementById('roomCodePreview');
     if (preview) {
       preview.textContent = roomId;
+    }
+    // PC端
+    const displayRoomIdDesktop = document.getElementById('displayRoomIdDesktop');
+    if (displayRoomIdDesktop) {
+      displayRoomIdDesktop.textContent = roomId;
+    }
+    const previewDesktop = document.getElementById('roomCodePreviewDesktop');
+    if (previewDesktop) {
+      previewDesktop.textContent = roomId;
+    }
+  }
+
+  // 设置房间信息区域显示（同时控制PC端和移动端）
+  setRoomInfoSectionDisplay(display) {
+    // 移动端
+    this.roomInfoSection.style.display = display;
+    // PC端
+    const desktop = document.getElementById('roomInfoSectionDesktop');
+    if (desktop) {
+      desktop.style.display = display;
+    }
+  }
+
+  // 设置邀请链接区域显示（同时控制PC端和移动端）
+  setInviteSectionDisplay(display) {
+    document.getElementById('inviteSection').style.display = display;
+    const desktop = document.getElementById('inviteSectionDesktop');
+    if (desktop) {
+      desktop.style.display = display;
+    }
+  }
+
+  // 设置邀请链接值（同时控制PC端和移动端）
+  setInviteLinkValue(url) {
+    document.getElementById('inviteLink').value = url;
+    const desktop = document.getElementById('inviteLinkDesktop');
+    if (desktop) {
+      desktop.value = url;
+    }
+  }
+
+  // 设置准备区域显示（同时控制PC端和移动端）
+  setReadySectionDisplay(display) {
+    document.getElementById('readySection').style.display = display;
+    const desktop = document.getElementById('readySectionDesktop');
+    if (desktop) {
+      desktop.style.display = display;
+    }
+  }
+
+  // 设置我的准备状态（同时控制PC端和移动端）
+  setMyReadyStatus(text, color) {
+    const el = document.getElementById('myReadyStatus');
+    if (el) {
+      el.textContent = text;
+      el.style.color = color;
+    }
+    const elDesktop = document.getElementById('myReadyStatusDesktop');
+    if (elDesktop) {
+      elDesktop.textContent = text;
+      elDesktop.style.color = color;
+    }
+  }
+
+  // 设置对手准备状态（同时控制PC端和移动端）
+  setOpponentReadyStatus(text, color) {
+    const el = document.getElementById('opponentReadyStatus');
+    if (el) {
+      el.textContent = text;
+      el.style.color = color;
+    }
+    const elDesktop = document.getElementById('opponentReadyStatusDesktop');
+    if (elDesktop) {
+      elDesktop.textContent = text;
+      elDesktop.style.color = color;
+    }
+  }
+
+  // 设置准备按钮状态（同时控制PC端和移动端）
+  setReadyButtonState(disabled, text) {
+    const btn = document.getElementById('readyBtn');
+    if (btn) {
+      btn.disabled = disabled;
+      btn.textContent = text;
+    }
+    const btnDesktop = document.getElementById('readyBtnDesktop');
+    if (btnDesktop) {
+      btnDesktop.disabled = disabled;
+      btnDesktop.textContent = text;
     }
   }
 
@@ -564,7 +654,7 @@ class UI {
     document.getElementById('toggleInviteLink')?.addEventListener('click', () => {
       const inviteSection = document.getElementById('inviteSection');
       const inviteUrl = `${window.location.origin}/room/${document.getElementById('displayRoomId').textContent}`;
-      document.getElementById('inviteLink').value = inviteUrl;
+      this.setInviteLinkValue(inviteUrl);
 
       // 切换邀请链接区域的显示状态
       if (inviteSection.style.display === 'none' || !inviteSection.style.display) {
@@ -604,13 +694,74 @@ class UI {
       });
     }
 
-    // 点击其他地方关闭房间详情弹出层
+    // ========== PC端房间信息事件监听 ==========
+    // 复制房间号 (PC端)
+    document.getElementById('copyRoomIdDesktop')?.addEventListener('click', () => {
+      const roomId = document.getElementById('displayRoomIdDesktop').textContent;
+      navigator.clipboard.writeText(roomId);
+      this.showToast('房间号已复制');
+    });
+
+    // 切换邀请链接显示 (PC端)
+    document.getElementById('toggleInviteLinkDesktop')?.addEventListener('click', () => {
+      const inviteSectionDesktop = document.getElementById('inviteSectionDesktop');
+      const inviteUrl = `${window.location.origin}/room/${document.getElementById('displayRoomIdDesktop').textContent}`;
+      this.setInviteLinkValue(inviteUrl);
+
+      // 切换邀请链接区域的显示状态
+      if (inviteSectionDesktop.style.display === 'none' || !inviteSectionDesktop.style.display) {
+        inviteSectionDesktop.style.display = 'block';
+      } else {
+        inviteSectionDesktop.style.display = 'none';
+      }
+
+      // 复制链接到剪贴板
+      navigator.clipboard.writeText(inviteUrl);
+      this.showToast('邀请链接已复制');
+    });
+
+    // 复制邀请链接 (PC端)
+    document.getElementById('copyInviteLinkDesktop')?.addEventListener('click', () => {
+      const link = document.getElementById('inviteLinkDesktop').value;
+      navigator.clipboard.writeText(link);
+      this.showToast('邀请链接已复制');
+    });
+
+    // 离开房间 (PC端)
+    document.getElementById('leaveRoomBtnDesktop')?.addEventListener('click', () => this.handleLeaveRoom());
+
+    // 准备按钮 (PC端)
+    document.getElementById('readyBtnDesktop')?.addEventListener('click', () => this.handleReady());
+
+    // 房间信息按钮（PC端弹出层）
+    const showRoomInfoBtnDesktop = document.getElementById('showRoomInfoBtnDesktop');
+    if (showRoomInfoBtnDesktop) {
+      showRoomInfoBtnDesktop.addEventListener('click', (e) => {
+        e.stopPropagation();
+        const popup = document.getElementById('roomDetailPopupDesktop');
+        if (popup) {
+          const isVisible = popup.style.display === 'block';
+          popup.style.display = isVisible ? 'none' : 'block';
+        }
+      });
+    }
+
+    // 点击其他地方关闭房间详情弹出层（同时处理PC端和移动端）
     document.addEventListener('click', (e) => {
+      // 移动端弹出层
       const popup = document.getElementById('roomDetailPopup');
       const roomInfoSection = document.getElementById('roomInfoSection');
       if (popup && popup.style.display === 'block') {
         if (!roomInfoSection.contains(e.target)) {
           popup.style.display = 'none';
+        }
+      }
+      // PC端弹出层
+      const popupDesktop = document.getElementById('roomDetailPopupDesktop');
+      const roomInfoSectionDesktop = document.getElementById('roomInfoSectionDesktop');
+      if (popupDesktop && popupDesktop.style.display === 'block') {
+        if (!roomInfoSectionDesktop.contains(e.target)) {
+          popupDesktop.style.display = 'none';
         }
       }
     });
@@ -628,10 +779,10 @@ class UI {
         // 在左侧面板显示房间信息
         this.updateRoomIdDisplay(data.roomId);
         // 桌面端：显示邀请链接区域，方便用户复制
-        document.getElementById('inviteSection').style.display = 'block';
-        document.getElementById('readySection').style.display = 'none';
+        this.setInviteSectionDisplay('block');
+        this.setReadySectionDisplay('none');
         const inviteUrl = `${window.location.origin}/room/${data.roomId}`;
-        document.getElementById('inviteLink').value = inviteUrl;
+        this.setInviteLinkValue(inviteUrl);
 
         // 显示对手卡片占位
         this.opponentCard.style.display = 'flex';
@@ -666,7 +817,7 @@ class UI {
         this.opponentCard.style.display = 'flex';
         this.opponentCard.querySelector('.player-label').textContent = '对手 (黑方)';
         this.playerCard.querySelector('.player-label').textContent = '你 (白方)';
-        this.roomInfoSection.style.display = 'block';
+        this.setRoomInfoSectionDisplay('block');
 
         // Join always receives a snapshot (may include existing record).
         game.board = data.board || Array(15).fill(null).map(() => Array(15).fill(0));
@@ -724,7 +875,7 @@ class UI {
         // 步骤 3：操作 DOM 显示
         this.roomPanel.style.display = 'none';
         document.getElementById('multiplayerSelect').style.display = 'none';
-        this.roomInfoSection.style.display = 'block';
+        this.setRoomInfoSectionDisplay('block');
         this.opponentCard.style.display = 'flex';
         this.updateRoomIdDisplay(data.roomId);
 
@@ -741,8 +892,8 @@ class UI {
           // 游戏进行中
           game.isPlaying = true;
           this.setBoardOverlayVisible(false);
-          document.getElementById('inviteSection').style.display = 'none';
-          document.getElementById('readySection').style.display = 'none';
+          this.setInviteSectionDisplay('none');
+          this.setReadySectionDisplay('none');
 
           if (data.opponentOnline) {
             this.opponentCard.querySelector('.player-label').textContent = data.isHost ? '对手 (白方)' : '对手 (黑方)';
@@ -757,17 +908,15 @@ class UI {
 
           if (data.isHost) {
             this.opponentCard.querySelector('.player-label').textContent = '等待加入...';
-            document.getElementById('inviteSection').style.display = 'block';
-            document.getElementById('readySection').style.display = 'none';
+            this.setInviteSectionDisplay('block');
+            this.setReadySectionDisplay('none');
             const inviteUrl = `${window.location.origin}/room/${data.roomId}`;
-            document.getElementById('inviteLink').value = inviteUrl;
+            this.setInviteLinkValue(inviteUrl);
           } else {
-            document.getElementById('inviteSection').style.display = 'none';
-            document.getElementById('readySection').style.display = 'block';
-            document.getElementById('readyBtn').disabled = false;
-            document.getElementById('readyBtn').textContent = '准备开始';
-            document.getElementById('myReadyStatus').textContent = '未准备';
-            document.getElementById('myReadyStatus').style.color = 'var(--text-muted)';
+            this.setInviteSectionDisplay('none');
+            this.setReadySectionDisplay('block');
+            this.setReadyButtonState(false, '准备开始');
+            this.setMyReadyStatus('未准备', 'var(--text-muted)');
             this.opponentCard.querySelector('.player-label').textContent = '对手 (黑方)';
           }
         }
@@ -794,7 +943,7 @@ class UI {
 
         // 关闭覆盖层
         this.setBoardOverlayVisible(false);
-        this.roomInfoSection.style.display = 'none';
+        this.setRoomInfoSectionDisplay('none');
 
         // 检查当前 URL 是否在房间页面
         const currentPath = window.location.pathname;
@@ -821,8 +970,8 @@ class UI {
       // 检查是否是重新加入进行中对局
       if (data.isRejoining && game.isPlaying) {
         // 恢复对局，隐藏准备区域
-        document.getElementById('inviteSection').style.display = 'none';
-        document.getElementById('readySection').style.display = 'none';
+        this.setInviteSectionDisplay('none');
+        this.setReadySectionDisplay('none');
         this.drawBoard();
         this.updateUI();
         this.showToast('对手重新加入，继续对局！');
@@ -837,8 +986,8 @@ class UI {
         this.mpOpponentReady = false;
 
         // 显示准备（改为 overlay）
-        document.getElementById('inviteSection').style.display = 'none';
-        document.getElementById('readySection').style.display = 'none';
+        this.setInviteSectionDisplay('none');
+        this.setReadySectionDisplay('none');
 
         this.drawBoard();
         this.updateUI();
@@ -853,7 +1002,7 @@ class UI {
       game.currentPlayer = data.currentPlayer || 1;
       this.opponentCard.style.display = 'flex';
       // 隐藏准备区域
-      document.getElementById('readySection').style.display = 'none';
+      this.setReadySectionDisplay('none');
       // 设置游戏状态为playing，隐藏房间文字，显示游戏操作按钮
       this.updateGameStatus('playing');
       this.setBoardOverlayVisible(false);
@@ -1026,13 +1175,13 @@ class UI {
         this.drawBoard();
 
         this.roomPanel.style.display = 'none';
-        this.roomInfoSection.style.display = 'block';
+        this.setRoomInfoSectionDisplay('block');
         this.updateRoomIdDisplay(data.roomId);
         // 桌面端：显示邀请链接区域
-        document.getElementById('inviteSection').style.display = 'block';
-        document.getElementById('readySection').style.display = 'none';
+        this.setInviteSectionDisplay('block');
+        this.setReadySectionDisplay('none');
         const inviteUrl = `${window.location.origin}/room/${data.roomId}`;
-        document.getElementById('inviteLink').value = inviteUrl;
+        this.setInviteLinkValue(inviteUrl);
 
         this.opponentCard.style.display = 'flex';
         this.opponentCard.querySelector('.player-label').textContent = '等待加入...';
@@ -1058,22 +1207,19 @@ class UI {
         this.drawBoard();
 
         // 重置准备状态
-        document.getElementById('myReadyStatus').textContent = '未准备';
-        document.getElementById('myReadyStatus').style.color = 'var(--text-muted)';
-        document.getElementById('opponentReadyStatus').textContent = '未准备';
-        document.getElementById('opponentReadyStatus').style.color = 'var(--text-muted)';
-        document.getElementById('readyBtn').disabled = false;
-        document.getElementById('readyBtn').textContent = '准备开始';
+        this.setMyReadyStatus('未准备', 'var(--text-muted)');
+        this.setOpponentReadyStatus('未准备', 'var(--text-muted)');
+        this.setReadyButtonState(false, '准备开始');
 
         // 在左侧面板显示邀请信息
         this.roomPanel.style.display = 'none';
-        this.roomInfoSection.style.display = 'block';
+        this.setRoomInfoSectionDisplay('block');
         this.updateRoomIdDisplay(data.roomId);
         // 桌面端：显示邀请链接区域
-        document.getElementById('inviteSection').style.display = 'block';
-        document.getElementById('readySection').style.display = 'none';
+        this.setInviteSectionDisplay('block');
+        this.setReadySectionDisplay('none');
         const inviteUrl = `${window.location.origin}/room/${data.roomId}`;
-        document.getElementById('inviteLink').value = inviteUrl;
+        this.setInviteLinkValue(inviteUrl);
 
         this.opponentCard.style.display = 'flex';
         this.opponentCard.querySelector('.player-label').textContent = '等待加入...';
@@ -1090,8 +1236,7 @@ class UI {
       // 对手准备了
       this.mpOpponentReady = true;
       this.updateBoardOverlay();
-      document.getElementById('opponentReadyStatus').textContent = '已准备';
-      document.getElementById('opponentReadyStatus').style.color = 'var(--success-color)';
+      this.setOpponentReadyStatus('已准备', 'var(--success-color)');
       this.showToast('对手已准备');
     });
 
@@ -1100,10 +1245,8 @@ class UI {
         // 自己准备了
         this.mpMyReady = true;
         this.updateBoardOverlay();
-        document.getElementById('myReadyStatus').textContent = '已准备';
-        document.getElementById('myReadyStatus').style.color = 'var(--success-color)';
-        document.getElementById('readyBtn').disabled = true;
-        document.getElementById('readyBtn').textContent = '等待对手准备...';
+        this.setMyReadyStatus('已准备', 'var(--success-color)');
+        this.setReadyButtonState(true, '等待对手准备...');
       } else {
         this.showToast(data.error || '准备失败');
       }
@@ -1251,7 +1394,7 @@ class UI {
 
     // 没有保存的房间，显示选择面板
     this.roomPanel.style.display = 'none';
-    this.roomInfoSection.style.display = 'none';
+    this.setRoomInfoSectionDisplay('none');
 
     // Reset game state for clean multiplayer selection
     game.gameMode = 'multiplayer';
@@ -1292,7 +1435,7 @@ class UI {
     document.getElementById('multiplayerSelect').style.display = 'none';
     this.opponentCard.style.display = 'flex';
     this.opponentCard.querySelector('.player-label').textContent = 'AI (白方)';
-    this.roomInfoSection.style.display = 'none';
+    this.setRoomInfoSectionDisplay('none');
     this.updateModeUI('ai');
     this.updateUI();
     this.drawBoard();
@@ -1312,7 +1455,7 @@ class UI {
     // 设置waiting状态，让CSS控制房间信息栏显示
     document.body.setAttribute('data-game-status', 'waiting');
     // 桌面端：显示邀请链接区域（在 socket 回调中会设置）
-    document.getElementById('inviteSection').style.display = 'none';
+    this.setInviteSectionDisplay('none');
 
     // 先显示对手卡片占位（等待socket回调更新文字）
     this.opponentCard.style.display = 'flex';
@@ -1333,7 +1476,7 @@ class UI {
     document.getElementById('multiplayerSelect').style.display = 'none';
     // 设置waiting状态，让CSS控制房间信息栏显示
     document.body.setAttribute('data-game-status', 'waiting');
-    document.getElementById('inviteSection').style.display = 'none';
+    this.setInviteSectionDisplay('none');
 
     this.opponentCard.style.display = 'none';
     this.updateUI();
@@ -1367,7 +1510,7 @@ class UI {
     document.getElementById('multiplayerSelect').style.display = 'none';
     this.opponentCard.style.display = 'flex';
     this.opponentCard.querySelector('.player-label').textContent = 'AI (白方)';
-    this.roomInfoSection.style.display = 'none';
+    this.setRoomInfoSectionDisplay('none');
     this.updateModeUI('ai');
     this.updateUI();
     this.drawBoard();
@@ -1566,7 +1709,7 @@ class UI {
       game.reset();
       game.clearSavedGame(); // 清除保存的游戏状态
       // 确保隐藏房间信息框
-      this.roomInfoSection.style.display = 'none';
+      this.setRoomInfoSectionDisplay('none');
       this.updateModeUI('ai');
       this.drawBoard();
       this.updateUI();
@@ -1612,7 +1755,7 @@ class UI {
     game.roomId = null;
     game.isHost = false;
     localStorage.removeItem('gobang-room');
-    this.roomInfoSection.style.display = 'none';
+    this.setRoomInfoSectionDisplay('none');
     this.resetMultiplayerReadyState();
     this.setBoardOverlayVisible(false);
   }

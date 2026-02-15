@@ -341,6 +341,20 @@ body.pre-init[data-initial-mode="multiplayer"] .mode-display {
   margin: 0 auto;
 }
 
+/* Desktop: hide mobile room-info-section (under board) */
+.game-container > .room-info-section {
+  display: none;
+}
+
+/* Desktop: show room-info-section inside control-area */
+.control-area .room-info-section {
+  display: none;
+}
+
+.control-area .room-info-section.room-info-desktop {
+  display: block;
+}
+
 /* Smaller desktops: keep the layout clean and avoid horizontal overflow. */
 @media (max-width: 1280px) {
   .decor-panel {
@@ -1384,6 +1398,16 @@ body:not([data-game-mode="ai"])[data-game-status="playing"] .room-code-preview {
   /* Mobile: hide original game-actions, use player-action instead */
   #gameActions {
     display: none !important;
+  }
+
+  /* Mobile: hide desktop room-info in side-panel */
+  .control-area .room-info-section.room-info-desktop {
+    display: none;
+  }
+
+  /* Mobile: show room-info-section under board */
+  .game-container > .room-info-section {
+    display: flex;
   }
 
   /* 玩家对战选择按钮仍然水平排列 */
