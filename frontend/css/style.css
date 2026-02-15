@@ -997,6 +997,12 @@ body.pre-init[data-initial-mode="multiplayer"] .mode-display {
     flex-direction: column;
     width: 100%;
     order: 0;
+    height: auto;
+    min-height: auto;
+    padding: 0;
+    border: none;
+    background: transparent;
+    box-shadow: none;
   }
 
   /* 主面板（玩家信息 + 操作按钮） */
