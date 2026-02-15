@@ -801,7 +801,7 @@ class UI {
       }
     });
 
-    socketManager.on('playerJoined'socketManager.on('playerJoined', (data) => {
+    socketManager.on('playerJoined', (data) => {
       this.roomPanel.style.display = 'none';
       this.opponentCard.style.display = 'flex';
       this.opponentCard.querySelector('.player-label').textContent = '对手 (白方)';
