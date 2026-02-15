@@ -509,6 +509,15 @@ body.pre-init[data-initial-mode="multiplayer"] .mode-display {
   margin-bottom: 20px;
 }
 
+/* Desktop: hide player-action wrappers */
+.player-card-wrapper {
+  display: contents;
+}
+
+.player-action {
+  display: none;
+}
+
 .player-card {
   display: flex;
   align-items: center;
@@ -619,6 +628,11 @@ body.pre-init[data-initial-mode="multiplayer"] .mode-display {
   display: flex;
   flex-direction: column;
   gap: 8px;
+}
+
+/* Desktop: show game-actions in side panel */
+#gameActions {
+  display: flex;
 }
 
 /* Multiplayer: before the game starts, hide undo/restart entirely (not just disabled). */
@@ -1367,8 +1381,12 @@ body:not([data-game-mode="ai"])[data-game-status="playing"] .room-code-preview {
     font-size: 12px;
   }
 
-  /* 移动端游戏操作按钮 - 水平排列 */
-  .game-actions,
+  /* Mobile: hide original game-actions, use player-action instead */
+  #gameActions {
+    display: none !important;
+  }
+
+  /* 玩家对战选择按钮仍然水平排列 */
   .multiplayer-actions {
     display: flex;
     flex-direction: row;
@@ -1377,7 +1395,6 @@ body:not([data-game-mode="ai"])[data-game-status="playing"] .room-code-preview {
     align-items: stretch;
   }
 
-  .game-actions .btn-action,
   .multiplayer-actions .btn-action {
     flex: 1;
     height: 44px;
@@ -1390,10 +1407,10 @@ body:not([data-game-mode="ai"])[data-game-status="playing"] .room-code-preview {
     border-radius: 10px;
   }
 
-  /* 房间信息 - 美观的卡片样式 */
+  /* 房间信息 - 移到棋盘下方 */
   .room-info-section {
-    order: unset;
-    margin-top: 0;
+    order: 2;
+    margin-top: 8px;
     width: 100%;
     border: none;
     padding: 0;
@@ -1494,9 +1511,39 @@ body:not([data-game-mode="ai"])[data-game-status="playing"] .room-code-preview {
     flex: 1;
   }
 
+  /* Mobile: player-card-wrapper contains card + button */
+  .player-card-wrapper {
+    display: flex;
+    flex-direction: column;
+    flex: 1;
+    gap: 6px;
+    min-width: 0;
+  }
+
+  /* Mobile: show action buttons under each player card */
+  .player-action {
+    display: flex;
+    flex-direction: column;
+  }
+
+  .player-action .mobile-action-btn {
+    width: 100%;
+    height: 36px;
+    font-size: 13px;
+    font-weight: 600;
+    border-radius: 8px;
+    background-color: var(--bg-secondary);
+    border: 1px solid var(--border-color);
+    color: var(--text-primary);
+  }
+
+  .player-action .mobile-action-btn:disabled {
+    opacity: 0.5;
+  }
+
   .player-card {
     padding: 0 12px;
-    flex: 1;
+    flex: 0 0 auto;
     gap: 10px;
     transition: none;
     align-items: center;
@@ -1560,6 +1607,17 @@ body:not([data-game-mode="ai"])[data-game-status="playing"] .room-code-preview {
 
   /* 隐藏游戏信息区域（当前回合、对局模式），使布局更简洁 */
   .game-info {
+    display: none;
+  }
+
+  /* Mobile: show player-action buttons only during gameplay */
+  .player-action {
+    display: flex;
+    flex-direction: column;
+  }
+
+  /* Hide action buttons when not playing */
+  body:not([data-game-status="playing"]) .player-action {
     display: none;
   }
 
