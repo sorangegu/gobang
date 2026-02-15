@@ -1062,7 +1062,8 @@ body.pre-init[data-initial-mode="multiplayer"] .mode-display {
   }
 
   body[data-game-status="playing"] .invite-section,
-  body[data-game-status="playing"] .ready-section {
+  body[data-game-status="playing"] .ready-section,
+  body[data-game-status="playing"] .multiplayer-select {
     display: none;
   }
 
