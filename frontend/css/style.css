@@ -1251,7 +1251,7 @@ body:not([data-game-mode="ai"])[data-game-status="playing"] .room-code-preview {
     background-color: transparent;
     border: none;
     box-shadow: none;
-    padding: 2px 8px;
+    padding: 0;
     display: flex;
     flex-direction: column;
     gap: 4px;
@@ -1470,7 +1470,9 @@ body:not([data-game-mode="ai"])[data-game-status="playing"] .room-code-preview {
   .room-info-section {
     order: 4; /* 在侧边栏之后 */
     margin-top: 8px;
-    width: 100%;
+    width: calc(100% - 16px);
+    margin-left: 8px;
+    margin-right: 8px;
     border: none;
     padding: 0;
     flex-direction: column;
@@ -1483,25 +1485,25 @@ body:not([data-game-mode="ai"])[data-game-status="playing"] .room-code-preview {
     width: 100%;
     display: flex;
     align-items: center;
-    gap: 6px;
-    padding: 0 8px;
+    gap: 4px;
+    padding: 4px 6px;
     margin: 0;
-    height: var(--btn-height);
+    height: auto;
+    min-height: 52px;
     background-color: var(--bg-secondary);
     border: 1px solid var(--border-color);
     border-radius: var(--btn-radius);
+    box-sizing: border-box;
   }
 
   /* 房间信息按钮 */
   .btn-room-info {
     flex: 1;
-    height: 36px;
     padding: 0 8px;
     background: transparent;
     border: none;
     justify-content: flex-start;
     gap: 8px;
-    border-radius: 8px;
   }
 
   /* 房间号预览 */
@@ -1521,9 +1523,9 @@ body:not([data-game-mode="ai"])[data-game-status="playing"] .room-code-preview {
   }
 
   .room-actions .btn-icon {
-    width: 36px;
-    height: 36px;
-    border-radius: 8px;
+    width: 44px;
+    height: 44px;
+    border-radius: var(--btn-radius);
   }
 
   /* 房间详情弹出层 */
