@@ -666,9 +666,9 @@ body:not([data-game-status="playing"]) #gameActions {
   margin-top: 16px;
 }
 
-/* 桌面端有房间时显示房间信息栏 */
-body[data-game-status="waiting"] .room-action-bar,
-body[data-game-status="playing"] .room-action-bar {
+/* 桌面端有房间时显示房间信息栏（非人机模式） */
+body:not([data-game-mode="ai"])[data-game-status="waiting"] .room-action-bar,
+body:not([data-game-mode="ai"])[data-game-status="playing"] .room-action-bar {
   display: flex;
 }
 
@@ -678,9 +678,9 @@ body:not([data-game-status="waiting"]):not([data-game-status="playing"]) .room-i
   display: none;
 }
 
-/* 桌面端有房间时显示房间信息section */
-body[data-game-status="waiting"] .room-info-section,
-body[data-game-status="playing"] .room-info-section {
+/* 桌面端有房间时显示房间信息section（非人机模式） */
+body:not([data-game-mode="ai"])[data-game-status="waiting"] .room-info-section,
+body:not([data-game-mode="ai"])[data-game-status="playing"] .room-info-section {
   display: block !important;
 }
 
@@ -720,12 +720,12 @@ body[data-game-status="playing"] .room-info-section {
   color: white;
 }
 
-/* During play, hide the room code text while keeping action icons. */
-body[data-game-status="playing"] .room-id-box {
+/* During play, hide the room code text while keeping action icons. (非人机模式) */
+body:not([data-game-mode="ai"])[data-game-status="playing"] .room-id-box {
   display: none;
 }
 
-body[data-game-status="playing"] .room-code-preview {
+body:not([data-game-mode="ai"])[data-game-status="playing"] .room-code-preview {
   display: none;
 }
 
@@ -1232,28 +1232,28 @@ body[data-game-status="playing"] .room-code-preview {
     gap: 8px;
   }
 
-  /* 游戏进行中：隐藏房间文字，保留按钮，显示游戏操作 */
-  body[data-game-status="playing"] .room-id-box {
+  /* 游戏进行中：隐藏房间文字，保留按钮，显示游戏操作（非人机模式） */
+  body:not([data-game-mode="ai"])[data-game-status="playing"] .room-id-box {
     display: none;
   }
 
-  body[data-game-status="playing"] .room-code-preview {
+  body:not([data-game-mode="ai"])[data-game-status="playing"] .room-code-preview {
     display: none;
   }
 
-  body[data-game-status="playing"] .room-action-bar {
+  body:not([data-game-mode="ai"])[data-game-status="playing"] .room-action-bar {
     justify-content: flex-end;
   }
 
   /* Keep room actions visible during play; only hide the room code text. */
 
-  body[data-game-status="playing"] .invite-section,
-  body[data-game-status="playing"] .ready-section,
-  body[data-game-status="playing"] .multiplayer-select {
+  body:not([data-game-mode="ai"])[data-game-status="playing"] .invite-section,
+  body:not([data-game-mode="ai"])[data-game-status="playing"] .ready-section,
+  body:not([data-game-mode="ai"])[data-game-status="playing"] .multiplayer-select {
     display: none;
   }
 
-  body[data-game-status="playing"] #gameActions {
+  body:not([data-game-mode="ai"])[data-game-status="playing"] #gameActions {
     display: flex;
   }
 

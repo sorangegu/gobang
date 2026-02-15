@@ -276,6 +276,7 @@ class UI {
       this.opponentCard.querySelector('.player-label').textContent = 'AI (白方)';
       // 人机模式：立即设置为playing状态
       this.updateGameStatus('playing');
+      this.updateGameMode('ai');
     } else if (mode === 'multiplayer') {
       this.roomPanel.style.display = 'none';
       this.roomInfoSection.style.display = 'none';
@@ -286,6 +287,7 @@ class UI {
       this.opponentCard.querySelector('.player-label').textContent = '白方';
       // 多人对战选择页面，还未开始游戏
       this.updateGameStatus(null);
+      this.updateGameMode(null);
     } else if (mode === 'create' || mode === 'join' || mode === 'room') {
       // create/join/room 模式：隐藏人机操作和选择面板，显示房间信息
       this.roomPanel.style.display = 'none';
@@ -293,6 +295,7 @@ class UI {
       // 不使用内联样式，让CSS根据data-game-status控制显示
       this.roomInfoSection.style.display = 'block';
       this.opponentCard.style.display = 'flex';
+      this.updateGameMode(null);
     }
   }
 
@@ -302,6 +305,15 @@ class UI {
       document.body.dataset.gameStatus = 'playing';
     } else {
       delete document.body.dataset.gameStatus;
+    }
+  }
+
+  // 更新游戏模式（用于控制UI显示）
+  updateGameMode(mode) {
+    if (mode === 'ai') {
+      document.body.dataset.gameMode = 'ai';
+    } else {
+      delete document.body.dataset.gameMode;
     }
   }
 
