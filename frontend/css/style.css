@@ -1495,15 +1495,17 @@ body:not([data-game-mode="ai"])[data-game-status="playing"] .room-code-preview {
   /* 房间信息 - 在棋盘下方 */
   .room-info-section {
     order: 4; /* 在侧边栏之后 */
-    margin-top: 8px;
-    width: calc(100% - 16px);
-    margin-left: 8px;
-    margin-right: 8px;
+    margin-top: 12px;
+    width: calc(100vw - 20px);
+    max-width: 604px;
+    margin-left: auto;
+    margin-right: auto;
     border: none;
     padding: 0;
     flex-direction: column;
     gap: 8px;
     flex-shrink: 0;
+    box-sizing: border-box;
   }
 
   /* 单行房间栏 - 简洁样式 */
@@ -1690,10 +1692,12 @@ body:not([data-game-mode="ai"])[data-game-status="playing"] .room-code-preview {
   .player-info {
     flex-direction: row;
     margin-bottom: 0;
+    margin-top: 4px;
     gap: 8px;
     justify-content: space-between;
     width: 100%;
     flex: 1;
+    padding: 0;
   }
 
   /* Mobile: player-card-wrapper contains card + button */
@@ -1701,7 +1705,7 @@ body:not([data-game-mode="ai"])[data-game-status="playing"] .room-code-preview {
     display: flex;
     flex-direction: column;
     flex: 1;
-    gap: 6px;
+    gap: 8px;
     min-width: 0;
   }
 
@@ -1874,7 +1878,7 @@ body:not([data-game-mode="ai"])[data-game-status="playing"] .room-code-preview {
     width: calc(100vw - 20px);
     max-width: 604px;
     box-sizing: border-box;
-    margin: 8px auto 0;
+    margin: 8px auto 12px;
     position: relative;
     z-index: 1;
     order: 1; /* 棋盘始终在第一行之后 */
