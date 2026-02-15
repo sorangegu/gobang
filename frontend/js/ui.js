@@ -709,22 +709,26 @@ class UI {
         game.winner = null; // Clear any local winner state
         game.lastMove = game.moveHistory.length > 0 ? game.moveHistory[game.moveHistory.length - 1] : null;
 
-        if (data.status === 'playing' && data.opponentOnline) {
-          // 正在游戏中且对手在线，显示对手
-          this.opponentCard.style.display = 'flex';
-          this.opponentCard.querySelector('.player-label').textContent = data.isHost ? '对手 (白方)' : '对手 (黑方)';
-          this.playerCard.querySelector('.player-label').textContent = data.isHost ? '你 (黑方)' : '你 (白方)';
+        if (data.status === 'playing') {
+          // Game is already active (reconnecting to ongoing game)
+          this.updateGameStatus('playing');
+          this.setBoardOverlayVisible(false); // Key fix: updateBoardOverlay() might not be enough
+
           document.getElementById('inviteSection').style.display = 'none';
           document.getElementById('readySection').style.display = 'none';
-        } else if (data.status === 'playing' && !data.opponentOnline) {
-          // 游戏进行中但对手离线，显示等待对手重连
-          this.opponentCard.style.display = 'flex';
-          this.opponentCard.querySelector('.player-label').textContent = '等待重连...';
-          document.getElementById('inviteSection').style.display = 'none';
-          document.getElementById('readySection').style.display = 'none';
-          this.showToast('对手已断开，等待对手重连...');
+
+          if (data.opponentOnline) {
+            this.opponentCard.style.display = 'flex';
+            this.opponentCard.querySelector('.player-label').textContent = data.isHost ? '对手 (白方)' : '对手 (黑方)';
+          } else {
+            this.opponentCard.style.display = 'flex';
+            this.opponentCard.querySelector('.player-label').textContent = '等待重连...';
+            this.showToast('对手已断开，等待对手重连...');
+          }
         } else {
-          // 等待中，显示准备区域或邀请链接
+          // Waiting state (game not started yet)
+          this.updateGameStatus('waiting');
+          // ... rest of waiting logic ...
           if (data.isHost) {
             // 房主显示邀请链接
             this.opponentCard.style.display = 'flex';
