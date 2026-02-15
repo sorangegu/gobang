@@ -1128,8 +1128,8 @@ body:not([data-game-mode="ai"])[data-game-status="playing"] .room-code-preview {
     --mobile-nav-height: 44px;
     --mobile-info-height: 70px;
     --mobile-room-height: 44px;
-    --btn-height: 40px;
-    --btn-radius: 10px;
+    --btn-height: 42px;
+    --btn-radius: 8px;
   }
 
   /* 隐藏顶部导航栏，改为下方导航 */
@@ -1240,7 +1240,10 @@ body:not([data-game-mode="ai"])[data-game-status="playing"] .room-code-preview {
   .side-panel {
     display: flex;
     flex-direction: column;
-    width: 100%;
+    width: calc(100vw - 20px);
+    max-width: 604px;
+    margin-left: auto;
+    margin-right: auto;
     order: 3; /* 在导航之后 */
     height: auto;
     min-height: auto;
