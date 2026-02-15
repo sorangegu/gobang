@@ -12,7 +12,7 @@
   <script>
     (function () {
       var path = window.location.pathname;
-      var isRoom = path === '/room' || path === '/room/' || /^\/room\/[A-Z0-9]{6}$/i.test(path);
+      var isRoom = path === '/room' || path === '/room/' || /^\/room\/[A-Z0-9]{6}\/?$/i.test(path);
       document.body.dataset.initialMode = isRoom ? 'multiplayer' : 'ai';
     })();
   </script>

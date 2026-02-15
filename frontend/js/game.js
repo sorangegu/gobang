@@ -19,7 +19,7 @@ class Game {
     const path = window.location.pathname;
 
     // /room/XXXXXX - 具体房间
-    const roomMatch = path.match(/^\/room\/([A-Z0-9]{6})$/i);
+    const roomMatch = path.match(/^\/room\/([A-Z0-9]{6})\/?$/i);
     if (roomMatch) {
       return 'room';
     }

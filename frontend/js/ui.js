@@ -120,12 +120,22 @@ class UI {
     document.body.classList.remove('pre-init');
   }
 
+  // Multiplayer "waiting" state should NOT be treated as "playing".
+  resetBoardToWaiting() {
+    game.board = Array(15).fill(null).map(() => Array(15).fill(0));
+    game.currentPlayer = 1;
+    game.isPlaying = false;
+    game.moveHistory = [];
+    game.winner = null;
+    game.lastMove = null;
+  }
+
   // 从 URL 检测当前模式
   detectModeFromURL() {
     const path = window.location.pathname;
 
     // /room/XXXXXX - 具体房间
-    const roomMatch = path.match(/^\/room\/([A-Z0-9]{6})$/i);
+    const roomMatch = path.match(/^\/room\/([A-Z0-9]{6})\/?$/i);
     if (roomMatch) {
       return { type: 'room', roomId: roomMatch[1].toUpperCase() };
     }
@@ -227,8 +237,10 @@ class UI {
     let canvasSize;
     let padding;
     if (window.innerWidth <= 768) {
-      // 动态计算尺寸：屏幕宽度减去内边距，最大限制 604px
-      canvasSize = Math.min(window.innerWidth - 20, 604);
+      // Match CSS: board-wrapper is (100vw - 20px) with 10px padding on both sides.
+      const wrapperOuter = Math.min(window.innerWidth - 20, 604);
+      const wrapperPadding = 10;
+      canvasSize = Math.max(240, wrapperOuter - wrapperPadding * 2);
       padding = canvasSize <= 320 ? 8 : 10;
     } else {
       canvasSize = 604;
@@ -389,9 +401,14 @@ class UI {
     });
     document.getElementById('backHomeBtn').addEventListener('click', () => {
       this.hideModal(this.resultModal);
-      game.reset();
-      this.drawBoard();
-      this.updateUI();
+      if (game.gameMode === 'ai') {
+        // Back to AI home: start a fresh game.
+        window.history.pushState({}, '', '/');
+        this.startAIGame();
+      } else {
+        // Multiplayer: leave the room and go back to the multiplayer page.
+        this.handleLeaveRoom();
+      }
     });
 
     // 重置统计
@@ -518,7 +535,7 @@ class UI {
           this.showToast('重新加入对局成功！');
         } else {
           // 新加入，重置状态
-          game.reset();
+          this.resetBoardToWaiting();
           // 显示准备区域
           document.getElementById('inviteSection').style.display = 'none';
           document.getElementById('readySection').style.display = 'block';
@@ -620,7 +637,7 @@ class UI {
         this.showToast('对手重新加入，继续对局！');
       } else {
         // 新玩家加入，重置状态
-        game.reset();
+        this.resetBoardToWaiting();
         // 显示准备区域
         document.getElementById('inviteSection').style.display = 'none';
         document.getElementById('readySection').style.display = 'block';
@@ -690,6 +707,14 @@ class UI {
       }
     });
 
+    socketManager.on('undoRequestResult', (data) => {
+      if (data.success && data.pending) {
+        this.showToast('已发送悔棋请求，等待对手确认');
+      } else if (!data.success) {
+        this.showToast(data.error || '悔棋请求失败');
+      }
+    });
+
     socketManager.on('restartRequested', () => {
       if (confirm('对手请求重新开始，是否同意？')) {
         socketManager.respondRestart(true);
@@ -706,6 +731,14 @@ class UI {
       this.updateUI();
       this.hideModal(this.resultModal);
       this.showToast('游戏重新开始');
+    });
+
+    socketManager.on('restartRequestResult', (data) => {
+      if (data.success && data.pending) {
+        this.showToast('已发送重新开始请求，等待对手确认');
+      } else if (!data.success) {
+        this.showToast(data.error || '重新开始请求失败');
+      }
     });
 
     socketManager.on('gameOver', (data) => {
@@ -976,6 +1009,8 @@ class UI {
       game.gameMode = savedRoom.isHost ? 'create' : 'join';
       game.myColor = savedRoom.playerColor;
       game.roomId = savedRoom.roomId;
+      game.isPlaying = false;
+      game.winner = null;
       // 清空棋盘显示
       game.board = Array(15).fill(null).map(() => Array(15).fill(0));
       game.lastMove = null;
@@ -1247,12 +1282,19 @@ class UI {
     let canvasSize;
     let padding;
     if (window.innerWidth <= 768) {
-      // 动态计算尺寸：屏幕宽度减去内边距，最大限制 604px
-      canvasSize = Math.min(window.innerWidth - 20, 604);
+      const wrapperOuter = Math.min(window.innerWidth - 20, 604);
+      const wrapperPadding = 10;
+      canvasSize = Math.max(240, wrapperOuter - wrapperPadding * 2);
       padding = canvasSize <= 320 ? 8 : 10;
     } else {
       canvasSize = 604;
       padding = 22;
+    }
+
+    // Mobile browsers can fire spurious resize events during scroll/address-bar changes.
+    // Skip work unless the effective size actually changes.
+    if (this.canvasSize === canvasSize && this.padding === padding && this.dpr === dpr) {
+      return;
     }
 
     this.padding = padding;
@@ -1281,15 +1323,32 @@ class UI {
         this.drawBoard();
         this.updateUI();
       }
+      return;
     }
+
+    // 玩家对战：走 Socket 流程
+    if (!game.roomId) {
+      this.showToast('未在房间中');
+      return;
+    }
+    socketManager.requestUndo();
   }
 
   // 处理重新开始
   handleRestart() {
-    game.reset();
-    game.clearSavedGame(); // 清除保存的游戏状态
-    this.drawBoard();
-    this.updateUI();
+    if (game.gameMode === 'ai') {
+      game.reset();
+      game.clearSavedGame(); // 清除保存的游戏状态
+      this.drawBoard();
+      this.updateUI();
+      return;
+    }
+
+    if (!game.roomId) {
+      this.showToast('未在房间中');
+      return;
+    }
+    socketManager.requestRestart();
   }
 
   // 处理离开房间
@@ -1302,8 +1361,8 @@ class UI {
     // 清理房间信息
     this.clearRoomInfo();
 
-    // 重置游戏状态
-    game.reset();
+    // 重置棋盘显示（回到玩家对战选择页）
+    this.resetBoardToWaiting();
 
     // 更新 URL 为玩家对战选择页面
     window.history.pushState({}, '', '/room');
@@ -1339,6 +1398,9 @@ class UI {
 
   // 更新UI状态
   updateUI() {
+    // Drive UI visibility from game state to avoid refresh flicker.
+    this.updateGameStatus(game.isPlaying && game.winner === null ? 'playing' : null);
+
     // 更新当前回合
     this.currentTurnDisplay.textContent = game.currentPlayer === 1 ? '黑方' : '白方';
 
@@ -1362,8 +1424,8 @@ class UI {
     this.playerCard.classList.toggle('active', isMyTurn && game.isPlaying);
     this.opponentCard.classList.toggle('active', !isMyTurn && game.isPlaying);
 
-    // 启用/禁用按钮
-    this.undoBtn.disabled = game.moveHistory.length === 0;
+    // 启用/禁用按钮（多人对战：仅对局开始后才可用）
+    this.undoBtn.disabled = !game.isPlaying || game.moveHistory.length === 0;
     this.restartBtn.disabled = !game.isPlaying;
 
     // Subtle affordance: only show pointer when the user can place a stone.

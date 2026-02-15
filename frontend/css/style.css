@@ -607,10 +607,16 @@ body.pre-init[data-initial-mode="multiplayer"] .mode-display {
   border-bottom: none;
 }
 
-.game-actions {
+/* Undo/Restart live under #gameActions (multiplayer create/join uses a separate action row). */
+#gameActions {
   display: flex;
   flex-direction: column;
   gap: 8px;
+}
+
+/* Multiplayer: before the game starts, hide undo/restart entirely (not just disabled). */
+body:not([data-game-status="playing"]) #gameActions {
+  display: none;
 }
 
 .btn-action {
@@ -686,6 +692,15 @@ body.pre-init[data-initial-mode="multiplayer"] .mode-display {
 
 .btn-room-info:hover .room-code-preview {
   color: white;
+}
+
+/* During play, hide the room code text while keeping action icons. */
+body[data-game-status="playing"] .room-id-box {
+  display: none;
+}
+
+body[data-game-status="playing"] .room-code-preview {
+  display: none;
 }
 
 /* 房间详情弹出层 */
@@ -1147,13 +1162,15 @@ body.pre-init[data-initial-mode="multiplayer"] .mode-display {
     display: none;
   }
 
+  body[data-game-status="playing"] .room-code-preview {
+    display: none;
+  }
+
   body[data-game-status="playing"] .room-action-bar {
     justify-content: flex-end;
   }
 
-  body[data-game-status="playing"] .room-info-section {
-    display: none;
-  }
+  /* Keep room actions visible during play; only hide the room code text. */
 
   body[data-game-status="playing"] .invite-section,
   body[data-game-status="playing"] .ready-section,
@@ -1161,12 +1178,12 @@ body.pre-init[data-initial-mode="multiplayer"] .mode-display {
     display: none;
   }
 
-  body[data-game-status="playing"] .game-actions {
+  body[data-game-status="playing"] #gameActions {
     display: flex;
   }
 
   /* 游戏未开始：隐藏游戏操作，显示房间信息 */
-  body:not([data-game-status="playing"]) .game-actions {
+  body:not([data-game-status="playing"]) #gameActions {
     display: none;
   }
 
@@ -1183,7 +1200,7 @@ body.pre-init[data-initial-mode="multiplayer"] .mode-display {
   }
 
   /* pre-init状态下，根据初始模式显示对应的按钮区域 */
-  body.pre-init[data-initial-mode="ai"] .game-actions {
+  body.pre-init[data-initial-mode="ai"] #gameActions {
     display: flex !important;
   }
 
@@ -1200,7 +1217,7 @@ body.pre-init[data-initial-mode="multiplayer"] .mode-display {
     display: flex !important;
   }
 
-  body.pre-init[data-initial-mode="multiplayer"] .game-actions:not(.multiplayer-actions),
+  body.pre-init[data-initial-mode="multiplayer"] #gameActions,
   body.pre-init[data-initial-mode="multiplayer"] .room-info-section {
     display: none !important;
   }
@@ -1210,7 +1227,7 @@ body.pre-init[data-initial-mode="multiplayer"] .mode-display {
     display: none !important;
   }
 
-  body[data-game-status="playing"].pre-init .game-actions {
+  body[data-game-status="playing"].pre-init #gameActions {
     display: flex !important;
   }
 
@@ -1533,23 +1550,15 @@ body.pre-init[data-initial-mode="multiplayer"] .mode-display {
 
   /* 手机端棋盘默认尺寸，防止刷新时闪烁 */
   #board {
-    width: calc(100vw - 40px) !important;
-    height: calc(100vw - 40px) !important;
-    max-width: 584px !important;
-    max-height: 584px !important;
+    width: 100%;
+    height: auto;
+    aspect-ratio: 1 / 1;
+    max-width: 584px;
+    max-height: 584px;
     background-color: #deb887;
     -webkit-tap-highlight-color: transparent;
     -webkit-touch-callout: none;
     touch-action: manipulation;
-  }
-
-  /* 预加载状态显示背景网格，避免空白 */
-  body.pre-init #board {
-    background-image:
-      linear-gradient(#8b7355 1px, transparent 1px),
-      linear-gradient(90deg, #8b7355 1px, transparent 1px);
-    background-size: calc((100vw - 40px) / 14) calc((100vw - 40px) / 14);
-    background-position: 10px 10px;
   }
 
   /* 玩家对战选择面板 */
