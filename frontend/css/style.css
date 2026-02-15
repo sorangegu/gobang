@@ -752,6 +752,9 @@ body.pre-init[data-initial-mode="multiplayer"] .mode-display {
   width: 604px;
   height: 604px;
   background-color: #deb887;
+  -webkit-tap-highlight-color: transparent;
+  -webkit-touch-callout: none;
+  touch-action: manipulation;
 }
 
 /* ===== 按钮样式 ===== */
@@ -1346,11 +1349,14 @@ body.pre-init[data-initial-mode="multiplayer"] .mode-display {
 
   /* 手机端棋盘默认尺寸，防止刷新时闪烁 */
   #board {
-    width: 100%;
-    height: auto;
-    aspect-ratio: 1/1;
-    max-width: 100%;
+    width: calc(100vw - 40px) !important;
+    height: calc(100vw - 40px) !important;
+    max-width: 584px !important;
+    max-height: 584px !important;
     background-color: #deb887;
+    -webkit-tap-highlight-color: transparent;
+    -webkit-touch-callout: none;
+    touch-action: manipulation;
   }
 
   /* 预加载状态显示背景网格，避免空白 */
@@ -1496,8 +1502,8 @@ body.pre-init[data-initial-mode="multiplayer"] .mode-display {
 
   /* 极小屏幕棋盘默认尺寸 */
   #board {
-    width: 100%;
-    height: auto;
+    width: calc(100vw - 32px) !important;
+    height: calc(100vw - 32px) !important;
     background-color: #deb887;
   }
 

@@ -50,7 +50,7 @@ class UI {
         this.updateModeUI('room');
         this.roomInfoSection.style.display = 'block';
         document.getElementById('displayRoomId').textContent = savedRoom.roomId;
-        document.getElementById('inviteSection').style.display = 'block';
+        document.getElementById('inviteSection').style.display = 'none';
         const inviteUrl = `${window.location.origin}/room/${savedRoom.roomId}`;
         document.getElementById('inviteLink').value = inviteUrl;
         // 设置待重连
@@ -86,7 +86,7 @@ class UI {
         // 显示房间信息
         this.roomInfoSection.style.display = 'block';
         document.getElementById('displayRoomId').textContent = savedRoom.roomId;
-        document.getElementById('inviteSection').style.display = 'block';
+        document.getElementById('inviteSection').style.display = 'none';
         const inviteUrl = `${window.location.origin}/room/${savedRoom.roomId}`;
         document.getElementById('inviteLink').value = inviteUrl;
         this.updateModeUI('room');
