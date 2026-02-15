@@ -198,7 +198,9 @@ class SocketManager {
 
   // 重连房间
   reconnectRoom(roomId, playerColor) {
+    console.log('[DEBUG] socket.reconnectRoom 发送:', { roomId, playerColor });
     this.socket.emit('reconnect_room', { roomId, playerColor }, (response) => {
+      console.log('[DEBUG] socket.reconnectRoom 响应:', response);
       this.emit('roomReconnected', response);
     });
   }
