@@ -1059,7 +1059,7 @@ body:not([data-game-mode="ai"])[data-game-status="playing"] .room-code-preview {
 /* ===== 通知 ===== */
 .toast {
   position: fixed;
-  top: 140px;
+  top: 35%;
   left: 50%;
   transform: translateX(-50%);
   background-color: var(--bg-secondary);
@@ -1068,17 +1068,15 @@ body:not([data-game-mode="ai"])[data-game-status="playing"] .room-code-preview {
   border-radius: var(--radius);
   box-shadow: var(--shadow);
   z-index: 1001;
-  animation: slideDown 200ms ease;
+  animation: fadeIn 200ms ease;
 }
 
-@keyframes slideDown {
+@keyframes fadeIn {
   from {
-    transform: translate(-50%, -20px);
     opacity: 0;
   }
 
   to {
-    transform: translate(-50%, 0);
     opacity: 1;
   }
 }
@@ -1086,7 +1084,7 @@ body:not([data-game-mode="ai"])[data-game-status="playing"] .room-code-preview {
 /* ===== 响应式 - iOS 18 风格 (完整重写) ===== */
 @media (max-width: 768px) {
   .toast {
-    top: 50%;
+    top: 35%;
     transform: translate(-50%, -50%);
     padding: 10px 16px;
     font-size: 14px;
