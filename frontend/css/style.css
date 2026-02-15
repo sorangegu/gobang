@@ -848,7 +848,7 @@ body.pre-init[data-initial-mode="multiplayer"] .mode-display {
   }
 }
 
-/* ===== 响应式 ===== */
+/* ===== 响应式 - iOS 18 风格 (完整重写) ===== */
 @media (max-width: 768px) {
   :root {
     --board-size: calc(100vw - 20px);
@@ -1393,6 +1393,54 @@ body.pre-init[data-initial-mode="multiplayer"] .mode-display {
   .info-row {
     transition: none !important;
   }
+  :root {
+    --accent: #0A84FF;
+    --radius: 14px;
+    --radius-lg: 22px;
+    --shadow: 0 12px 28px rgba(0, 0, 0, 0.25);
+  }
+  .player-card {
+    background: linear-gradient(180deg, rgba(255,255,255,0.18), rgba(255,255,255,0.08));
+    border: 1px solid rgba(255, 255, 255, 0.14);
+    border-radius: 16px;
+    box-shadow: 0 12px 24px rgba(0, 0, 0, 0.25);
+  }
+  .game-info {
+    background: linear-gradient(180deg, rgba(255,255,255,0.14), rgba(255,255,255,0.06));
+    border: 1px solid rgba(255, 255, 255, 0.12);
+    border-radius: 16px;
+    box-shadow: 0 10px 22px rgba(0, 0, 0, 0.24);
+    padding: 8px 12px;
+  }
+  .room-info-section,
+  .multiplayer-select {
+    background: linear-gradient(180deg, rgba(255,255,255,0.14), rgba(255,255,255,0.06));
+    border: 1px solid rgba(255, 255, 255, 0.12);
+    border-radius: 16px;
+    box-shadow: 0 10px 22px rgba(0, 0, 0, 0.24);
+    padding: 12px;
+  }
+  .btn-action {
+    border-radius: 999px;
+    background: linear-gradient(180deg, rgba(255,255,255,0.15), rgba(255,255,255,0.05));
+    border: 1px solid rgba(255, 255, 255, 0.12);
+    box-shadow: 0 6px 14px rgba(0, 0, 0, 0.25);
+    transition: transform 120ms ease, box-shadow 120ms ease, opacity 120ms ease;
+  }
+  .btn-action:active {
+    transform: scale(0.98);
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.22);
+  }
+  .btn-primary {
+    border-radius: 999px;
+    background: linear-gradient(180deg, #4CA1FF, #0A84FF);
+    box-shadow: 0 10px 22px rgba(10, 132, 255, 0.35);
+  }
+  .btn-secondary {
+    border-radius: 999px;
+    background: linear-gradient(180deg, rgba(255,255,255,0.15), rgba(255,255,255,0.05));
+    border: 1px solid rgba(255, 255, 255, 0.14);
+  }
 }
 
 @media (max-width: 400px) {
@@ -1486,6 +1534,33 @@ body.pre-init[data-initial-mode="multiplayer"] .mode-display {
     padding: 4px 6px;
     font-size: 10px;
     height: 28px;
+  }
+  :root {
+    --accent: #0A84FF;
+    --radius: 14px;
+    --radius-lg: 22px;
+    --shadow: 0 12px 28px rgba(0, 0, 0, 0.25);
+  }
+  .btn-action {
+    border-radius: 999px;
+    background: linear-gradient(180deg, rgba(255,255,255,0.15), rgba(255,255,255,0.05));
+    border: 1px solid rgba(255, 255, 255, 0.12);
+    box-shadow: 0 6px 14px rgba(0, 0, 0, 0.25);
+    transition: transform 120ms ease, box-shadow 120ms ease, opacity 120ms ease;
+  }
+  .btn-action:active {
+    transform: scale(0.98);
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.22);
+  }
+  .btn-primary {
+    border-radius: 999px;
+    background: linear-gradient(180deg, #4CA1FF, #0A84FF);
+    box-shadow: 0 10px 22px rgba(10, 132, 255, 0.35);
+  }
+  .btn-secondary {
+    border-radius: 999px;
+    background: linear-gradient(180deg, rgba(255,255,255,0.15), rgba(255,255,255,0.05));
+    border: 1px solid rgba(255, 255, 255, 0.14);
   }
 }
 
