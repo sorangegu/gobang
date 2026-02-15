@@ -1174,17 +1174,6 @@ body:not([data-game-mode="ai"])[data-game-status="playing"] .room-code-preview {
     letter-spacing: 3px;
   }
 
-  /* 手机端导航 - 固定高度 */
-  .mobile-nav {
-    display: flex;
-    justify-content: center;
-    gap: 8px;
-    height: var(--btn-height);
-    width: 100%;
-    padding: 0 12px;
-    flex-shrink: 0;
-  }
-
   /* 手机端导航 - 放在标题下方 */
   .mobile-nav {
     display: flex;
@@ -1193,6 +1182,7 @@ body:not([data-game-mode="ai"])[data-game-status="playing"] .room-code-preview {
     height: var(--btn-height);
     width: 100%;
     padding: 0;
+    flex-shrink: 0;
   }
 
   .mobile-nav-btn {
@@ -1368,21 +1358,21 @@ body:not([data-game-mode="ai"])[data-game-status="playing"] .room-code-preview {
   .control-area .btn-icon {
     background-color: var(--bg-secondary);
     border: 1px solid var(--border-color);
-    border-radius: 10px;
+    border-radius: var(--btn-radius);
     color: var(--text-primary);
     transition: all 0.2s ease;
     font-weight: 500;
-    height: 44px;
+    height: var(--btn-height);
   }
 
   .control-area .btn-primary {
     background-color: var(--accent);
     border: none;
-    border-radius: 10px;
+    border-radius: var(--btn-radius);
     color: white;
     transition: all 0.2s ease;
     font-weight: 600;
-    height: 44px;
+    height: var(--btn-height);
   }
 
   .control-area .btn-action:active,
@@ -1397,13 +1387,13 @@ body:not([data-game-mode="ai"])[data-game-status="playing"] .room-code-preview {
     display: flex;
     align-items: center;
     padding: 0 14px;
-    height: 44px;
+    height: var(--btn-height);
     font-size: 14px;
     margin-right: 0;
     justify-content: center;
     background-color: var(--bg-secondary);
     border: 1px solid var(--border-color);
-    border-radius: 10px;
+    border-radius: var(--btn-radius);
   }
 
   /* 房间号文字 */
@@ -1838,8 +1828,8 @@ body:not([data-game-mode="ai"])[data-game-status="playing"] .room-code-preview {
   .btn-room-info {
     display: flex;
     flex: 1;
-    height: 44px;
-    border-radius: 10px;
+    height: var(--btn-height);
+    border-radius: var(--btn-radius);
     font-size: 14px;
     font-weight: 500;
     background: transparent;
