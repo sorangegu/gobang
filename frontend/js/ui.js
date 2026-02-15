@@ -29,18 +29,42 @@ class UI {
 
     // 根据模式初始化
     if (this.initMode.type === 'ai') {
-      // 人机模式：加载保存的进度
-      game.init('ai');
-      game.myColor = 1;
-      // 尝试加载保存的游戏状态
-      const loaded = game.loadGame();
-      if (!loaded) {
-        game.isPlaying = true;
-        game.board = Array(15).fill(null).map(() => Array(15).fill(0));
+      // 人机模式：先检查是否有保存的房间（可能是刷新后丢失了 URL）
+      const savedRoom = this.getValidSavedRoom();
+      if (savedRoom) {
+        // 有保存的房间，重定向到房间页
+        console.log('[DEBUG] AI mode but found saved room, redirecting to room:', savedRoom.roomId);
+        game.init(savedRoom.isHost ? 'create' : 'join');
+        game.myColor = savedRoom.playerColor;
+        game.roomId = savedRoom.roomId;
+        // 更新 URL 为房间页
+        window.history.replaceState({}, '', `/room/${savedRoom.roomId}`);
+        this.updateModeUI('room');
+        this.roomInfoSection.style.display = 'block';
+        this.updateRoomIdDisplay(savedRoom.roomId);
+        document.getElementById('inviteSection').style.display = 'block';
+        const inviteUrl = `${window.location.origin}/room/${savedRoom.roomId}`;
+        document.getElementById('inviteLink').value = inviteUrl;
+        // 设置待重连
+        this.pendingReconnect = {
+          roomId: savedRoom.roomId,
+          playerColor: savedRoom.playerColor
+        };
+        this.drawBoard();
+      } else {
+        // 没有保存的房间，正常进入人机模式
+        game.init('ai');
+        game.myColor = 1;
+        // 尝试加载保存的游戏状态
+        const loaded = game.loadGame();
+        if (!loaded) {
+          game.isPlaying = true;
+          game.board = Array(15).fill(null).map(() => Array(15).fill(0));
+        }
+        this.updateModeUI('ai');
+        // 加载完棋局后再绘制棋盘
+        this.drawBoard();
       }
-      this.updateModeUI('ai');
-      // 加载完棋局后再绘制棋盘
-      this.drawBoard();
     } else if (this.initMode.type === 'multiplayer') {
       // 玩家对战选择页面：检查是否有保存的房间
       const savedRoom = this.getValidSavedRoom();
@@ -55,7 +79,7 @@ class UI {
         this.updateModeUI('room');
         this.roomInfoSection.style.display = 'block';
         this.updateRoomIdDisplay(savedRoom.roomId);
-        document.getElementById('inviteSection').style.display = 'none';
+        document.getElementById('inviteSection').style.display = 'block';
         const inviteUrl = `${window.location.origin}/room/${savedRoom.roomId}`;
         document.getElementById('inviteLink').value = inviteUrl;
         // 设置待重连
@@ -91,7 +115,7 @@ class UI {
         // 显示房间信息
         this.roomInfoSection.style.display = 'block';
         this.updateRoomIdDisplay(savedRoom.roomId);
-        document.getElementById('inviteSection').style.display = 'none';
+        document.getElementById('inviteSection').style.display = 'block';
         const inviteUrl = `${window.location.origin}/room/${savedRoom.roomId}`;
         document.getElementById('inviteLink').value = inviteUrl;
         this.updateModeUI('room');
