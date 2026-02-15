@@ -152,7 +152,7 @@ class UI {
       if (roomData.roomId && roomData.playerColor) {
         return roomData;
       }
-    } catch (e) {}
+    } catch (e) { }
     localStorage.removeItem('gobang-room');
     return null;
   }
@@ -372,14 +372,11 @@ class UI {
       this.showToast('房间号已复制');
     });
 
-    // 切换邀请链接显示
+    // 切换邀请链接显示 (改为直接复制)
     document.getElementById('toggleInviteLink')?.addEventListener('click', () => {
-      const inviteSection = document.getElementById('inviteSection');
-      if (inviteSection.style.display === 'none') {
-        inviteSection.style.display = 'block';
-      } else {
-        inviteSection.style.display = 'none';
-      }
+      const inviteUrl = `${window.location.origin}/room/${document.getElementById('displayRoomId').textContent}`;
+      navigator.clipboard.writeText(inviteUrl);
+      this.showToast('邀请链接已复制');
     });
 
     // 复制邀请链接
@@ -402,10 +399,15 @@ class UI {
       if (data.success) {
         // 在左侧面板显示房间信息
         document.getElementById('displayRoomId').textContent = data.roomId;
-        document.getElementById('inviteSection').style.display = 'block';
+        document.getElementById('inviteSection').style.display = 'none'; // iOS 18 风格不再展开
         document.getElementById('readySection').style.display = 'none';
         const inviteUrl = `${window.location.origin}/room/${data.roomId}`;
         document.getElementById('inviteLink').value = inviteUrl;
+
+        // 显示对手卡片占位
+        this.opponentCard.style.display = 'flex';
+        this.opponentCard.querySelector('.player-label').textContent = '等待加入...';
+
         game.setRoomInfo(data.roomId, true);
         this.saveRoomInfo(data.roomId, 1);
         // 更新 URL 为房间页
@@ -485,16 +487,18 @@ class UI {
           document.getElementById('readySection').style.display = 'none';
         } else if (data.status === 'playing' && !data.opponentOnline) {
           // 游戏进行中但对手离线，显示等待对手重连
-          this.opponentCard.style.display = 'none';
+          this.opponentCard.style.display = 'flex';
+          this.opponentCard.querySelector('.player-label').textContent = '等待重连...';
           document.getElementById('inviteSection').style.display = 'none';
           document.getElementById('readySection').style.display = 'none';
           this.showToast('对手已断开，等待对手重连...');
         } else {
           // 等待中，显示准备区域或邀请链接
-          this.opponentCard.style.display = 'none';
           if (data.isHost) {
             // 房主显示邀请链接
-            document.getElementById('inviteSection').style.display = 'block';
+            this.opponentCard.style.display = 'flex';
+            this.opponentCard.querySelector('.player-label').textContent = '等待加入...';
+            document.getElementById('inviteSection').style.display = 'none'; // iOS 18 风格不再展开
             document.getElementById('readySection').style.display = 'none';
             const inviteUrl = `${window.location.origin}/room/${data.roomId}`;
             document.getElementById('inviteLink').value = inviteUrl;
@@ -703,12 +707,13 @@ class UI {
         this.roomPanel.style.display = 'none';
         this.roomInfoSection.style.display = 'block';
         document.getElementById('displayRoomId').textContent = data.roomId;
-        document.getElementById('inviteSection').style.display = 'block';
+        document.getElementById('inviteSection').style.display = 'none'; // iOS 18 风格不再展开
         document.getElementById('readySection').style.display = 'none';
         const inviteUrl = `${window.location.origin}/room/${data.roomId}`;
         document.getElementById('inviteLink').value = inviteUrl;
 
-        this.opponentCard.style.display = 'none';
+        this.opponentCard.style.display = 'flex';
+        this.opponentCard.querySelector('.player-label').textContent = '等待加入...';
         this.updateUI();
         this.showToast(data.reason || '你已成为新房主，对局已保留');
       } else {
@@ -732,12 +737,13 @@ class UI {
         this.roomPanel.style.display = 'none';
         this.roomInfoSection.style.display = 'block';
         document.getElementById('displayRoomId').textContent = data.roomId;
-        document.getElementById('inviteSection').style.display = 'block';
+        document.getElementById('inviteSection').style.display = 'none'; // iOS 18 风格不再展开
         document.getElementById('readySection').style.display = 'none';
         const inviteUrl = `${window.location.origin}/room/${data.roomId}`;
         document.getElementById('inviteLink').value = inviteUrl;
 
-        this.opponentCard.style.display = 'none';
+        this.opponentCard.style.display = 'flex';
+        this.opponentCard.querySelector('.player-label').textContent = '等待加入...';
         this.updateUI();
         this.showToast(data.reason || '你已成为新房主');
       }
@@ -1088,7 +1094,7 @@ class UI {
 
     for (const point of emptyPoints) {
       const score = this.evaluatePoint(point.x, point.y, 2) +
-                    this.evaluatePoint(point.x, point.y, 1) * 0.9;
+        this.evaluatePoint(point.x, point.y, 1) * 0.9;
       if (score > bestScore) {
         bestScore = score;
         bestPoint = point;
