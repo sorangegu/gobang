@@ -911,7 +911,7 @@ class UI {
       // 显示房间信息面板
       this.roomInfoSection.style.display = 'block';
       document.getElementById('displayRoomId').textContent = savedRoom.roomId;
-      document.getElementById('inviteSection').style.display = 'block';
+      document.getElementById('inviteSection').style.display = 'none'; // 不自动弹出邀请链接
       const inviteUrl = `${window.location.origin}/room/${savedRoom.roomId}`;
       document.getElementById('inviteLink').value = inviteUrl;
       document.getElementById('multiplayerSelect').style.display = 'none';

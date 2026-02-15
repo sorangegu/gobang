@@ -904,12 +904,10 @@ body.pre-init[data-initial-mode="multiplayer"] .mode-display {
   .mobile-nav-btn {
     flex: 1;
     padding: 8px 16px;
-    background: rgba(255, 255, 255, 0.12);
-    backdrop-filter: blur(12px);
-    -webkit-backdrop-filter: blur(12px);
-    border: 1px solid rgba(255, 255, 255, 0.08);
-    border-radius: 999px;
-    color: rgba(255, 255, 255, 0.8);
+    background-color: var(--bg-secondary);
+    border: 1px solid var(--border-color);
+    border-radius: var(--radius);
+    color: var(--text-secondary);
     font-size: 14px;
     font-weight: 600;
     cursor: pointer;
@@ -971,14 +969,11 @@ body.pre-init[data-initial-mode="multiplayer"] .mode-display {
     gap: 8px;
   }
 
-  /* 玩家卡片 iOS 18 风格 */
+  /* 玩家卡片 - 与PC端一致 */
   .side-panel-main .player-card {
-    background: rgba(255, 255, 255, 0.08) !important;
-    backdrop-filter: blur(10px);
-    -webkit-backdrop-filter: blur(10px);
-    border: 1px solid rgba(255, 255, 255, 0.05) !important;
-    border-radius: 16px !important;
-    box-shadow: none !important;
+    background-color: var(--bg-primary);
+    border: 1px solid var(--border-color);
+    border-radius: var(--radius);
   }
 
   /* 统一控制区域容器 */
@@ -994,30 +989,31 @@ body.pre-init[data-initial-mode="multiplayer"] .mode-display {
     padding: 0;
   }
 
-  /* iOS 18 磨砂胶囊风格 */
+  /* 控制区域按钮 - 与PC端一致 */
   .control-area .btn-action,
-  .control-area .btn-icon,
-  .control-area .room-id-box,
+  .control-area .btn-icon {
+    background-color: var(--bg-primary);
+    border: 1px solid var(--border-color);
+    border-radius: var(--radius);
+    color: var(--text-primary);
+    transition: all 0.2s ease;
+  }
+
   .control-area .btn-primary {
-    background: rgba(255, 255, 255, 0.12) !important;
-    backdrop-filter: blur(12px);
-    -webkit-backdrop-filter: blur(12px);
-    border: 1px solid rgba(255, 255, 255, 0.08) !important;
-    border-radius: 999px !important;
-    /* 胶囊圆角 */
-    color: #fff !important;
-    box-shadow: 0 2px 6px rgba(0, 0, 0, 0.05);
+    background-color: var(--accent);
+    border: none;
+    border-radius: var(--radius);
+    color: white;
     transition: all 0.2s ease;
   }
 
   .control-area .btn-action:active,
   .control-area .btn-icon:active,
   .control-area .btn-primary:active {
-    background: rgba(255, 255, 255, 0.2) !important;
     transform: scale(0.96);
   }
 
-  /* 房间号盒子特殊处理 */
+  /* 房间号盒子 */
   .control-area .room-id-box {
     display: flex;
     align-items: center;
@@ -1026,19 +1022,22 @@ body.pre-init[data-initial-mode="multiplayer"] .mode-display {
     font-size: 14px;
     margin-right: 8px;
     justify-content: center;
+    background-color: var(--bg-primary);
+    border: 1px solid var(--border-color);
+    border-radius: var(--radius);
   }
 
   /* 房间号文字 */
   .control-area .room-code {
     font-family: inherit;
     font-weight: 600;
-    color: #fff !important;
+    color: var(--accent);
     letter-spacing: 1px;
     margin-left: 6px;
   }
 
   .control-area .room-label {
-    color: rgba(255, 255, 255, 0.7);
+    color: var(--text-secondary);
     font-size: 12px;
   }
 
@@ -1306,11 +1305,7 @@ body.pre-init[data-initial-mode="multiplayer"] .mode-display {
     max-width: 604px;
     box-sizing: border-box;
     margin: 0 auto;
-    margin: 0 auto;
     order: 2;
-    /* 放在中间（信息栏下方，房间信息上方） */
-    /* 固定棋盘位置，不受上方内容影响 */
-    /* 固定棋盘位置，不受上方内容影响 */
     position: relative;
     display: flex;
     justify-content: center;
@@ -1393,53 +1388,9 @@ body.pre-init[data-initial-mode="multiplayer"] .mode-display {
   .info-row {
     transition: none !important;
   }
-  :root {
-    --accent: #0A84FF;
-    --radius: 14px;
-    --radius-lg: 22px;
-    --shadow: 0 12px 28px rgba(0, 0, 0, 0.25);
-  }
-  .player-card {
-    background: linear-gradient(180deg, rgba(255,255,255,0.18), rgba(255,255,255,0.08));
-    border: 1px solid rgba(255, 255, 255, 0.14);
-    border-radius: 16px;
-    box-shadow: 0 12px 24px rgba(0, 0, 0, 0.25);
-  }
-  .game-info {
-    background: linear-gradient(180deg, rgba(255,255,255,0.14), rgba(255,255,255,0.06));
-    border: 1px solid rgba(255, 255, 255, 0.12);
-    border-radius: 16px;
-    box-shadow: 0 10px 22px rgba(0, 0, 0, 0.24);
-    padding: 8px 12px;
-  }
-  .room-info-section,
-  .multiplayer-select {
-    background: linear-gradient(180deg, rgba(255,255,255,0.14), rgba(255,255,255,0.06));
-    border: 1px solid rgba(255, 255, 255, 0.12);
-    border-radius: 16px;
-    box-shadow: 0 10px 22px rgba(0, 0, 0, 0.24);
-    padding: 12px;
-  }
-  .btn-action {
-    border-radius: 999px;
-    background: linear-gradient(180deg, rgba(255,255,255,0.15), rgba(255,255,255,0.05));
-    border: 1px solid rgba(255, 255, 255, 0.12);
-    box-shadow: 0 6px 14px rgba(0, 0, 0, 0.25);
-    transition: transform 120ms ease, box-shadow 120ms ease, opacity 120ms ease;
-  }
+  /* 按钮交互 - 保持与PC端一致的颜色 */
   .btn-action:active {
     transform: scale(0.98);
-    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.22);
-  }
-  .btn-primary {
-    border-radius: 999px;
-    background: linear-gradient(180deg, #4CA1FF, #0A84FF);
-    box-shadow: 0 10px 22px rgba(10, 132, 255, 0.35);
-  }
-  .btn-secondary {
-    border-radius: 999px;
-    background: linear-gradient(180deg, rgba(255,255,255,0.15), rgba(255,255,255,0.05));
-    border: 1px solid rgba(255, 255, 255, 0.14);
   }
 }
 
@@ -1535,32 +1486,9 @@ body.pre-init[data-initial-mode="multiplayer"] .mode-display {
     font-size: 10px;
     height: 28px;
   }
-  :root {
-    --accent: #0A84FF;
-    --radius: 14px;
-    --radius-lg: 22px;
-    --shadow: 0 12px 28px rgba(0, 0, 0, 0.25);
-  }
-  .btn-action {
-    border-radius: 999px;
-    background: linear-gradient(180deg, rgba(255,255,255,0.15), rgba(255,255,255,0.05));
-    border: 1px solid rgba(255, 255, 255, 0.12);
-    box-shadow: 0 6px 14px rgba(0, 0, 0, 0.25);
-    transition: transform 120ms ease, box-shadow 120ms ease, opacity 120ms ease;
-  }
+  /* 极小屏幕按钮交互 */
   .btn-action:active {
     transform: scale(0.98);
-    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.22);
-  }
-  .btn-primary {
-    border-radius: 999px;
-    background: linear-gradient(180deg, #4CA1FF, #0A84FF);
-    box-shadow: 0 10px 22px rgba(10, 132, 255, 0.35);
-  }
-  .btn-secondary {
-    border-radius: 999px;
-    background: linear-gradient(180deg, rgba(255,255,255,0.15), rgba(255,255,255,0.05));
-    border: 1px solid rgba(255, 255, 255, 0.14);
   }
 }
 
