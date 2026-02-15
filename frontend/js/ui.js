@@ -326,16 +326,39 @@ class UI {
 
     // 棋盘点击（支持鼠标和触摸）
     this.canvas.addEventListener('click', (e) => this.handleBoardClick(e));
-    this.canvas.addEventListener('touchend', (e) => {
+    
+    // 触摸事件处理 - 使用 touchstart 提高响应速度
+    this.canvas.addEventListener('touchstart', (e) => {
       e.preventDefault();
-      const touch = e.changedTouches[0];
-      const mouseEvent = new MouseEvent('click', {
-        clientX: touch.clientX,
-        clientY: touch.clientY,
-        bubbles: true
-      });
-      this.canvas.dispatchEvent(mouseEvent);
+      const touch = e.touches[0];
+      const rect = this.canvas.getBoundingClientRect();
+      const scaleX = (this.canvas.width / window.devicePixelRatio) / rect.width;
+      const scaleY = (this.canvas.height / window.devicePixelRatio) / rect.height;
+      const x = (touch.clientX - rect.left) * scaleX;
+      const y = (touch.clientY - rect.top) * scaleY;
+      
+      const cellX = Math.round((x - this.padding) / this.cellSize);
+      const cellY = Math.round((y - this.padding) / this.cellSize);
+      
+      if (cellX >= 0 && cellX < 15 && cellY >= 0 && cellY < 15) {
+        // 创建模拟点击事件
+        const mouseEvent = new MouseEvent('click', {
+          clientX: touch.clientX,
+          clientY: touch.clientY,
+          bubbles: true
+        });
+        this.canvas.dispatchEvent(mouseEvent);
+      }
     }, { passive: false });
+
+    // 窗口大小改变时重新计算 Canvas 尺寸
+    let resizeTimeout;
+    window.addEventListener('resize', () => {
+      clearTimeout(resizeTimeout);
+      resizeTimeout = setTimeout(() => {
+        this.handleResize();
+      }, 250);
+    });
 
     // 结果弹窗
     document.getElementById('restartGameBtn').addEventListener('click', () => {
@@ -1164,6 +1187,37 @@ class UI {
     }
 
     return score;
+  }
+
+  // 处理窗口大小改变
+  handleResize() {
+    const { canvas, boardSize } = this;
+    const dpr = window.devicePixelRatio || 1;
+
+    let canvasSize;
+    let padding;
+    if (window.innerWidth <= 768) {
+      // 动态计算尺寸：屏幕宽度减去内边距，最大限制 604px
+      canvasSize = Math.min(window.innerWidth - 20, 604);
+      padding = canvasSize <= 320 ? 8 : 10;
+    } else {
+      canvasSize = 604;
+      padding = 22;
+    }
+
+    this.padding = padding;
+    this.cellSize = (canvasSize - padding * 2) / (boardSize - 1);
+
+    canvas.width = canvasSize * dpr;
+    canvas.height = canvasSize * dpr;
+    canvas.style.width = canvasSize + 'px';
+    canvas.style.height = canvasSize + 'px';
+
+    this.dpr = dpr;
+    this.canvasSize = canvasSize;
+
+    // 重新绘制棋盘
+    this.drawBoard();
   }
 
   // 处理悔棋
