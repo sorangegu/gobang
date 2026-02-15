@@ -967,11 +967,94 @@ body.pre-init[data-initial-mode="multiplayer"] .mode-display {
     gap: 8px;
   }
 
-  /* 房间信息 - 放在棋盘下方 */
+  /* 统一控制区域容器 */
+  .control-area {
+    width: 100%;
+    height: 48px;
+    /* 固定高度确保布局稳定 */
+    min-height: 48px;
+    display: flex;
+    align-items: center;
+    position: relative;
+    /* 为悬浮弹窗提供锚点 */
+    z-index: 20;
+    /* 确保悬浮层在最上 */
+  }
+
+  /* 移动端游戏操作按钮 - 水平排列 */
+  .game-actions,
+  .multiplayer-actions {
+    flex-direction: row;
+    width: 100%;
+    gap: 8px;
+    height: 100%;
+  }
+
+  .game-actions .btn-action {
+    flex: 1;
+    height: 36px;
+    /* 统一按钮高度 */
+    padding: 0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+
+  /* 房间信息 - 改回正常流布局，因为在control-area内 */
   .room-info-section {
-    order: 3;
-    /* 放在棋盘下方 */
+    order: unset;
+    margin-top: 0;
+    width: 100%;
+    height: 100%;
+    border: none;
+    padding: 0;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+  }
+
+  /* 单行房间栏 - 自适应宽度 */
+  .room-action-bar {
+    flex: 1;
+    height: 100%;
+    padding: 0;
+    margin: 0;
+    background: transparent;
+    border: none;
+    min-width: 0;
+    /* 允许收缩 */
+  }
+
+  /* 准备区域 - 流式布局，不覆盖 */
+  .ready-section {
+    position: relative;
+    background: transparent;
+    border: none;
+    padding: 0;
+    margin: 0;
+    width: auto;
+    flex-shrink: 0;
+  }
+
+  #readyBtn {
+    padding: 0 12px;
+    height: 32px;
+    font-size: 12px;
+    width: auto;
+    white-space: nowrap;
+  }
+
+  /* 邀请链接区域 - 改为悬浮弹窗 */
+  .invite-section {
+    position: absolute;
+    top: 100%;
+    left: 0;
+    width: 100%;
     margin-top: 8px;
+    z-index: 100;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.5);
+    background-color: var(--bg-secondary);
+    border: 1px solid var(--border-color);
   }
 
   /* 隐藏侧边栏标题（已在mobile-header显示） */

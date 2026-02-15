@@ -1,14 +1,16 @@
 <!DOCTYPE html>
 <html lang="zh-CN">
+
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>五子棋在线</title>
   <link rel="stylesheet" href="/css/style.css">
 </head>
+
 <body class="pre-init">
   <script>
-    (function() {
+    (function () {
       var path = window.location.pathname;
       var isRoom = path === '/room' || path === '/room/' || /^\/room\/[A-Z0-9]{6}$/i.test(path);
       document.body.dataset.initialMode = isRoom ? 'multiplayer' : 'ai';
@@ -79,77 +81,82 @@
             </div>
           </div>
 
-          <div class="game-actions" id="gameActions">
-            <button class="btn-action" id="undoBtn" disabled>悔棋</button>
-            <button class="btn-action" id="restartBtn" disabled>重新开始</button>
-          </div>
-
-          <!-- 玩家对战选择 -->
-          <div class="multiplayer-select" id="multiplayerSelect" style="display: none;">
-            <div class="game-actions multiplayer-actions">
-              <button class="btn-action" id="createRoomBtn">创建新房间</button>
-              <button class="btn-action" id="showJoinBtn">加入房间</button>
+          <!-- 统一控制区域：包含游戏操作、对战选择、房间信息 -->
+          <div class="control-area">
+            <div class="game-actions" id="gameActions">
+              <button class="btn-action" id="undoBtn" disabled>悔棋</button>
+              <button class="btn-action" id="restartBtn" disabled>重新开始</button>
             </div>
-            <div class="join-input-section" id="joinInputSection" style="display: none; margin-top: 8px;">
-              <div style="display: flex; gap: 6px;">
-                <input type="text" id="roomIdInputPanel" placeholder="输入房间号" maxlength="6" style="flex: 1; padding: 6px 10px; background-color: var(--bg-primary); border: 1px solid var(--border-color); border-radius: var(--radius); color: var(--text-primary); font-size: 13px; text-transform: uppercase; letter-spacing: 2px; text-align: center;">
-                <button class="btn-primary" id="joinRoomBtnPanel" style="padding: 6px 12px; font-size: 12px;">加入</button>
+
+            <!-- 玩家对战选择 -->
+            <div class="multiplayer-select" id="multiplayerSelect" style="display: none;">
+              <div class="game-actions multiplayer-actions">
+                <button class="btn-action" id="createRoomBtn">创建新房间</button>
+                <button class="btn-action" id="showJoinBtn">加入房间</button>
+              </div>
+              <div class="join-input-section" id="joinInputSection" style="display: none; margin-top: 8px;">
+                <div style="display: flex; gap: 6px;">
+                  <input type="text" id="roomIdInputPanel" placeholder="输入房间号" maxlength="6"
+                    style="flex: 1; padding: 6px 10px; background-color: var(--bg-primary); border: 1px solid var(--border-color); border-radius: var(--radius); color: var(--text-primary); font-size: 13px; text-transform: uppercase; letter-spacing: 2px; text-align: center;">
+                  <button class="btn-primary" id="joinRoomBtnPanel"
+                    style="padding: 6px 12px; font-size: 12px;">加入</button>
+                </div>
               </div>
             </div>
-          </div>
-        </div>
 
-        <!-- 房间信息 -->
-        <div class="room-info-section" id="roomInfoSection" style="display: none;">
-          <!-- 房间操作栏：房间号 + 邀请链接 + 离开房间 -->
-          <div class="room-action-bar">
-            <div class="room-id-box">
-              <span class="room-label">房间</span>
-              <span class="room-code" id="displayRoomId">------</span>
-            </div>
-            <div class="room-actions">
-              <button class="btn-icon" id="copyRoomId" title="复制房间号">
-                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                  <rect x="9" y="9" width="13" height="13" rx="2" ry="2"></rect>
-                  <path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"></path>
-                </svg>
-              </button>
-              <button class="btn-icon" id="toggleInviteLink" title="邀请链接">
-                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                  <path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"></path>
-                  <path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"></path>
-                </svg>
-              </button>
-              <button class="btn-icon btn-leave" id="leaveRoomBtn" title="离开房间">
-                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                  <path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"></path>
-                  <polyline points="16 17 21 12 16 7"></polyline>
-                  <line x1="21" y1="12" x2="9" y2="12"></line>
-                </svg>
-              </button>
-            </div>
-          </div>
+            <!-- 房间信息 (已移入 control-area) -->
+            <div class="room-info-section" id="roomInfoSection" style="display: none;">
+              <!-- 房间操作栏：房间号 + 邀请链接 + 离开房间 -->
+              <div class="room-action-bar">
+                <div class="room-id-box">
+                  <span class="room-label">房间</span>
+                  <span class="room-code" id="displayRoomId">------</span>
+                </div>
+                <div class="room-actions">
+                  <button class="btn-icon" id="copyRoomId" title="复制房间号">
+                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                      <rect x="9" y="9" width="13" height="13" rx="2" ry="2"></rect>
+                      <path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"></path>
+                    </svg>
+                  </button>
+                  <button class="btn-icon" id="toggleInviteLink" title="邀请链接">
+                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                      <path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"></path>
+                      <path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"></path>
+                    </svg>
+                  </button>
+                  <button class="btn-icon btn-leave" id="leaveRoomBtn" title="离开房间">
+                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                      <path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"></path>
+                      <polyline points="16 17 21 12 16 7"></polyline>
+                      <line x1="21" y1="12" x2="9" y2="12"></line>
+                    </svg>
+                  </button>
+                </div>
+              </div>
 
-          <!-- 邀请链接展开区域 -->
-          <div class="invite-section" id="inviteSection" style="display: none;">
-            <div class="invite-link-row">
-              <input type="text" id="inviteLink" readonly placeholder="邀请链接">
-              <button class="btn-copy" id="copyInviteLink">复制</button>
-            </div>
-            <p class="waiting-text">等待对手加入...</p>
-          </div>
+              <!-- 邀请链接展开区域 (悬浮显示) -->
+              <div class="invite-section" id="inviteSection" style="display: none;">
+                <div class="invite-link-row">
+                  <input type="text" id="inviteLink" readonly placeholder="邀请链接">
+                  <button class="btn-copy" id="copyInviteLink">复制</button>
+                </div>
+                <p class="waiting-text">等待对手加入...</p>
+              </div>
 
-          <!-- 准备状态 -->
-          <div class="ready-section" id="readySection" style="display: none;">
-            <div class="ready-status-row">
-              <span class="ready-label">你的状态:</span>
-              <span class="ready-value" id="myReadyStatus">未准备</span>
+              <!-- 准备状态 (紧凑显示) -->
+              <div class="ready-section" id="readySection" style="display: none;">
+                <div class="ready-status-row" style="display: none;"> <!-- 隐藏详细状态文本，靠按钮状态 -->
+                  <span class="ready-label">你的状态:</span>
+                  <span class="ready-value" id="myReadyStatus">未准备</span>
+                </div>
+                <div class="ready-status-row" style="display: none;">
+                  <span class="ready-label">对手状态:</span>
+                  <span class="ready-value" id="opponentReadyStatus">未准备</span>
+                </div>
+                <button class="btn-primary" id="readyBtn">准备开始</button>
+              </div>
             </div>
-            <div class="ready-status-row">
-              <span class="ready-label">对手状态:</span>
-              <span class="ready-value" id="opponentReadyStatus">未准备</span>
-            </div>
-            <button class="btn-primary" id="readyBtn">准备开始</button>
           </div>
         </div>
       </aside>
@@ -235,4 +242,5 @@
   <script src="/js/game.js?v=1.2"></script>
   <script src="/js/ui.js?v=1.2"></script>
 </body>
+
 </html>
