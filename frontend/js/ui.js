@@ -749,6 +749,10 @@ class UI {
             this.showToast('对手已断开，等待对手重连...');
           }
         } else {
+          // 等待状态：重置准备状态
+          this.resetMultiplayerReadyState();
+          game.isPlaying = false;
+
           if (data.isHost) {
             this.opponentCard.querySelector('.player-label').textContent = '等待加入...';
             document.getElementById('inviteSection').style.display = 'block';
