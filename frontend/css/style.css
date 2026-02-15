@@ -711,11 +711,6 @@ body[data-game-mode="room"] .control-area .room-info-section.room-info-desktop {
   display: block !important;
 }
 
-/* 玩家对战模式下隐藏右侧装饰面板 */
-body[data-game-mode="room"] .decor-panel {
-  display: none;
-}
-
 /* 房间信息按钮 (桌面端显示) */
 .btn-room-info {
   display: flex;
