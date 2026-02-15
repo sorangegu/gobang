@@ -1128,8 +1128,8 @@ body:not([data-game-mode="ai"])[data-game-status="playing"] .room-code-preview {
     --mobile-nav-height: 44px;
     --mobile-info-height: 70px;
     --mobile-room-height: 44px;
-    --btn-height: 48px;
-    --btn-radius: 12px;
+    --btn-height: 44px;
+    --btn-radius: 10px;
   }
 
   /* 隐藏顶部导航栏，改为下方导航 */
@@ -1249,7 +1249,7 @@ body:not([data-game-mode="ai"])[data-game-status="playing"] .room-code-preview {
     background: transparent;
     box-shadow: none;
     flex-shrink: 0;
-    margin-top: 12px;
+    margin-top: 4px;
   }
 
   /* 主面板（玩家信息 + 操作按钮） */
@@ -1261,7 +1261,7 @@ body:not([data-game-mode="ai"])[data-game-status="playing"] .room-code-preview {
     padding: 0;
     display: flex;
     flex-direction: column;
-    gap: 12px;
+    gap: 6px;
     height: auto;
   }
 
@@ -1277,7 +1277,7 @@ body:not([data-game-mode="ai"])[data-game-status="playing"] .room-code-preview {
     background: transparent;
     border: none;
     padding: 0;
-    gap: 12px;
+    gap: 6px;
   }
 
   /* 游戏进行中：隐藏房间文字，保留按钮，显示游戏操作（非人机模式） */
@@ -1880,7 +1880,7 @@ body:not([data-game-mode="ai"])[data-game-status="playing"] .room-code-preview {
     width: calc(100vw - 20px);
     max-width: 604px;
     box-sizing: border-box;
-    margin: 8px auto 12px;
+    margin: 8px auto 4px;
     position: relative;
     z-index: 1;
     order: 1; /* 棋盘始终在第一行之后 */
