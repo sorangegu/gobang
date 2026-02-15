@@ -666,19 +666,20 @@ body:not([data-game-status="playing"]) #gameActions {
   margin-top: 16px;
 }
 
-/* 桌面端有房间时显示房间信息栏（非人机模式） */
-body:not([data-game-mode="ai"]) .room-action-bar {
+/* 桌面端有房间时显示房间信息栏（仅room模式） */
+body[data-game-mode="room"] .room-action-bar {
   display: flex;
 }
 
 /* 桌面端默认隐藏房间信息section */
 body:not([data-game-status]) .room-info-section,
-body[data-game-mode="ai"] .room-info-section {
+body[data-game-mode="ai"] .room-info-section,
+body[data-game-mode="multiplayer"] .room-info-section {
   display: none;
 }
 
-/* 桌面端有房间时显示房间信息section（非人机模式 - 覆盖上面的隐藏规则） */
-body:not([data-game-mode="ai"]) .room-info-section {
+/* 桌面端有房间时显示房间信息section（仅room模式 - 覆盖上面的隐藏规则） */
+body[data-game-mode="room"] .room-info-section {
   display: block !important;
 }
 

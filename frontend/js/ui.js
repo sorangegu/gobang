@@ -299,8 +299,9 @@ class UI {
       this.opponentCard.style.display = 'flex';
       this.opponentCard.querySelector('.player-label').textContent = '白方';
       // 多人对战选择页面，还未开始游戏
+      // 更新游戏模式（用于控制UI显示）
       this.updateGameStatus(null);
-      this.updateGameMode(null);
+      this.updateGameMode('multiplayer');
     } else if (mode === 'create' || mode === 'join' || mode === 'room') {
       // create/join/room 模式：隐藏人机操作和选择面板，显示房间信息
       this.roomPanel.style.display = 'none';
@@ -308,7 +309,7 @@ class UI {
       // 不使用内联样式，让CSS根据data-game-status控制显示
       this.roomInfoSection.style.display = 'block';
       this.opponentCard.style.display = 'flex';
-      this.updateGameMode(null);
+      this.updateGameMode('room');
     }
   }
 
@@ -316,6 +317,9 @@ class UI {
   updateGameStatus(status) {
     if (status === 'playing') {
       document.body.dataset.gameStatus = 'playing';
+      // Ensure specific mode is retained or inferred if needed, but primarily rely on gameMode
+    } else if (status === 'waiting') {
+      document.body.dataset.gameStatus = 'waiting';
     } else {
       delete document.body.dataset.gameStatus;
     }
@@ -323,8 +327,8 @@ class UI {
 
   // 更新游戏模式（用于控制UI显示）
   updateGameMode(mode) {
-    if (mode === 'ai') {
-      document.body.dataset.gameMode = 'ai';
+    if (mode) {
+      document.body.dataset.gameMode = mode;
     } else {
       delete document.body.dataset.gameMode;
     }
