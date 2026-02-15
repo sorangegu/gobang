@@ -956,10 +956,22 @@ body:not([data-game-mode="ai"])[data-game-status="playing"] .room-code-preview {
 
 .board-overlay .overlay-btn {
   width: 100%;
-  height: 46px;
-  border-radius: 12px;
-  font-size: 15px;
-  font-weight: 700;
+  height: var(--btn-height);
+  border-radius: var(--btn-radius);
+  font-size: 14px;
+  font-weight: 600;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background-color: var(--accent);
+  border: none;
+  color: white;
+  transition: all 0.2s ease;
+}
+
+.board-overlay .overlay-btn:active {
+  opacity: 0.9;
+  transform: scale(0.96);
 }
 
 /* ===== 按钮样式 ===== */
@@ -1178,22 +1190,26 @@ body:not([data-game-mode="ai"])[data-game-status="playing"] .room-code-preview {
     display: flex;
     justify-content: center;
     gap: 8px;
-    height: 44px;
+    height: var(--btn-height);
     width: 100%;
-    padding: 0 12px;
+    padding: 0;
   }
 
   .mobile-nav-btn {
     flex: 1;
+    height: var(--btn-height);
     padding: 0 16px;
     background-color: var(--bg-secondary);
     border: 1px solid var(--border-color);
-    border-radius: 10px;
+    border-radius: var(--btn-radius);
     color: var(--text-secondary);
-    font-size: 15px;
+    font-size: 14px;
     font-weight: 600;
     cursor: pointer;
     transition: all 150ms ease;
+    display: flex;
+    align-items: center;
+    justify-content: center;
   }
 
   .mobile-nav-btn.active {
@@ -1464,6 +1480,24 @@ body:not([data-game-mode="ai"])[data-game-status="playing"] .room-code-preview {
 
   .multiplayer-actions .btn-action {
     flex: 1;
+    height: var(--btn-height);
+    border-radius: var(--btn-radius);
+    font-size: 14px;
+    font-weight: 600;
+    padding: 0 16px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background-color: var(--bg-secondary);
+    border: 1px solid var(--border-color);
+    color: var(--text-primary);
+  }
+
+  .multiplayer-actions .btn-action:active {
+    background-color: var(--accent);
+    border-color: var(--accent);
+    color: white;
+    transform: scale(0.96);
   }
 
   /* 房间信息 - 在棋盘下方 */
@@ -1485,11 +1519,11 @@ body:not([data-game-mode="ai"])[data-game-status="playing"] .room-code-preview {
     width: 100%;
     display: flex;
     align-items: center;
-    gap: 4px;
-    padding: 4px 6px;
+    gap: 6px;
+    padding: 6px;
     margin: 0;
     height: auto;
-    min-height: 52px;
+    min-height: 56px;
     background-color: var(--bg-secondary);
     border: 1px solid var(--border-color);
     border-radius: var(--btn-radius);
@@ -1499,11 +1533,18 @@ body:not([data-game-mode="ai"])[data-game-status="playing"] .room-code-preview {
   /* 房间信息按钮 */
   .btn-room-info {
     flex: 1;
-    padding: 0 8px;
+    height: var(--btn-height);
+    padding: 0 12px;
     background: transparent;
     border: none;
     justify-content: flex-start;
     gap: 8px;
+    border-radius: var(--btn-radius);
+    display: flex;
+    align-items: center;
+    font-size: 14px;
+    font-weight: 500;
+    color: var(--text-primary);
   }
 
   /* 房间号预览 */
@@ -1517,15 +1558,35 @@ body:not([data-game-mode="ai"])[data-game-status="playing"] .room-code-preview {
   /* 房间按钮区域 */
   .room-actions {
     display: flex;
-    gap: 4px;
+    gap: 6px;
     flex-shrink: 0;
     align-items: center;
   }
 
   .room-actions .btn-icon {
-    width: 44px;
-    height: 44px;
+    width: var(--btn-height);
+    height: var(--btn-height);
     border-radius: var(--btn-radius);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background-color: var(--bg-primary);
+    border: 1px solid var(--border-color);
+    color: var(--text-secondary);
+    padding: 0;
+    transition: all 0.2s ease;
+  }
+
+  .room-actions .btn-icon:active {
+    background-color: var(--accent);
+    border-color: var(--accent);
+    color: white;
+    transform: scale(0.96);
+  }
+
+  .room-actions .btn-icon.btn-leave:active {
+    background-color: var(--danger-color);
+    border-color: var(--danger-color);
   }
 
   /* 房间详情弹出层 */
@@ -1559,7 +1620,24 @@ body:not([data-game-mode="ai"])[data-game-status="playing"] .room-code-preview {
 
   #readyBtn {
     width: 100%;
+    height: var(--btn-height);
+    border-radius: var(--btn-radius);
+    font-size: 14px;
+    font-weight: 600;
+    padding: 0 16px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background-color: var(--accent);
+    border: none;
+    color: white;
     white-space: nowrap;
+    transition: all 0.2s ease;
+  }
+
+  #readyBtn:active {
+    opacity: 0.9;
+    transform: scale(0.96);
   }
 
   /* 邀请链接区域 */
@@ -1601,6 +1679,15 @@ body:not([data-game-mode="ai"])[data-game-status="playing"] .room-code-preview {
     color: white;
     border: none;
     white-space: nowrap;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: all 0.2s ease;
+  }
+
+  .btn-copy:active {
+    opacity: 0.9;
+    transform: scale(0.96);
   }
 
   /* 隐藏侧边栏标题（已在mobile-header显示） */
@@ -1635,18 +1722,36 @@ body:not([data-game-mode="ai"])[data-game-status="playing"] .room-code-preview {
 
   .player-action .mobile-action-btn {
     width: 100%;
-    height: var(--btn-height) !important;
-    border-radius: var(--btn-radius) !important;
+    height: var(--btn-height);
+    border-radius: var(--btn-radius);
+    font-size: 14px;
+    font-weight: 600;
+    padding: 0 16px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background-color: var(--bg-secondary);
+    border: 1px solid var(--border-color);
+    color: var(--text-primary);
+    transition: all 0.2s ease;
+  }
+
+  .player-action .mobile-action-btn:active:not(:disabled) {
+    background-color: var(--accent);
+    border-color: var(--accent);
+    color: white;
+    transform: scale(0.96);
   }
 
   .player-action .mobile-action-btn:disabled {
     opacity: 0.5;
+    cursor: not-allowed;
   }
 
   .player-card {
     padding: 0 12px;
     flex: 0 0 auto;
-    gap: 10px;
+    gap: 8px;
     transition: none;
     align-items: center;
     justify-content: center;
@@ -1657,6 +1762,7 @@ body:not([data-game-mode="ai"])[data-game-status="playing"] .room-code-preview {
     border: 1px solid var(--border-color);
     border-radius: var(--btn-radius);
     -webkit-tap-highlight-color: transparent;
+    box-sizing: border-box;
   }
 
   .player-card.active {
@@ -1844,10 +1950,29 @@ body:not([data-game-mode="ai"])[data-game-status="playing"] .room-code-preview {
     border: 1px solid var(--border-color);
     background-color: var(--bg-primary);
     color: var(--text-primary);
+    text-transform: uppercase;
+    letter-spacing: 2px;
+    text-align: center;
   }
 
   .multiplayer-select .join-input-section .btn-primary {
-    /* 继承统一样式 */
+    height: var(--btn-height);
+    padding: 0 16px;
+    font-size: 14px;
+    font-weight: 600;
+    border-radius: var(--btn-radius);
+    background-color: var(--accent);
+    border: none;
+    color: white;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: all 0.2s ease;
+  }
+
+  .multiplayer-select .join-input-section .btn-primary:active {
+    opacity: 0.9;
+    transform: scale(0.96);
   }
 
 
