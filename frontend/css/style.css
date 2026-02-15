@@ -136,8 +136,8 @@ body.pre-init[data-initial-mode="multiplayer"] .nav-btn[data-mode="multiplayer"]
   border-radius: 1px;
 }
 
-body.pre-init[data-initial-mode="multiplayer"] #opponentCard {
-  display: none;
+body.pre-init[data-initial-mode="multiplayer"] #opponentCard .player-label {
+  /* 预初始化时白方卡片显示默认文字 */
 }
 
 body.pre-init[data-initial-mode="multiplayer"] #multiplayerSelect {
@@ -1334,6 +1334,7 @@ body.pre-init[data-initial-mode="multiplayer"] .mode-display {
   .multiplayer-select {
     padding: 0;
     background-color: transparent;
+    width: 100%;
   }
 
   .multiplayer-select .multiplayer-actions {
@@ -1347,22 +1348,25 @@ body.pre-init[data-initial-mode="multiplayer"] .mode-display {
 
   .multiplayer-select .multiplayer-actions .btn-action {
     flex: 1;
-    min-width: 80px;
+    min-width: 0;
     padding: 0 12px;
-    font-size: 13px;
+    font-size: 14px;
     font-weight: 500;
-    background-color: var(--bg-secondary);
+    background-color: var(--bg-primary);
     border: 1px solid var(--border-color);
+    border-radius: var(--radius);
     white-space: nowrap;
-    height: 36px;
+    height: 40px;
     display: flex;
     align-items: center;
     justify-content: center;
+    color: var(--text-primary);
   }
 
-  .multiplayer-select .multiplayer-actions .btn-action:hover {
+  .multiplayer-select .multiplayer-actions .btn-action:active {
     background-color: var(--accent);
     border-color: var(--accent);
+    color: white;
   }
 
   .multiplayer-select .join-input-section {
@@ -1476,15 +1480,15 @@ body.pre-init[data-initial-mode="multiplayer"] .mode-display {
 
   /* 极小屏幕玩家对战按钮更紧凑 */
   .multiplayer-select .multiplayer-actions .btn-action {
-    padding: 4px 6px;
-    font-size: 10px;
-    height: 28px;
+    padding: 0 8px;
+    font-size: 12px;
+    height: 34px;
   }
 
   .game-actions .btn-action {
-    padding: 4px 6px;
-    font-size: 10px;
-    height: 28px;
+    padding: 0 8px;
+    font-size: 12px;
+    height: 34px;
   }
   /* 极小屏幕按钮交互 */
   .btn-action:active {

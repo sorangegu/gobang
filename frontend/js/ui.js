@@ -72,7 +72,6 @@ class UI {
         this.roomPanel.style.display = 'none';
         this.roomInfoSection.style.display = 'none';
         document.getElementById('multiplayerSelect').style.display = 'block';
-        this.opponentCard.style.display = 'none';
         this.updateModeUI('multiplayer');
         // 不需要再调用 drawBoard()，initCanvas 已经绘制过了
       }
@@ -111,7 +110,6 @@ class UI {
         this.roomPanel.style.display = 'none';
         this.roomInfoSection.style.display = 'none';
         document.getElementById('multiplayerSelect').style.display = 'block';
-        this.opponentCard.style.display = 'none';
         this.updateModeUI('multiplayer');
       }
       this.drawBoard();
@@ -195,7 +193,9 @@ class UI {
       this.roomInfoSection.style.display = 'none';
       document.getElementById('multiplayerSelect').style.display = 'block';
       document.getElementById('gameActions').style.display = 'none';
-      this.opponentCard.style.display = 'none';
+      // 显示白棋卡片，标签设为"白方"
+      this.opponentCard.style.display = 'flex';
+      this.opponentCard.querySelector('.player-label').textContent = '白方';
     } else if (mode === 'create' || mode === 'join' || mode === 'room') {
       // create/join/room 模式：隐藏人机操作和选择面板，显示房间信息
       this.roomPanel.style.display = 'none';
@@ -938,7 +938,6 @@ class UI {
     this.roomInfoSection.style.display = 'none';
     document.getElementById('multiplayerSelect').style.display = 'block';
     document.getElementById('joinInputSection').style.display = 'none';
-    this.opponentCard.style.display = 'none';
     this.updateModeUI('multiplayer');
     // 更新 URL
     window.history.pushState({}, '', '/room');
@@ -983,7 +982,7 @@ class UI {
     // 隐藏选择面板，显示房间信息
     document.getElementById('multiplayerSelect').style.display = 'none';
     this.roomInfoSection.style.display = 'block';
-    document.getElementById('inviteSection').style.display = 'block';
+    document.getElementById('inviteSection').style.display = 'none'; // 不自动弹出邀请链接
 
     this.opponentCard.style.display = 'none';
     this.updateUI();
@@ -1248,9 +1247,11 @@ class UI {
     // 更新回合指示
     const isMyTurn = game.isMyTurn();
     const yourTurnEl = document.getElementById('yourTurn');
-    yourTurnEl.classList.toggle('visible', isMyTurn);
-    this.playerCard.classList.toggle('active', isMyTurn);
-    this.opponentCard.classList.toggle('active', !isMyTurn);
+    const opponentTurnEl = document.getElementById('opponentTurn');
+    yourTurnEl.classList.toggle('visible', isMyTurn && game.isPlaying);
+    opponentTurnEl.classList.toggle('visible', !isMyTurn && game.isPlaying);
+    this.playerCard.classList.toggle('active', isMyTurn && game.isPlaying);
+    this.opponentCard.classList.toggle('active', !isMyTurn && game.isPlaying);
 
     // 启用/禁用按钮
     this.undoBtn.disabled = game.moveHistory.length === 0;
