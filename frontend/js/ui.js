@@ -704,96 +704,78 @@ class UI {
       console.log('[DEBUG] roomReconnected 收到:', data);
       if (data.success) {
         this.pendingReconnect = null;
-        this.roomPanel.style.display = 'none';
-        this.roomInfoSection.style.display = 'block';
-        // 确保隐藏选择面板
-        document.getElementById('multiplayerSelect').style.display = 'none';
 
+        // 步骤 1：更新游戏状态
         game.setRoomInfo(data.roomId, data.isHost);
         game.myColor = data.playerColor;
-        // Fix: Explicitly set game mode to 'room' so logic (like clicks) works correctly
         game.gameMode = 'room';
 
-        // Restore initMode so UI logic works if we leave/refresh
-        this.initMode = {
-          type: data.isHost ? 'create' : 'join',
-          roomId: data.roomId
-        };
-
-        // Fix: Update game state from server data to overwrite any AI state
+        // 从服务器数据恢复棋盘状态
         if (data.board) game.board = data.board;
         if (data.moveHistory) game.moveHistory = data.moveHistory;
         if (data.currentPlayer) game.currentPlayer = data.currentPlayer;
-        game.winner = null; // Clear any local winner state
+        game.winner = null;
         game.lastMove = game.moveHistory.length > 0 ? game.moveHistory[game.moveHistory.length - 1] : null;
 
-        if (data.status === 'playing') {
-          // Game is already active (reconnecting to ongoing game)
-          this.updateGameStatus('playing');
-          this.setBoardOverlayVisible(false); // Key fix: updateBoardOverlay() might not be enough
+        // 步骤 2：设置 DOM 属性（CSS 依赖这些属性）
+        document.body.dataset.gameMode = 'room';
+        document.body.dataset.gameStatus = data.status === 'playing' ? 'playing' : 'waiting';
 
+        // 步骤 3：操作 DOM 显示
+        this.roomPanel.style.display = 'none';
+        document.getElementById('multiplayerSelect').style.display = 'none';
+        this.roomInfoSection.style.display = 'block';
+        this.opponentCard.style.display = 'flex';
+        this.updateRoomIdDisplay(data.roomId);
+
+        // 更新导航按钮状态
+        this.navBtns.forEach(btn => {
+          btn.classList.toggle('active', btn.dataset.mode === 'multiplayer');
+        });
+        document.querySelectorAll('.mobile-nav-btn').forEach(btn => {
+          btn.classList.toggle('active', btn.dataset.mode === 'multiplayer');
+        });
+
+        // 步骤 4：根据游戏状态更新具体 UI
+        if (data.status === 'playing') {
+          this.setBoardOverlayVisible(false);
           document.getElementById('inviteSection').style.display = 'none';
           document.getElementById('readySection').style.display = 'none';
 
           if (data.opponentOnline) {
-            this.opponentCard.style.display = 'flex';
             this.opponentCard.querySelector('.player-label').textContent = data.isHost ? '对手 (白方)' : '对手 (黑方)';
           } else {
-            this.opponentCard.style.display = 'flex';
             this.opponentCard.querySelector('.player-label').textContent = '等待重连...';
             this.showToast('对手已断开，等待对手重连...');
           }
         } else {
-          // Waiting state (game not started yet)
-          this.updateGameStatus('waiting');
-          // ... rest of waiting logic ...
           if (data.isHost) {
-            // 房主显示邀请链接
-            this.opponentCard.style.display = 'flex';
             this.opponentCard.querySelector('.player-label').textContent = '等待加入...';
-            // 桌面端：显示邀请链接区域
             document.getElementById('inviteSection').style.display = 'block';
             document.getElementById('readySection').style.display = 'none';
             const inviteUrl = `${window.location.origin}/room/${data.roomId}`;
             document.getElementById('inviteLink').value = inviteUrl;
           } else {
-            // 被邀玩家显示准备区域 - FIX: Previously hidden
             document.getElementById('inviteSection').style.display = 'none';
-            document.getElementById('readySection').style.display = 'block'; // Changed from 'none' to 'block'
-
-            // Sync ready button state if needed (server doesn't persist ready state on reconnect in this implementation, so assume not ready)
+            document.getElementById('readySection').style.display = 'block';
             document.getElementById('readyBtn').disabled = false;
             document.getElementById('readyBtn').textContent = '准备开始';
             document.getElementById('myReadyStatus').textContent = '未准备';
             document.getElementById('myReadyStatus').style.color = 'var(--text-muted)';
-
-            // Ensure opponent card is visible
-            this.opponentCard.style.display = 'flex';
             this.opponentCard.querySelector('.player-label').textContent = '对手 (黑方)';
           }
         }
 
-        // Force UI update to room mode
-        this.updateModeUI('room');
-        // 设置正确的游戏状态
-        if (data.status === 'playing') {
-          this.updateGameStatus('playing');
-        } else {
-          this.updateGameStatus('waiting');
-        }
-        // 更新房间号显示
-        this.updateRoomIdDisplay(data.roomId);
-
-        // 调试：检查 DOM 属性
-        console.log('[DEBUG] 重连后 DOM 状态:', {
-          gameMode: document.body.dataset.gameMode,
-          gameStatus: document.body.dataset.gameStatus,
-          roomInfoSectionDisplay: this.roomInfoSection.style.display,
-          multiplayerSelectDisplay: document.getElementById('multiplayerSelect').style.display
-        });
+        // 保存 initMode 以便离开/刷新时逻辑正常工作
+        this.initMode = {
+          type: data.isHost ? 'create' : 'join',
+          roomId: data.roomId
+        };
 
         // 更新 URL 为房间页面
         window.history.pushState({}, '', `/room/${data.roomId}`);
+
+        // 步骤 5：渲染和更新
         this.drawBoard();
         this.updateUI();
         this.updateBoardOverlay();
@@ -809,19 +791,17 @@ class UI {
         const roomMatch = currentPath.match(/^\/room\/([A-Z0-9]{6})\/?$/i);
 
         if (roomMatch) {
-          // 如果在具体房间页面，重连失败应该跳转到多人选择页，而不是人机页面
           this.showToast('房间已失效，请重新创建或加入');
           window.history.pushState({}, '', '/room');
           this.showMultiplayerSelect();
         } else {
-          // 其他情况，显示多人选择页
           this.showToast('房间已失效，请重新创建或加入');
           this.showMultiplayerSelect();
         }
       }
     });
 
-    socketManager.on('playerJoined', (data) => {
+    socketManager.on('playerJoined'socketManager.on('playerJoined', (data) => {
       this.roomPanel.style.display = 'none';
       this.opponentCard.style.display = 'flex';
       this.opponentCard.querySelector('.player-label').textContent = '对手 (白方)';
