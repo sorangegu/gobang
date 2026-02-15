@@ -28,6 +28,12 @@ class UI {
     console.log('[DEBUG] initMode:', this.initMode);
 
     // 根据模式初始化
+    if (this.initMode.type === 'redirect-ai') {
+      // 根路径重定向到 /ai
+      window.history.replaceState({}, '', '/ai');
+      this.initMode = { type: 'ai' };
+    }
+
     if (this.initMode.type === 'ai') {
       // 人机模式：完全独立，不检查房间信息
       game.init('ai');
@@ -221,8 +227,13 @@ class UI {
       return { type: 'multiplayer' };
     }
 
-    // / 或其他 - 人机对战（默认）
-    return { type: 'ai' };
+    // /ai - 人机对战
+    if (path === '/ai' || path === '/ai/') {
+      return { type: 'ai' };
+    }
+
+    // / 或其他 - 重定向到 /ai
+    return { type: 'redirect-ai' };
   }
 
   // 获取有效的保存房间信息
@@ -760,6 +771,8 @@ class UI {
 
         // Force UI update to room mode
         this.updateModeUI('room');
+        // 更新 URL 为房间页面
+        window.history.pushState({}, '', `/room/${data.roomId}`);
         this.drawBoard();
         this.updateUI();
         this.updateBoardOverlay();
@@ -1187,13 +1200,9 @@ class UI {
   // 处理模式切换
   handleModeChange(mode) {
     if (mode === 'ai') {
-      // Switching to AI mode:
-      // We do NOT leave the room on the server to preserve the session.
-      // We just locally switch the view and state to AI.
-
+      // 切换到人机模式：URL 变为 /ai
       this.resumeAIGame();
-      // 更新 URL
-      window.history.pushState({}, '', '/');
+      window.history.pushState({}, '', '/ai');
     } else if (mode === 'multiplayer') {
       // 显示玩家对战选择面板
       this.showMultiplayerSelect();
@@ -1239,10 +1248,8 @@ class UI {
     document.getElementById('multiplayerSelect').style.display = 'block';
     this.updateModeUI('multiplayer');
 
-    // 更新 URL (Fix: match game.js check for /room)
-    if (window.location.pathname !== '/room') {
-      window.history.pushState({}, '', '/room');
-    }
+    // 更新 URL 为 /room
+    window.history.pushState({}, '', '/room');
     this.drawBoard();
     this.updateUI();
   }

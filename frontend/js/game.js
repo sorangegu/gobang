@@ -29,7 +29,7 @@ class Game {
       return 'multiplayer';
     }
 
-    // / 或其他 - 人机对战（默认）
+    // /ai 或 / 或其他 - 人机对战
     return 'ai';
   }
 
