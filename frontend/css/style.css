@@ -1085,6 +1085,12 @@ body:not([data-game-mode="ai"])[data-game-status="playing"] .room-code-preview {
 
 /* ===== 响应式 - iOS 18 风格 (完整重写) ===== */
 @media (max-width: 768px) {
+  .toast {
+    top: 60px;
+    padding: 10px 16px;
+    font-size: 14px;
+  }
+
   :root {
     --board-size: calc(100vw - 20px);
     --mobile-header-height: 44px;
