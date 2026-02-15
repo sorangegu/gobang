@@ -792,6 +792,10 @@ class UI {
         localStorage.removeItem('gobang-room');
         this.pendingReconnect = null;
 
+        // 关闭覆盖层
+        this.setBoardOverlayVisible(false);
+        this.roomInfoSection.style.display = 'none';
+
         // 检查当前 URL 是否在房间页面
         const currentPath = window.location.pathname;
         const roomMatch = currentPath.match(/^\/room\/([A-Z0-9]{6})\/?$/i);
