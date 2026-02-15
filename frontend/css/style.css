@@ -518,7 +518,7 @@ body.pre-init[data-initial-mode="multiplayer"] .mode-display {
 .player-card {
   display: flex;
   align-items: center;
-  justify-content: flex-start;
+  justify-content: center;
   gap: 12px;
   padding: 10px 16px;
   background-color: var(--bg-primary);
