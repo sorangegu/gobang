@@ -1059,7 +1059,7 @@ body:not([data-game-mode="ai"])[data-game-status="playing"] .room-code-preview {
 /* ===== 通知 ===== */
 .toast {
   position: fixed;
-  bottom: calc(24px + env(safe-area-inset-bottom));
+  top: 80px;
   left: 50%;
   transform: translateX(-50%);
   background-color: var(--bg-secondary);
@@ -1068,12 +1068,12 @@ body:not([data-game-mode="ai"])[data-game-status="playing"] .room-code-preview {
   border-radius: var(--radius);
   box-shadow: var(--shadow);
   z-index: 1001;
-  animation: slideUp 200ms ease;
+  animation: slideDown 200ms ease;
 }
 
-@keyframes slideUp {
+@keyframes slideDown {
   from {
-    transform: translate(-50%, 20px);
+    transform: translate(-50%, -20px);
     opacity: 0;
   }
 
