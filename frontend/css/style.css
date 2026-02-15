@@ -341,20 +341,22 @@ body.pre-init[data-initial-mode="multiplayer"] .mode-display {
   margin: 0 auto;
 }
 
-/* ===== PC端 (宽度 > 768px) ===== */
-/* PC端：隐藏移动端房间信息（棋盘下方） */
-.game-container > .room-info-section {
-  display: none !important;
-}
+/* ===== PC端房间信息规则 (宽度 > 768px) ===== */
+@media (min-width: 769px) {
+  /* PC端：隐藏移动端房间信息（棋盘下方） */
+  .game-container > .room-info-section {
+    display: none !important;
+  }
 
-/* PC端：默认隐藏房间信息section（control-area内） */
-.control-area .room-info-section.room-info-desktop {
-  display: none;
-}
+  /* PC端：默认隐藏房间信息section（control-area内） */
+  .control-area .room-info-section.room-info-desktop {
+    display: none;
+  }
 
-/* PC端：有房间时显示房间信息 */
-body[data-game-mode="room"] .control-area .room-info-section.room-info-desktop {
-  display: block !important;
+  /* PC端：有房间时显示房间信息 */
+  body[data-game-mode="room"] .control-area .room-info-section.room-info-desktop {
+    display: block !important;
+  }
 }
 
 /* Smaller desktops: keep the layout clean and avoid horizontal overflow. */
