@@ -1128,7 +1128,7 @@ body:not([data-game-mode="ai"])[data-game-status="playing"] .room-code-preview {
     --mobile-nav-height: 44px;
     --mobile-info-height: 70px;
     --mobile-room-height: 44px;
-    --btn-height: 42px;
+    --btn-height: 44px;
     --btn-radius: 8px;
   }
 
@@ -1447,7 +1447,7 @@ body:not([data-game-mode="ai"])[data-game-status="playing"] .room-code-preview {
     border-radius: var(--btn-radius) !important;
     font-size: 14px !important;
     font-weight: 600 !important;
-    padding: 0 16px !important;
+    padding: 0 12px !important;
     display: flex !important;
     align-items: center !important;
     justify-content: center !important;
@@ -1758,6 +1758,7 @@ body:not([data-game-mode="ai"])[data-game-status="playing"] .room-code-preview {
     flex: 0 0 auto !important;
     min-height: var(--btn-height) !important;
     max-height: var(--btn-height) !important;
+    overflow: visible !important;
   }
 
   .player-card.active {
