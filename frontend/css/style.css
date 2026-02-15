@@ -1104,7 +1104,7 @@ body:not([data-game-mode="ai"])[data-game-status="playing"] .room-code-preview {
 /* ===== 响应式 - iOS 18 风格 (完整重写) ===== */
 @media (max-width: 768px) {
   .toast {
-    top: 120px; /* 在导航下方，避免与顶部元素重叠 */
+    top: 140px; /* 往下移一点 */
     transform: translateX(-50%);
     padding: 10px 16px;
     font-size: 14px;
@@ -1483,8 +1483,8 @@ body:not([data-game-mode="ai"])[data-game-status="playing"] .room-code-preview {
     width: 100%;
     display: flex;
     align-items: center;
-    gap: 8px;
-    padding: 0 12px;
+    gap: 6px;
+    padding: 0 8px;
     margin: 0;
     height: var(--btn-height);
     background-color: var(--bg-secondary);
@@ -1495,12 +1495,13 @@ body:not([data-game-mode="ai"])[data-game-status="playing"] .room-code-preview {
   /* 房间信息按钮 */
   .btn-room-info {
     flex: 1;
-    height: 100%;
-    padding: 0;
+    height: 36px;
+    padding: 0 8px;
     background: transparent;
     border: none;
     justify-content: flex-start;
     gap: 8px;
+    border-radius: 8px;
   }
 
   /* 房间号预览 */
@@ -1514,7 +1515,7 @@ body:not([data-game-mode="ai"])[data-game-status="playing"] .room-code-preview {
   /* 房间按钮区域 */
   .room-actions {
     display: flex;
-    gap: 6px;
+    gap: 4px;
     flex-shrink: 0;
     align-items: center;
   }
@@ -1627,11 +1628,13 @@ body:not([data-game-mode="ai"])[data-game-status="playing"] .room-code-preview {
   .player-action {
     display: flex;
     flex-direction: column;
+    width: 100%;
   }
 
   .player-action .mobile-action-btn {
     width: 100%;
-    /* 继承统一样式 */
+    height: var(--btn-height) !important;
+    border-radius: var(--btn-radius) !important;
   }
 
   .player-action .mobile-action-btn:disabled {
@@ -1646,10 +1649,11 @@ body:not([data-game-mode="ai"])[data-game-status="playing"] .room-code-preview {
     align-items: center;
     justify-content: center;
     min-width: 0;
-    height: 44px;
+    width: 100%;
+    height: var(--btn-height);
     background-color: var(--bg-secondary);
     border: 1px solid var(--border-color);
-    border-radius: 10px;
+    border-radius: var(--btn-radius);
     -webkit-tap-highlight-color: transparent;
   }
 
