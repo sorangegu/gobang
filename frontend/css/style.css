@@ -1081,6 +1081,25 @@ body.pre-init[data-initial-mode="multiplayer"] .mode-display {
     display: flex !important;
   }
 
+  /* 刷新页面时pre-init状态，确保玩家卡片和游戏操作等元素可见 */
+  body.pre-init .player-info,
+  body.pre-init .player-card,
+  body.pre-init .control-area {
+    display: flex !important;
+  }
+
+  body.pre-init[data-initial-mode="ai"] .game-actions {
+    display: flex !important;
+  }
+
+  body.pre-init[data-initial-mode="multiplayer"] .multiplayer-select {
+    display: block !important;
+  }
+
+  body.pre-init[data-initial-mode="multiplayer"] .multiplayer-select .game-actions.multiplayer-actions {
+    display: flex !important;
+  }
+
   /* 控制区域按钮 - 更美观的样式 */
   .control-area .btn-action,
   .control-area .btn-icon {

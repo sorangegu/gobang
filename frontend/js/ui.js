@@ -185,7 +185,7 @@ class UI {
       this.roomPanel.style.display = 'none';
       this.roomInfoSection.style.display = 'none';
       document.getElementById('multiplayerSelect').style.display = 'none';
-      document.getElementById('gameActions').style.display = 'flex';
+      // 不使用内联样式，让CSS根据data-game-status控制显示
       this.opponentCard.style.display = 'flex';
       this.opponentCard.querySelector('.player-label').textContent = 'AI (白方)';
       // 人机模式：立即设置为playing状态
@@ -194,7 +194,7 @@ class UI {
       this.roomPanel.style.display = 'none';
       this.roomInfoSection.style.display = 'none';
       document.getElementById('multiplayerSelect').style.display = 'block';
-      document.getElementById('gameActions').style.display = 'none';
+      // 不使用内联样式，让CSS根据data-game-status控制显示
       // 显示白棋卡片，标签设为"白方"
       this.opponentCard.style.display = 'flex';
       this.opponentCard.querySelector('.player-label').textContent = '白方';
@@ -204,7 +204,7 @@ class UI {
       // create/join/room 模式：隐藏人机操作和选择面板，显示房间信息
       this.roomPanel.style.display = 'none';
       document.getElementById('multiplayerSelect').style.display = 'none';
-      document.getElementById('gameActions').style.display = 'none';
+      // 不使用内联样式，让CSS根据data-game-status控制显示
       this.roomInfoSection.style.display = 'block';
       this.opponentCard.style.display = 'flex';
     }
