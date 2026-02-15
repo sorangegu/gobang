@@ -1104,8 +1104,8 @@ body:not([data-game-mode="ai"])[data-game-status="playing"] .room-code-preview {
 /* ===== 响应式 - iOS 18 风格 (完整重写) ===== */
 @media (max-width: 768px) {
   .toast {
-    top: 35%;
-    transform: translate(-50%, -50%);
+    top: 120px; /* 在导航下方，避免与顶部元素重叠 */
+    transform: translateX(-50%);
     padding: 10px 16px;
     font-size: 14px;
   }
@@ -1478,13 +1478,13 @@ body:not([data-game-mode="ai"])[data-game-status="playing"] .room-code-preview {
     flex-shrink: 0;
   }
 
-  /* 单行房间栏 - 美观样式 */
+  /* 单行房间栏 - 简洁样式 */
   .room-action-bar {
     width: 100%;
     display: flex;
     align-items: center;
     gap: 8px;
-    padding: 0 8px 0 12px;
+    padding: 0 12px;
     margin: 0;
     height: var(--btn-height);
     background-color: var(--bg-secondary);
@@ -1492,32 +1492,52 @@ body:not([data-game-mode="ai"])[data-game-status="playing"] .room-code-preview {
     border-radius: var(--btn-radius);
   }
 
-  /* 房间号盒子占据剩余空间 */
-  .room-action-bar .room-id-box {
+  /* 房间信息按钮 */
+  .btn-room-info {
     flex: 1;
-    height: auto;
-    display: flex;
-    align-items: center;
-    justify-content: center;
+    height: 100%;
     padding: 0;
     background: transparent;
     border: none;
-    border-radius: 0;
+    justify-content: flex-start;
+    gap: 8px;
+  }
+
+  /* 房间号预览 */
+  .room-code-preview {
+    font-weight: 700;
+    color: var(--accent);
+    letter-spacing: 1px;
+    font-size: 14px;
   }
 
   /* 房间按钮区域 */
-  .room-action-bar .room-actions {
+  .room-actions {
     display: flex;
-    gap: 8px;
+    gap: 6px;
     flex-shrink: 0;
     align-items: center;
-    height: var(--btn-height);
   }
 
-  .room-action-bar .room-actions .btn-icon {
+  .room-actions .btn-icon {
     width: 36px;
     height: 36px;
     border-radius: 8px;
+  }
+
+  /* 房间详情弹出层 */
+  .room-detail-popup {
+    position: absolute;
+    top: 100%;
+    left: 0;
+    right: 0;
+    margin-top: 4px;
+    padding: 12px;
+    background-color: var(--bg-secondary);
+    border: 1px solid var(--border-color);
+    border-radius: var(--btn-radius);
+    z-index: 100;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
   }
 
   /* 准备区域 */
@@ -1539,7 +1559,7 @@ body:not([data-game-mode="ai"])[data-game-status="playing"] .room-code-preview {
     white-space: nowrap;
   }
 
-  /* 邀请链接区域 - 美观样式 */
+  /* 邀请链接区域 */
   .invite-section {
     position: static;
     width: 100%;
@@ -1611,13 +1631,7 @@ body:not([data-game-mode="ai"])[data-game-status="playing"] .room-code-preview {
 
   .player-action .mobile-action-btn {
     width: 100%;
-    height: 36px;
-    font-size: 13px;
-    font-weight: 600;
-    border-radius: 8px;
-    background-color: var(--bg-secondary);
-    border: 1px solid var(--border-color);
-    color: var(--text-primary);
+    /* 继承统一样式 */
   }
 
   .player-action .mobile-action-btn:disabled {
@@ -1801,18 +1815,7 @@ body:not([data-game-mode="ai"])[data-game-status="playing"] .room-code-preview {
   .multiplayer-select .multiplayer-actions .btn-action {
     flex: 1;
     min-width: 0;
-    padding: 0 12px;
-    font-size: 14px;
-    font-weight: 500;
-    background-color: var(--bg-primary);
-    border: 1px solid var(--border-color);
-    border-radius: 10px;
-    white-space: nowrap;
-    height: 44px;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    color: var(--text-primary);
+    /* 继承统一样式 */
   }
 
   .multiplayer-select .multiplayer-actions .btn-action:active {
@@ -1828,13 +1831,17 @@ body:not([data-game-mode="ai"])[data-game-status="playing"] .room-code-preview {
 
   .multiplayer-select .join-input-section input {
     flex: 1;
-    padding: 5px 8px;
-    font-size: 11px;
+    height: var(--btn-height);
+    padding: 0 12px;
+    font-size: 14px;
+    border-radius: var(--btn-radius);
+    border: 1px solid var(--border-color);
+    background-color: var(--bg-primary);
+    color: var(--text-primary);
   }
 
   .multiplayer-select .join-input-section .btn-primary {
-    padding: 5px 10px;
-    font-size: 11px;
+    /* 继承统一样式 */
   }
 
 
