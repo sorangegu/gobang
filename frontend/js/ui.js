@@ -682,6 +682,9 @@ class UI {
         this.showToast('加入房间成功！');
       } else {
         this.showToast(data.error || '加入房间失败');
+        // 加入房间失败时，跳转到多人选择页面，而不是人机页面
+        window.history.pushState({}, '', '/room');
+        this.showMultiplayerSelect();
       }
     });
 
@@ -766,10 +769,21 @@ class UI {
         console.log('[DEBUG] Reconnect failed:', data.error);
         localStorage.removeItem('gobang-room');
         this.pendingReconnect = null;
-        this.showToast('房间已失效，请重新创建或加入');
 
-        // Fallback to multiplayer selection screen
-        this.showMultiplayerSelect();
+        // 检查当前 URL 是否在房间页面
+        const currentPath = window.location.pathname;
+        const roomMatch = currentPath.match(/^\/room\/([A-Z0-9]{6})\/?$/i);
+
+        if (roomMatch) {
+          // 如果在具体房间页面，重连失败应该跳转到多人选择页，而不是人机页面
+          this.showToast('房间已失效，请重新创建或加入');
+          window.history.pushState({}, '', '/room');
+          this.showMultiplayerSelect();
+        } else {
+          // 其他情况，显示多人选择页
+          this.showToast('房间已失效，请重新创建或加入');
+          this.showMultiplayerSelect();
+        }
       }
     });
 
@@ -944,8 +958,11 @@ class UI {
       game.isPlaying = false;
       this.drawBoard();
       this.clearRoomInfo();
+
+      // 跳转到多人选择页面，而不是人机页面
+      window.history.pushState({}, '', '/room');
       setTimeout(() => {
-        this.startAIGame();
+        this.showMultiplayerSelect();
       }, 2000);
     });
 
