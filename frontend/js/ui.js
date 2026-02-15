@@ -738,6 +738,8 @@ class UI {
 
         // 步骤 4：根据游戏状态更新具体 UI
         if (data.status === 'playing') {
+          // 游戏进行中
+          game.isPlaying = true;
           this.setBoardOverlayVisible(false);
           document.getElementById('inviteSection').style.display = 'none';
           document.getElementById('readySection').style.display = 'none';
