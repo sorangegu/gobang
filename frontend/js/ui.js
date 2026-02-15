@@ -454,7 +454,7 @@ class UI {
 
     // 棋盘点击（支持鼠标和触摸）
     this.canvas.addEventListener('click', (e) => this.handleBoardClick(e));
-    
+
     // 触摸事件处理 - 使用 touchstart 提高响应速度
     this.canvas.addEventListener('touchstart', (e) => {
       e.preventDefault();
@@ -464,10 +464,10 @@ class UI {
       const scaleY = (this.canvas.height / window.devicePixelRatio) / rect.height;
       const x = (touch.clientX - rect.left) * scaleX;
       const y = (touch.clientY - rect.top) * scaleY;
-      
+
       const cellX = Math.round((x - this.padding) / this.cellSize);
       const cellY = Math.round((y - this.padding) / this.cellSize);
-      
+
       if (cellX >= 0 && cellX < 15 && cellY >= 0 && cellY < 15) {
         // 创建模拟点击事件
         const mouseEvent = new MouseEvent('click', {
@@ -537,14 +537,14 @@ class UI {
       const inviteSection = document.getElementById('inviteSection');
       const inviteUrl = `${window.location.origin}/room/${document.getElementById('displayRoomId').textContent}`;
       document.getElementById('inviteLink').value = inviteUrl;
-      
+
       // 切换邀请链接区域的显示状态
       if (inviteSection.style.display === 'none' || !inviteSection.style.display) {
         inviteSection.style.display = 'block';
       } else {
         inviteSection.style.display = 'none';
       }
-      
+
       // 复制链接到剪贴板
       navigator.clipboard.writeText(inviteUrl);
       this.showToast('邀请链接已复制');
@@ -616,7 +616,7 @@ class UI {
 
         // 显示等待对手的 overlay
         this.updateBoardOverlay();
-        
+
         // 显示创建成功的提示
         this.showToast('房间已创建！请分享邀请链接给对手');
       } else {
@@ -710,9 +710,19 @@ class UI {
             const inviteUrl = `${window.location.origin}/room/${data.roomId}`;
             document.getElementById('inviteLink').value = inviteUrl;
           } else {
-            // 被邀玩家显示准备区域
+            // 被邀玩家显示准备区域 - FIX: Previously hidden
             document.getElementById('inviteSection').style.display = 'none';
-            document.getElementById('readySection').style.display = 'none';
+            document.getElementById('readySection').style.display = 'block'; // Changed from 'none' to 'block'
+
+            // Sync ready button state if needed (server doesn't persist ready state on reconnect in this implementation, so assume not ready)
+            document.getElementById('readyBtn').disabled = false;
+            document.getElementById('readyBtn').textContent = '准备开始';
+            document.getElementById('myReadyStatus').textContent = '未准备';
+            document.getElementById('myReadyStatus').style.color = 'var(--text-muted)';
+
+            // Ensure opponent card is visible
+            this.opponentCard.style.display = 'flex';
+            this.opponentCard.querySelector('.player-label').textContent = '对手 (黑方)';
           }
         }
 
@@ -861,6 +871,7 @@ class UI {
 
     socketManager.on('playerLeft', (data) => {
       // 对手离开：保留对局记录，但进入等待状态（需对手重新加入并双方开始）
+      // NOTE: backend logic changed to force reset.
       if (data.preserveGame) {
         game.board = data.board || game.board;
         game.moveHistory = data.moveHistory || game.moveHistory || [];
@@ -956,11 +967,21 @@ class UI {
         this.showToast(data.reason || '你已成为新房主，对局已保留');
       } else {
         // 不保留对局，重置状态
+        // 强制重置本地所有状态
+        game.gameMode = 'create'; // Ensure mode is create (Host)
+        game.myColor = 1;         // Host is Black
         game.board = Array(15).fill(null).map(() => Array(15).fill(0));
         game.moveHistory = [];
+        game.currentPlayer = 1;
         game.lastMove = null;
         game.winner = null;
         game.isPlaying = false;
+
+        this.mpOpponentPresent = false;
+        this.mpMyReady = false;
+        this.mpOpponentReady = false;
+        this.setBoardOverlayVisible(false);
+
         this.drawBoard();
 
         // 重置准备状态

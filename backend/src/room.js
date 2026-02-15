@@ -460,43 +460,46 @@ class RoomManager {
     const opponent = isHost ? room.guest : room.host;
 
     if (isHost && opponent) {
-      // 房主离开，guest 变为新房主，保留对局状态
+      // 房主离开，guest 变为新房主，重置对局
       room.host = opponent;
       room.guest = null;
       opponent.isHost = true;
       opponent.playerColor = 1;
-      // Leaving should pause the game but keep the record.
-      if (room.status === 'playing') room.status = 'waiting';
-      // 保持对局记录，只重置准备状态
+
+      // 强制重置房间状态和游戏数据
+      room.status = 'waiting';
+      room.board = Array(15).fill(null).map(() => Array(15).fill(0));
+      room.moveHistory = [];
+      room.currentPlayer = 1;
+      room.winner = null;
       room.hostReady = false;
       room.guestReady = false;
 
-      // 通知新房主，保留对局
+      // 通知新房主，不保留对局
       opponent.emit('became_host', {
         roomId,
-        reason: '房主离开，你已成为新房主，对局已保留',
-        preserveGame: true,
-        board: room.board,
-        moveHistory: room.moveHistory,
-        currentPlayer: room.currentPlayer,
-        isPlaying: room.status === 'playing'
+        reason: '房主离开，你已成为新房主，对局已重置',
+        preserveGame: false
       });
     } else if (!isHost && opponent) {
-      // Guest 离开，房主保留对局
+      // Guest 离开，房主保留房间但重置对局（或者也可以选择保留，但为了统一体验，建议重置或至少不强制保留）
+      // 这里我们保持原逻辑：Guest离开，房主获胜或者游戏结束。但如果是为了避免混淆，我们可以直接结束当前局。
+      // 当前逻辑是：Guest离开，房主保留对局。这在 technical 上是没问题的（房主没变），但用户体验上对手跑了，应该重置。
+      // 让我们修改为告知房主对手离开了，并重置游戏状态进入等待。
+
       room.guest = null;
-      if (room.status === 'playing') room.status = 'waiting';
-      // 保持对局记录，只重置准备状态
+      room.status = 'waiting';
+      room.board = Array(15).fill(null).map(() => Array(15).fill(0));
+      room.moveHistory = [];
+      room.currentPlayer = 1;
+      room.winner = null;
       room.hostReady = false;
       room.guestReady = false;
 
-      // 通知房主，保留对局
+      // 通知房主
       opponent.emit('player_left', {
-        reason: '对手离开，对局已保留',
-        preserveGame: true,
-        board: room.board,
-        moveHistory: room.moveHistory,
-        currentPlayer: room.currentPlayer,
-        isPlaying: room.status === 'playing'
+        reason: '对手离开，对局已重置',
+        preserveGame: false
       });
     } else {
       // 两边都不在，清理房间
