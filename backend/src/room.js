@@ -560,7 +560,7 @@ class RoomManager {
     const room = this.rooms.get(roomId);
     if (!room) return;
 
-    // 标记玩家断开，给30秒重连时间
+    // 标记玩家断开，给60秒重连时间
     if (socket.id === room.host.id) {
       room.hostDisconnected = true;
       room.hostDisconnectTime = Date.now();
@@ -577,15 +577,15 @@ class RoomManager {
       });
     }
 
-    // 30秒后清理房间（如果没有重连）
+    // 60秒后清理房间（如果没有重连）
     setTimeout(() => {
       const currentRoom = this.rooms.get(roomId);
       if (!currentRoom) return;
 
       // 检查是否还需要清理
       const now = Date.now();
-      const hostTimeout = currentRoom.hostDisconnected && (now - currentRoom.hostDisconnectTime > 30000);
-      const guestTimeout = currentRoom.guestDisconnected && (now - currentRoom.guestDisconnectTime > 30000);
+      const hostTimeout = currentRoom.hostDisconnected && (now - currentRoom.hostDisconnectTime > 60000);
+      const guestTimeout = currentRoom.guestDisconnected && (now - currentRoom.guestDisconnectTime > 60000);
 
       if (hostTimeout || guestTimeout) {
         // 通知还在的玩家
@@ -597,7 +597,7 @@ class RoomManager {
         }
         this.rooms.delete(roomId);
       }
-    }, 31000);
+    }, 61000);
   }
 
   // 重连房间
