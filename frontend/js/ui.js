@@ -1219,8 +1219,14 @@ class UI {
 
     // 检查是否有保存的房间
     const savedRoom = this.getValidSavedRoom();
+    console.log('[DEBUG] showMultiplayerSelect - savedRoom:', savedRoom);
+    console.log('[DEBUG] showMultiplayerSelect - localStorage gobang-room:', localStorage.getItem('gobang-room'));
+
     if (savedRoom) {
       console.log('[DEBUG] Found saved room, attempting reconnect...', savedRoom);
+
+      // 先隐藏选择面板，防止闪烁
+      document.getElementById('multiplayerSelect').style.display = 'none';
 
       this.pendingReconnect = savedRoom;
 
