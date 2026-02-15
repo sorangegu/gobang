@@ -1076,6 +1076,11 @@ body.pre-init[data-initial-mode="multiplayer"] .mode-display {
     display: none;
   }
 
+  /* 玩家对战选择面板中的game-actions始终显示 */
+  .multiplayer-select .game-actions.multiplayer-actions {
+    display: flex !important;
+  }
+
   /* 控制区域按钮 - 更美观的样式 */
   .control-area .btn-action,
   .control-area .btn-icon {
