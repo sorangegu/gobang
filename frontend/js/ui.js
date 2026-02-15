@@ -708,7 +708,7 @@ class UI {
         // 步骤 1：更新游戏状态
         game.setRoomInfo(data.roomId, data.isHost);
         game.myColor = data.playerColor;
-        game.gameMode = 'room';
+        game.gameMode = data.isHost ? 'create' : 'join';
 
         // 从服务器数据恢复棋盘状态
         if (data.board) game.board = data.board;
