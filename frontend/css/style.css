@@ -661,7 +661,7 @@ body:not([data-game-status="playing"]) #gameActions {
 
 /* 房间操作栏 - 一行布局 */
 .room-action-bar {
-  display: flex;
+  display: none;
   justify-content: space-between;
   align-items: center;
   padding: 8px 12px;
@@ -671,11 +671,10 @@ body:not([data-game-status="playing"]) #gameActions {
   margin-top: 16px;
 }
 
-/* 桌面端显示房间信息栏 */
-body:not([data-game-status]) .room-action-bar,
-body.pre-init[data-initial-mode="multiplayer"] .room-action-bar,
-body[data-game-status="waiting"] .room-action-bar {
-  display: flex !important;
+/* 桌面端有房间时显示房间信息栏 */
+body[data-game-status="waiting"] .room-action-bar,
+body[data-game-status="playing"] .room-action-bar {
+  display: flex;
 }
 
 /* 房间信息按钮 (桌面端显示) */
@@ -692,8 +691,6 @@ body[data-game-status="waiting"] .room-action-bar {
   font-size: 14px;
   cursor: pointer;
   transition: all 150ms ease;
-  flex: 1;
-  justify-content: flex-start;
 }
 
 .btn-room-info:hover {
