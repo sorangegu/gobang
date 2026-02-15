@@ -463,14 +463,22 @@ class UI {
     }
   }
 
-  // 设置房间信息区域显示（同时控制PC端和移动端）
+  // 设置房间信息区域显示
+  // PC端：只设置PC端元素，让CSS控制移动端元素隐藏
+  // 移动端：同时设置两端（PC端会被CSS隐藏）
   setRoomInfoSectionDisplay(display) {
-    // 移动端
-    this.roomInfoSection.style.display = display;
-    // PC端
+    const isMobile = window.innerWidth <= 768;
+
+    // PC端：只操作PC端元素
     const desktop = document.getElementById('roomInfoSectionDesktop');
     if (desktop) {
       desktop.style.display = display;
+    }
+
+    // 移动端：同时操作移动端元素
+    // PC端让CSS规则控制移动端元素隐藏
+    if (isMobile || display === 'none') {
+      this.roomInfoSection.style.display = display;
     }
   }
 
