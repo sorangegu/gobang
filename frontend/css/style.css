@@ -1,5 +1,7 @@
 /* ===== 基础重置 ===== */
-*, *::before, *::after {
+*,
+*::before,
+*::after {
   box-sizing: border-box;
   margin: 0;
   padding: 0;
@@ -252,8 +254,15 @@ body.pre-init[data-initial-mode="multiplayer"] .mode-display {
 }
 
 @keyframes pulse {
-  0%, 100% { opacity: 1; }
-  50% { opacity: 0.5; }
+
+  0%,
+  100% {
+    opacity: 1;
+  }
+
+  50% {
+    opacity: 0.5;
+  }
 }
 
 .join-form {
@@ -301,6 +310,11 @@ body.pre-init[data-initial-mode="multiplayer"] .mode-display {
   transition: background-color var(--transition), border-color var(--transition);
   display: flex;
   flex-direction: column;
+}
+
+/* 桌面端 side-panel-main 默认占满 */
+.side-panel-main {
+  width: 100%;
 }
 
 .side-panel-header {
@@ -760,8 +774,13 @@ body.pre-init[data-initial-mode="multiplayer"] .mode-display {
 }
 
 @keyframes fadeIn {
-  from { opacity: 0; }
-  to { opacity: 1; }
+  from {
+    opacity: 0;
+  }
+
+  to {
+    opacity: 1;
+  }
 }
 
 .modal-content {
@@ -775,8 +794,15 @@ body.pre-init[data-initial-mode="multiplayer"] .mode-display {
 }
 
 @keyframes scaleIn {
-  from { transform: scale(0.9); opacity: 0; }
-  to { transform: scale(1); opacity: 1; }
+  from {
+    transform: scale(0.9);
+    opacity: 0;
+  }
+
+  to {
+    transform: scale(1);
+    opacity: 1;
+  }
 }
 
 .modal-content h2 {
@@ -811,8 +837,15 @@ body.pre-init[data-initial-mode="multiplayer"] .mode-display {
 }
 
 @keyframes slideUp {
-  from { transform: translate(-50%, 20px); opacity: 0; }
-  to { transform: translate(-50%, 0); opacity: 1; }
+  from {
+    transform: translate(-50%, 20px);
+    opacity: 0;
+  }
+
+  to {
+    transform: translate(-50%, 0);
+    opacity: 1;
+  }
 }
 
 /* ===== 响应式 ===== */
@@ -916,18 +949,29 @@ body.pre-init[data-initial-mode="multiplayer"] .mode-display {
     font-size: 13px;
   }
 
-  /* 手机端侧边栏 - 改为垂直堆叠信息栏 (两行) */
+  /* 手机端侧边栏 - 使用 display: contents 允许子元素重排 */
   .side-panel {
+    display: contents;
+  }
+
+  /* 主面板（玩家信息 + 操作按钮） */
+  .side-panel-main {
     width: 100%;
-    height: auto;
-    min-height: auto;
-    padding: 8px 12px;
-    flex-direction: column;
-    align-items: stretch;
-    gap: 8px;
-    order: 2; /* 放在棋盘上方 */
+    order: 1;
+    /* 放在最上方 */
     background-color: var(--bg-secondary);
     border-bottom: 1px solid var(--border-color);
+    padding: 8px 12px;
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+  }
+
+  /* 房间信息 - 放在棋盘下方 */
+  .room-info-section {
+    order: 3;
+    /* 放在棋盘下方 */
+    margin-top: 8px;
   }
 
   /* 隐藏侧边栏标题（已在mobile-header显示） */
@@ -1105,7 +1149,10 @@ body.pre-init[data-initial-mode="multiplayer"] .mode-display {
     max-width: 604px;
     box-sizing: border-box;
     margin: 0 auto;
-    order: 3; /* 确保棋盘在信息栏下方 */
+    margin: 0 auto;
+    order: 2;
+    /* 放在中间（信息栏下方，房间信息上方） */
+    /* 固定棋盘位置，不受上方内容影响 */
     /* 固定棋盘位置，不受上方内容影响 */
     position: relative;
     display: flex;

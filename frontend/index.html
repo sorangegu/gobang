@@ -47,52 +47,54 @@
       </div>
       <!-- 侧边信息面板 -->
       <aside class="side-panel" id="sidePanel">
-        <div class="side-panel-header">
-          <h1 class="game-title">五子棋</h1>
-        </div>
-        <div class="player-info">
-          <div class="player-card" id="playerCard">
-            <div class="player-stone black"></div>
-            <div class="player-status">
-              <span class="player-label">你 (黑方)</span>
-              <span class="player-turn" id="yourTurn" style="display: none;">你的回合</span>
+        <div class="side-panel-main">
+          <div class="side-panel-header">
+            <h1 class="game-title">五子棋</h1>
+          </div>
+          <div class="player-info">
+            <div class="player-card" id="playerCard">
+              <div class="player-stone black"></div>
+              <div class="player-status">
+                <span class="player-label">你 (黑方)</span>
+                <span class="player-turn" id="yourTurn" style="display: none;">你的回合</span>
+              </div>
+            </div>
+            <div class="player-card opponent" id="opponentCard">
+              <div class="player-stone white"></div>
+              <div class="player-status">
+                <span class="player-label">AI (白方)</span>
+                <span class="player-turn" id="opponentTurn" style="display: none;">AI回合</span>
+              </div>
             </div>
           </div>
-          <div class="player-card opponent" id="opponentCard">
-            <div class="player-stone white"></div>
-            <div class="player-status">
-              <span class="player-label">AI (白方)</span>
-              <span class="player-turn" id="opponentTurn" style="display: none;">AI回合</span>
+
+          <div class="game-info">
+            <div class="info-row">
+              <span>当前回合:</span>
+              <span id="currentTurn">黑方</span>
+            </div>
+            <div class="info-row mode-display">
+              <span>对局模式:</span>
+              <span id="gameMode">人机对战</span>
             </div>
           </div>
-        </div>
 
-        <div class="game-info">
-          <div class="info-row">
-            <span>当前回合:</span>
-            <span id="currentTurn">黑方</span>
+          <div class="game-actions" id="gameActions">
+            <button class="btn-action" id="undoBtn" disabled>悔棋</button>
+            <button class="btn-action" id="restartBtn" disabled>重新开始</button>
           </div>
-          <div class="info-row mode-display">
-            <span>对局模式:</span>
-            <span id="gameMode">人机对战</span>
-          </div>
-        </div>
 
-        <div class="game-actions" id="gameActions">
-          <button class="btn-action" id="undoBtn" disabled>悔棋</button>
-          <button class="btn-action" id="restartBtn" disabled>重新开始</button>
-        </div>
-
-        <!-- 玩家对战选择 -->
-        <div class="multiplayer-select" id="multiplayerSelect" style="display: none;">
-          <div class="game-actions multiplayer-actions">
-            <button class="btn-action" id="createRoomBtn">创建新房间</button>
-            <button class="btn-action" id="showJoinBtn">加入房间</button>
-          </div>
-          <div class="join-input-section" id="joinInputSection" style="display: none; margin-top: 8px;">
-            <div style="display: flex; gap: 6px;">
-              <input type="text" id="roomIdInputPanel" placeholder="输入房间号" maxlength="6" style="flex: 1; padding: 6px 10px; background-color: var(--bg-primary); border: 1px solid var(--border-color); border-radius: var(--radius); color: var(--text-primary); font-size: 13px; text-transform: uppercase; letter-spacing: 2px; text-align: center;">
-              <button class="btn-primary" id="joinRoomBtnPanel" style="padding: 6px 12px; font-size: 12px;">加入</button>
+          <!-- 玩家对战选择 -->
+          <div class="multiplayer-select" id="multiplayerSelect" style="display: none;">
+            <div class="game-actions multiplayer-actions">
+              <button class="btn-action" id="createRoomBtn">创建新房间</button>
+              <button class="btn-action" id="showJoinBtn">加入房间</button>
+            </div>
+            <div class="join-input-section" id="joinInputSection" style="display: none; margin-top: 8px;">
+              <div style="display: flex; gap: 6px;">
+                <input type="text" id="roomIdInputPanel" placeholder="输入房间号" maxlength="6" style="flex: 1; padding: 6px 10px; background-color: var(--bg-primary); border: 1px solid var(--border-color); border-radius: var(--radius); color: var(--text-primary); font-size: 13px; text-transform: uppercase; letter-spacing: 2px; text-align: center;">
+                <button class="btn-primary" id="joinRoomBtnPanel" style="padding: 6px 12px; font-size: 12px;">加入</button>
+              </div>
             </div>
           </div>
         </div>
