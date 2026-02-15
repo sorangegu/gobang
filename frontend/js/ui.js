@@ -915,7 +915,8 @@ class UI {
       const inviteUrl = `${window.location.origin}/room/${savedRoom.roomId}`;
       document.getElementById('inviteLink').value = inviteUrl;
       document.getElementById('multiplayerSelect').style.display = 'none';
-      this.opponentCard.style.display = 'none';
+      this.opponentCard.style.display = 'flex';
+      this.opponentCard.querySelector('.player-label').textContent = '重连中...';
       this.updateModeUI('room');
       // 更新 URL
       window.history.pushState({}, '', `/room/${savedRoom.roomId}`);
@@ -984,7 +985,11 @@ class UI {
     this.roomInfoSection.style.display = 'block';
     document.getElementById('inviteSection').style.display = 'none'; // 不自动弹出邀请链接
 
-    this.opponentCard.style.display = 'none';
+    // 先显示对手卡片占位（等待socket回调更新文字）
+    this.opponentCard.style.display = 'flex';
+    this.opponentCard.querySelector('.player-label').textContent = '等待加入...';
+    this.playerCard.querySelector('.player-label').textContent = '你 (黑方)';
+    this.updateModeUI('room');
     this.updateUI();
   }
 

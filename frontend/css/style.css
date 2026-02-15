@@ -5,6 +5,49 @@
   box-sizing: border-box;
   margin: 0;
   padding: 0;
+  -webkit-tap-highlight-color: transparent;
+}
+
+/* 彻底移除 iOS Safari 蓝色默认样式 */
+button,
+input,
+select,
+textarea {
+  -webkit-appearance: none;
+  -moz-appearance: none;
+  appearance: none;
+  outline: none;
+  font-family: inherit;
+}
+
+button:focus,
+input:focus,
+select:focus,
+textarea:focus {
+  outline: none;
+}
+
+/* 输入框聚焦边框用红色 */
+input:focus,
+textarea:focus {
+  border-color: var(--accent) !important;
+}
+
+/* 选中文本颜色使用红色主题 */
+::selection {
+  background-color: rgba(233, 69, 96, 0.3);
+  color: var(--text-primary);
+}
+
+::-moz-selection {
+  background-color: rgba(233, 69, 96, 0.3);
+  color: var(--text-primary);
+}
+
+/* iOS Safari 自动填充背景 */
+input:-webkit-autofill {
+  -webkit-box-shadow: 0 0 0 1000px var(--bg-primary) inset;
+  -webkit-text-fill-color: var(--text-primary);
 }
 
 html {
