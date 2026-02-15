@@ -1437,7 +1437,8 @@ body:not([data-game-mode="ai"])[data-game-status="playing"] .room-code-preview {
   .btn-action,
   .btn-primary,
   #readyBtn,
-  .btn-room-info {
+  .btn-room-info,
+  .player-card {
     height: var(--btn-height) !important;
     border-radius: var(--btn-radius) !important;
     font-size: 14px !important;
@@ -1447,6 +1448,7 @@ body:not([data-game-mode="ai"])[data-game-status="playing"] .room-code-preview {
     align-items: center !important;
     justify-content: center !important;
     transition: all 0.2s ease !important;
+    box-sizing: border-box !important;
   }
 
   .btn-icon {
@@ -1739,27 +1741,19 @@ body:not([data-game-mode="ai"])[data-game-status="playing"] .room-code-preview {
   }
 
   .player-card {
-    padding: 0 12px;
-    flex: 0 0 auto;
-    gap: 8px;
-    transition: none;
-    align-items: center;
-    justify-content: center;
-    min-width: 0;
-    width: 100%;
-    height: var(--btn-height);
-    background-color: var(--bg-secondary);
-    border: 1px solid var(--border-color);
-    border-radius: var(--btn-radius);
-    -webkit-tap-highlight-color: transparent;
-    box-sizing: border-box;
+    background-color: var(--bg-secondary) !important;
+    border: 1px solid var(--border-color) !important;
+    -webkit-tap-highlight-color: transparent !important;
+    width: 100% !important;
+    min-width: 0 !important;
+    flex: 0 0 auto !important;
   }
 
   .player-card.active {
-    border-color: var(--accent);
-    box-shadow: 0 0 0 2px rgba(233, 69, 96, 0.3);
-    outline: none;
-    background-color: var(--bg-primary);
+    border-color: var(--accent) !important;
+    box-shadow: 0 0 0 2px rgba(233, 69, 96, 0.3) !important;
+    outline: none !important;
+    background-color: var(--bg-primary) !important;
   }
 
   .player-stone {
