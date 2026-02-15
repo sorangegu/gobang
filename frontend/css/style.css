@@ -558,9 +558,10 @@ body.pre-init[data-initial-mode="multiplayer"] .mode-display {
   display: flex;
   flex-direction: column;
   justify-content: center;
-  align-items: flex-start;
+  align-items: center;
   line-height: 1.3;
   align-self: center;
+  min-width: 80px;
 }
 
 .player-label {
