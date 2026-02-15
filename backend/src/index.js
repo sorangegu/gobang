@@ -86,6 +86,11 @@ io.on('connection', (socket) => {
 
   // 重连房间
   socket.on('reconnect_room', (data, callback) => {
+    // data should contain roomId and playerColor
+    if (!data || !data.roomId || !data.playerColor) {
+      if (callback) callback({ success: false, error: '无效的重连参数' });
+      return;
+    }
     const result = roomManager.reconnectRoom(socket, data.roomId, data.playerColor);
     if (callback) callback(result);
   });

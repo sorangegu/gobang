@@ -448,6 +448,61 @@ class RoomManager {
     return { success: true, accepted: true };
   }
 
+  // 重连房间
+  reconnectRoom(socket, roomId, playerColor) {
+    const room = this.rooms.get(roomId);
+    if (!room) {
+      return { success: false, error: '房间不存在或已过期' };
+    }
+
+    // 验证身份并更新 socket
+    let isHost = false;
+    let originalSocket = null;
+
+    if (playerColor === 1) {
+      // 尝试作为房主重连
+      // 简单的验证：如果房主位置被占且ID不同，可能认为是其他人（但在无鉴权系统中，我们假设是同一个人换了连接）
+      // 实际上，只要 socket 断开，这里就会认为是重新连接
+      room.host = socket;
+      isHost = true;
+    } else if (playerColor === 2) {
+      // 尝试作为访客重连
+      room.guest = socket;
+      isHost = false;
+    } else {
+      return { success: false, error: '无效的玩家颜色' };
+    }
+
+    // 更新 socket 属性
+    socket.join(roomId);
+    socket.roomId = roomId;
+    socket.isHost = isHost;
+    socket.playerColor = playerColor;
+
+    // 状态同步
+    // 通知对手（如果有）
+    const opponent = isHost ? room.guest : room.host;
+    if (opponent) {
+      opponent.emit('player_reconnected', {
+        playerColor: playerColor
+      });
+    }
+
+    // 返回当前游戏状态
+    return {
+      success: true,
+      roomId,
+      isHost,
+      playerColor,
+      status: room.status,
+      board: room.board,
+      currentPlayer: room.currentPlayer,
+      moveHistory: room.moveHistory,
+      isPlaying: room.status === 'playing',
+      opponentOnline: !!opponent
+    };
+  }
+
   // 离开房间
   leaveRoom(socket) {
     const roomId = socket.roomId;
