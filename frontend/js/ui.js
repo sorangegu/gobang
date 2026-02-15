@@ -1187,9 +1187,10 @@ class UI {
 
     socketManager.createRoom();
 
-    // 隐藏选择面板，显示房间信息
+    // 隐藏选择面板，通过data-game-status让CSS控制房间信息显示
     document.getElementById('multiplayerSelect').style.display = 'none';
-    this.roomInfoSection.style.display = 'block';
+    // 设置waiting状态，让CSS控制房间信息栏显示
+    document.body.setAttribute('data-game-status', 'waiting');
     document.getElementById('inviteSection').style.display = 'none'; // 不自动弹出邀请链接
 
     // 先显示对手卡片占位（等待socket回调更新文字）
@@ -1207,9 +1208,10 @@ class UI {
     this.resetMultiplayerReadyState();
     this.setBoardOverlayVisible(false);
 
-    // 隐藏选择面板，显示房间信息
+    // 隐藏选择面板，通过data-game-status让CSS控制房间信息显示
     document.getElementById('multiplayerSelect').style.display = 'none';
-    this.roomInfoSection.style.display = 'block';
+    // 设置waiting状态，让CSS控制房间信息栏显示
+    document.body.setAttribute('data-game-status', 'waiting');
     document.getElementById('inviteSection').style.display = 'none';
 
     this.opponentCard.style.display = 'none';
