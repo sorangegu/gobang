@@ -902,7 +902,6 @@ body:not([data-game-mode="ai"])[data-game-status="playing"] .room-code-preview {
   padding: 22px;
   transition: transform 200ms ease;
   position: relative;
-  overflow: hidden;
 }
 
 #board {
@@ -1152,12 +1151,20 @@ body:not([data-game-mode="ai"])[data-game-status="playing"] .room-code-preview {
     transform: translateX(-50%);
     padding: 12px 20px;
     font-size: 14px;
-    background: var(--glass-bg);
-    backdrop-filter: var(--glass-blur);
-    -webkit-backdrop-filter: var(--glass-blur);
-    border: 1px solid var(--glass-border);
+    background: rgba(30, 30, 50, 0.88);
+    backdrop-filter: blur(20px);
+    -webkit-backdrop-filter: blur(20px);
+    border: 1px solid rgba(255, 255, 255, 0.12);
     border-radius: 14px;
-    box-shadow: var(--card-shadow);
+    box-shadow: 0 4px 16px rgba(0, 0, 0, 0.3);
+    color: rgba(255, 255, 255, 0.95);
+  }
+
+  [data-theme="light"] .toast {
+    background: rgba(255, 255, 255, 0.9);
+    border: 1px solid rgba(0, 0, 0, 0.08);
+    box-shadow: 0 4px 16px rgba(0, 0, 0, 0.1);
+    color: rgba(0, 0, 0, 0.85);
   }
 
   /* ── 隐藏PC导航 ── */
@@ -1923,20 +1930,20 @@ body:not([data-game-mode="ai"])[data-game-status="playing"] .room-code-preview {
 
   /* ══════ 棋盘覆盖层升级 ══════ */
   .board-overlay .overlay-card {
-    width: min(300px, calc(100% - 40px));
-    background: rgba(30, 30, 50, 0.92);
-    backdrop-filter: blur(20px);
-    -webkit-backdrop-filter: blur(20px);
+    width: min(300px, calc(100% - 48px));
+    background: rgba(30, 30, 50, 0.78);
+    backdrop-filter: blur(24px);
+    -webkit-backdrop-filter: blur(24px);
     border: 1px solid rgba(255, 255, 255, 0.15);
     border-radius: 16px;
-    box-shadow: 0 12px 40px rgba(0, 0, 0, 0.4);
-    padding: 20px 18px 18px;
+    box-shadow: 0 12px 40px rgba(0, 0, 0, 0.35);
+    padding: 22px 20px 18px;
   }
 
   [data-theme="light"] .board-overlay .overlay-card {
-    background: rgba(255, 255, 255, 0.92);
+    background: rgba(255, 255, 255, 0.82);
     border: 1px solid rgba(0, 0, 0, 0.1);
-    box-shadow: 0 12px 40px rgba(0, 0, 0, 0.15);
+    box-shadow: 0 12px 40px rgba(0, 0, 0, 0.12);
   }
 
   .board-overlay .overlay-btn {
