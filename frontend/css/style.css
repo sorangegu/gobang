@@ -1303,9 +1303,7 @@ body:not([data-game-mode="ai"])[data-game-status="playing"] .room-code-preview {
   }
 
   .player-card {
-    background: var(--glass-bg) !important;
-    backdrop-filter: var(--glass-blur) !important;
-    -webkit-backdrop-filter: var(--glass-blur) !important;
+    background: transparent !important;
     border: none !important;
     border-radius: var(--btn-radius) !important;
     box-shadow: var(--card-shadow) !important;
@@ -1318,15 +1316,29 @@ body:not([data-game-mode="ai"])[data-game-status="playing"] .room-code-preview {
     overflow: visible !important;
     transition: all 300ms ease !important;
     position: relative !important;
-    clip-path: inset(0 round var(--btn-radius)) !important;
-    -webkit-clip-path: inset(0 round var(--btn-radius)) !important;
   }
 
+  /* 背景层：处理 backdrop-filter 和裁剪 */
   .player-card::before {
     content: '' !important;
     position: absolute !important;
-    inset: -1px !important;
-    border-radius: calc(var(--btn-radius) + 1px) !important;
+    inset: 0 !important;
+    border-radius: var(--btn-radius) !important;
+    background: var(--glass-bg) !important;
+    backdrop-filter: var(--glass-blur) !important;
+    -webkit-backdrop-filter: var(--glass-blur) !important;
+    clip-path: inset(0 round var(--btn-radius)) !important;
+    -webkit-clip-path: inset(0 round var(--btn-radius)) !important;
+    pointer-events: none !important;
+    transition: background 300ms ease !important;
+  }
+
+  /* 边框层：不受 clip-path 影响 */
+  .player-card::after {
+    content: '' !important;
+    position: absolute !important;
+    inset: 0 !important;
+    border-radius: var(--btn-radius) !important;
     border: 1px solid var(--glass-border) !important;
     pointer-events: none !important;
     transition: all 300ms ease !important;
@@ -1336,14 +1348,17 @@ body:not([data-game-mode="ai"])[data-game-status="playing"] .room-code-preview {
   .player-card.active {
     box-shadow: var(--glow-accent), var(--card-shadow) !important;
     outline: none !important;
-    background: rgba(233, 69, 96, 0.08) !important;
   }
 
   .player-card.active::before {
+    background: rgba(233, 69, 96, 0.08) !important;
+  }
+
+  .player-card.active::after {
     border-color: var(--accent) !important;
     border-width: 2px !important;
-    inset: -2px !important;
-    border-radius: calc(var(--btn-radius) + 2px) !important;
+    inset: -1px !important;
+    border-radius: calc(var(--btn-radius) + 1px) !important;
   }
 
   [data-theme="light"] .player-card.active {
