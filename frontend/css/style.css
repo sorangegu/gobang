@@ -1306,9 +1306,9 @@ body:not([data-game-mode="ai"])[data-game-status="playing"] .room-code-preview {
     background: var(--glass-bg) !important;
     backdrop-filter: var(--glass-blur) !important;
     -webkit-backdrop-filter: var(--glass-blur) !important;
-    border: 1px solid var(--glass-border) !important;
+    border: none !important;
     border-radius: var(--btn-radius) !important;
-    box-shadow: var(--card-shadow) !important;
+    box-shadow: var(--card-shadow), inset 0 0 0 1px var(--glass-border) !important;
     -webkit-tap-highlight-color: transparent !important;
     width: 100% !important;
     min-width: 0 !important;
@@ -1317,11 +1317,11 @@ body:not([data-game-mode="ai"])[data-game-status="playing"] .room-code-preview {
     max-height: 52px !important;
     overflow: hidden !important;
     transition: all 300ms ease !important;
+    isolation: isolate !important;
   }
 
   .player-card.active {
-    border-color: var(--accent) !important;
-    box-shadow: var(--glow-accent), var(--card-shadow) !important;
+    box-shadow: var(--glow-accent), var(--card-shadow), inset 0 0 0 2px var(--accent) !important;
     outline: none !important;
     background: rgba(233, 69, 96, 0.08) !important;
   }
