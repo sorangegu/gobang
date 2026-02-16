@@ -1318,16 +1318,19 @@ body:not([data-game-mode="ai"])[data-game-status="playing"] .room-code-preview {
     overflow: visible !important;
     transition: all 300ms ease !important;
     position: relative !important;
+    clip-path: inset(0 round var(--btn-radius)) !important;
+    -webkit-clip-path: inset(0 round var(--btn-radius)) !important;
   }
 
   .player-card::before {
     content: '' !important;
     position: absolute !important;
-    inset: 0 !important;
-    border-radius: var(--btn-radius) !important;
+    inset: -1px !important;
+    border-radius: calc(var(--btn-radius) + 1px) !important;
     border: 1px solid var(--glass-border) !important;
     pointer-events: none !important;
-    transition: border-color 300ms ease !important;
+    transition: all 300ms ease !important;
+    box-sizing: border-box !important;
   }
 
   .player-card.active {
@@ -1339,6 +1342,8 @@ body:not([data-game-mode="ai"])[data-game-status="playing"] .room-code-preview {
   .player-card.active::before {
     border-color: var(--accent) !important;
     border-width: 2px !important;
+    inset: -2px !important;
+    border-radius: calc(var(--btn-radius) + 2px) !important;
   }
 
   [data-theme="light"] .player-card.active {
