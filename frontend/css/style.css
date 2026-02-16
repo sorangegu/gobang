@@ -1674,6 +1674,7 @@ body:not([data-game-mode="ai"])[data-game-status="playing"] .room-code-preview {
     padding-bottom: env(safe-area-inset-bottom);
     z-index: 50;
     order: unset;
+    overflow: hidden;
   }
 
   .room-action-bar {
