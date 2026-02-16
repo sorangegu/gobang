@@ -1308,22 +1308,37 @@ body:not([data-game-mode="ai"])[data-game-status="playing"] .room-code-preview {
     -webkit-backdrop-filter: var(--glass-blur) !important;
     border: none !important;
     border-radius: var(--btn-radius) !important;
-    box-shadow: var(--card-shadow), inset 0 0 0 1px var(--glass-border) !important;
+    box-shadow: var(--card-shadow) !important;
     -webkit-tap-highlight-color: transparent !important;
     width: 100% !important;
     min-width: 0 !important;
     flex: 0 0 auto !important;
     min-height: 52px !important;
     max-height: 52px !important;
-    overflow: hidden !important;
+    overflow: visible !important;
     transition: all 300ms ease !important;
-    isolation: isolate !important;
+    position: relative !important;
+  }
+
+  .player-card::before {
+    content: '' !important;
+    position: absolute !important;
+    inset: 0 !important;
+    border-radius: var(--btn-radius) !important;
+    border: 1px solid var(--glass-border) !important;
+    pointer-events: none !important;
+    transition: border-color 300ms ease !important;
   }
 
   .player-card.active {
-    box-shadow: var(--glow-accent), var(--card-shadow), inset 0 0 0 2px var(--accent) !important;
+    box-shadow: var(--glow-accent), var(--card-shadow) !important;
     outline: none !important;
     background: rgba(233, 69, 96, 0.08) !important;
+  }
+
+  .player-card.active::before {
+    border-color: var(--accent) !important;
+    border-width: 2px !important;
   }
 
   [data-theme="light"] .player-card.active {
