@@ -1315,7 +1315,7 @@ body:not([data-game-mode="ai"])[data-game-status="playing"] .room-code-preview {
     flex: 0 0 auto !important;
     min-height: 52px !important;
     max-height: 52px !important;
-    overflow: visible !important;
+    overflow: hidden !important;
     transition: all 300ms ease !important;
   }
 
@@ -1585,8 +1585,7 @@ body:not([data-game-mode="ai"])[data-game-status="playing"] .room-code-preview {
   .btn-action,
   .btn-primary,
   #readyBtn,
-  .btn-room-info,
-  .player-card {
+  .btn-room-info {
     height: var(--btn-height) !important;
     border-radius: var(--btn-radius) !important;
     font-size: 14px !important;
@@ -1607,12 +1606,6 @@ body:not([data-game-mode="ai"])[data-game-status="playing"] .room-code-preview {
     align-items: center !important;
     justify-content: center !important;
     padding: 0 !important;
-  }
-
-  /* 覆盖 player-card 高度 */
-  .player-card {
-    min-height: 52px !important;
-    max-height: 52px !important;
   }
 
   /* ══════ 多人对战选择 ══════ */
@@ -1653,8 +1646,8 @@ body:not([data-game-mode="ai"])[data-game-status="playing"] .room-code-preview {
   /* ══════ 房间信息 ══════ */
   .room-info-section {
     order: 4;
-    margin-top: 10px;
-    margin-bottom: 20px;
+    margin-top: 6px;
+    margin-bottom: 0;
     width: calc(100vw - 20px);
     max-width: 604px;
     margin-left: auto;
@@ -1668,22 +1661,42 @@ body:not([data-game-mode="ai"])[data-game-status="playing"] .room-code-preview {
     position: relative;
   }
 
+  /* 游戏中：房间信息固定在底部 */
+  body[data-game-status="playing"] .room-info-section {
+    position: fixed;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    width: 100%;
+    max-width: 100%;
+    margin: 0;
+    padding: 0 10px;
+    padding-bottom: env(safe-area-inset-bottom);
+    z-index: 50;
+    order: unset;
+  }
+
   .room-action-bar {
     width: 100%;
     display: flex;
     align-items: center;
     gap: 8px;
-    padding: 8px;
+    padding: 6px 8px;
     margin: 0;
     height: auto;
-    min-height: 58px;
-    background: var(--glass-bg);
-    backdrop-filter: var(--glass-blur);
-    -webkit-backdrop-filter: var(--glass-blur);
+    min-height: 50px;
+    background: rgba(30, 30, 50, 0.85);
+    backdrop-filter: blur(20px);
+    -webkit-backdrop-filter: blur(20px);
     border: 1px solid var(--glass-border);
     border-radius: var(--btn-radius);
     box-sizing: border-box;
-    box-shadow: var(--card-shadow);
+    box-shadow: 0 -2px 16px rgba(0, 0, 0, 0.2);
+  }
+
+  [data-theme="light"] .room-action-bar {
+    background: rgba(255, 255, 255, 0.88);
+    box-shadow: 0 -2px 16px rgba(0, 0, 0, 0.06);
   }
 
   .btn-room-info {
