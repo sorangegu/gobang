@@ -1752,6 +1752,7 @@ body:not([data-game-mode="ai"])[data-game-status="playing"] .room-code-preview {
   .player-card {
     background-color: var(--bg-secondary) !important;
     border: 1px solid var(--border-color) !important;
+    border-radius: var(--btn-radius) !important;
     -webkit-tap-highlight-color: transparent !important;
     width: 100% !important;
     min-width: 0 !important;
