@@ -932,7 +932,7 @@ body:not([data-game-mode="ai"])[data-game-status="playing"] .room-code-preview {
 }
 
 .board-overlay .overlay-card {
-  width: min(360px, 100%);
+  width: min(340px, calc(100% - 24px));
   background-color: var(--bg-secondary);
   border: 1px solid var(--border-color);
   border-radius: 14px;
@@ -1124,7 +1124,7 @@ body:not([data-game-mode="ai"])[data-game-status="playing"] .room-code-preview {
     --mobile-nav-height: 48px;
     --mobile-info-height: 70px;
     --mobile-room-height: 48px;
-    --btn-height: 46px;
+    --btn-height: 48px;
     --btn-radius: 12px;
     --glass-bg: rgba(255, 255, 255, 0.06);
     --glass-border: rgba(255, 255, 255, 0.1);
@@ -1580,7 +1580,7 @@ body:not([data-game-mode="ai"])[data-game-status="playing"] .room-code-preview {
     border-radius: var(--btn-radius) !important;
     font-size: 14px !important;
     font-weight: 600 !important;
-    padding: 0 14px !important;
+    padding: 0 10px !important;
     display: flex !important;
     align-items: center !important;
     justify-content: center !important;
@@ -1919,12 +1919,14 @@ body:not([data-game-mode="ai"])[data-game-status="playing"] .room-code-preview {
 
   /* ══════ 棋盘覆盖层升级 ══════ */
   .board-overlay .overlay-card {
+    width: min(320px, calc(100% - 32px));
     background: var(--glass-bg);
     backdrop-filter: blur(20px);
     -webkit-backdrop-filter: blur(20px);
     border: 1px solid var(--glass-border);
     border-radius: 16px;
     box-shadow: 0 12px 40px rgba(0, 0, 0, 0.3);
+    padding: 18px 16px 16px;
   }
 
   .board-overlay .overlay-btn {
