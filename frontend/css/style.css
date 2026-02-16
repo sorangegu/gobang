@@ -902,6 +902,7 @@ body:not([data-game-mode="ai"])[data-game-status="playing"] .room-code-preview {
   padding: 22px;
   transition: transform 200ms ease;
   position: relative;
+  overflow: hidden;
 }
 
 #board {
@@ -925,6 +926,9 @@ body:not([data-game-mode="ai"])[data-game-status="playing"] .room-code-preview {
   padding: 16px;
   background: rgba(0, 0, 0, 0.12);
   backdrop-filter: blur(2px);
+  border-radius: inherit;
+  overflow: visible;
+  z-index: 10;
 }
 
 [data-theme="light"] .board-overlay {
@@ -1919,14 +1923,20 @@ body:not([data-game-mode="ai"])[data-game-status="playing"] .room-code-preview {
 
   /* ══════ 棋盘覆盖层升级 ══════ */
   .board-overlay .overlay-card {
-    width: min(320px, calc(100% - 32px));
-    background: var(--glass-bg);
+    width: min(300px, calc(100% - 40px));
+    background: rgba(30, 30, 50, 0.92);
     backdrop-filter: blur(20px);
     -webkit-backdrop-filter: blur(20px);
-    border: 1px solid var(--glass-border);
+    border: 1px solid rgba(255, 255, 255, 0.15);
     border-radius: 16px;
-    box-shadow: 0 12px 40px rgba(0, 0, 0, 0.3);
-    padding: 18px 16px 16px;
+    box-shadow: 0 12px 40px rgba(0, 0, 0, 0.4);
+    padding: 20px 18px 18px;
+  }
+
+  [data-theme="light"] .board-overlay .overlay-card {
+    background: rgba(255, 255, 255, 0.92);
+    border: 1px solid rgba(0, 0, 0, 0.1);
+    box-shadow: 0 12px 40px rgba(0, 0, 0, 0.15);
   }
 
   .board-overlay .overlay-btn {
