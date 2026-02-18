@@ -66,7 +66,7 @@ function detectModeFromURL() {
   }
 
   // /room - 玩家对战选择页面
-  if (path === '/room' || path === '/room/') {
+  if (path === '/room' || path === '/room/' || path === '/multiplayer' || path === '/multiplayer/') {
     return { type: 'multiplayer' };
   }
 

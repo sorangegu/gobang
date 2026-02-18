@@ -117,6 +117,10 @@ class SocketManager {
     this.socket.on('opponent_reconnected', (data) => {
       this.emit('opponentReconnected', data);
     });
+    // 兼容旧服务端事件名
+    this.socket.on('player_reconnected', (data) => {
+      this.emit('opponentReconnected', data);
+    });
 
     // 成为新房主
     this.socket.on('became_host', (data) => {

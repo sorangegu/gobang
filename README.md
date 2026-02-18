@@ -1,207 +1,150 @@
-# 🎮 Gomoku 在线五子棋
+# Gomoku Online
 
-一个现代化的在线五子棋游戏，支持人机对战和多人对战模式。
+一个前后端分离的在线五子棋项目，支持人机对战与在线房间对战。
 
-![License](https://img.shields.io/badge/license-MIT-blue.svg)
-![Node](https://img.shields.io/badge/node-%3E%3D18.0.0-brightgreen.svg)
+## 功能概览
 
-## ✨ 功能特性
+- 人机对战（本地 AI，支持难度选择）
+- 在线对战（创建房间 / 加入房间 / 邀请链接）
+- 对战准备机制（双方准备后开局）
+- 悔棋与重新开始（联机模式为双方协商）
+- 断线重连与房间状态恢复
+- 响应式 UI（桌面与移动端）
+- Docker 化部署（前端 + 后端）
 
-### 🎯 游戏模式
-- 🤖 **人机对战** - 与 AI 对弈，智能评估算法
-- 👥 **多人对战** - 创建房间邀请好友对战
-- 🔗 **邀请链接** - 一键分享房间链接
+## 技术栈
 
-### 🎨 游戏体验
-- 📱 **响应式设计** - 完美适配手机、平板、桌面端
-- 🌓 **主题切换** - 深色/浅色主题自由切换
-- 📊 **游戏统计** - 记录游戏次数、胜率等数据
-- 🔄 **断线重连** - 刷新页面或切换模式后自动恢复对局
-- ↩️ **悔棋功能** - 人机模式支持悔棋
-- 🎯 **准备系统** - 多人对战双方准备后开始游戏
-- 👑 **房主转移** - 房主离开后自动转移给对手
+- 前端：HTML / CSS / Vanilla JavaScript / Canvas / Socket.IO Client
+- 后端：Node.js / Express / Socket.IO / Redis / Winston
+- 部署：Docker Compose + Nginx（反向代理 WebSocket）
 
-### 🛠️ 技术亮点
-- 🎯 **Canvas 渲染** - 流畅的棋盘绘制
-- 🔌 **实时通信** - Socket.IO 实现多人对战
-- 🐳 **Docker 部署** - 一键部署到服务器
-- 📦 **前后端分离** - 清晰的项目架构
+## 目录结构
 
-## 🚀 快速开始
-
-### 📋 前置要求
-- Node.js >= 18.0.0
-- Docker & Docker Compose（可选）
-
-### 💻 本地开发
-
-```bash
-# 克隆项目
-git clone https://github.com/sorangegu/gobang.git
-cd gobang
-
-# 安装后端依赖
-cd backend
-npm install
-
-# 启动后端服务
-npm start
-
-# 在另一个终端，启动前端服务
-cd ../frontend
-# 使用任意静态服务器，例如：
-npx serve .
-# 或
-python -m http.server 8080
-```
-
-### 🐳 Docker 部署
-
-```bash
-# 构建并启动
-docker-compose up -d --build
-
-# 查看日志
-docker-compose logs -f
-```
-
-### 🖥️ 服务器部署
-
-```bash
-# 克隆到服务器
-git clone https://github.com/sorangegu/gobang.git /opt/gobang
-
-# 复制前端文件
-cp -r /opt/gobang/frontend/* /var/www/gobang/
-
-# 启动后端
-cd /opt/gobang
-docker-compose up -d
-
-# 或使用部署脚本
-./deploy.sh
-```
-
-## 📖 使用说明
-
-### 🤖 人机对战
-1. 点击导航栏「人机对战」按钮
-2. 点击棋盘落子，黑方先行
-3. AI 会自动回应
-
-### 👥 多人对战
-1. **创建房间**：点击「玩家对战」→「创建房间」，获取 6 位房间号
-2. **分享邀请**：复制邀请链接或房间号给好友
-3. **加入房间**：好友点击链接或输入房间号加入
-4. **准备游戏**：双方点击「准备开始」后自动开始对局
-5. **切换模式**：可随时切换到人机对战，返回时自动恢复对局
-
-### 📜 游戏规则
-- 黑方先行，双方轮流落子
-- 先连成五子（横、竖、斜）者获胜
-
-## 🏗️ 项目结构
-
-```
+```text
 gobang/
-├── backend/              # 后端代码
+├── backend/
 │   ├── src/
-│   │   ├── index.js      # 主入口
-│   │   ├── room.js       # 房间管理
-│   │   └── ai.js         # AI 算法
+│   │   ├── index.js
+│   │   ├── room.js
+│   │   ├── ai.js
+│   │   ├── redis.js
+│   │   └── logger.js
 │   ├── Dockerfile
 │   └── package.json
-├── frontend/             # 前端代码
-│   ├── css/
-│   │   └── style.css     # 样式文件
-│   ├── js/
-│   │   ├── ui.js         # UI 交互
-│   │   ├── game.js       # 游戏逻辑
-│   │   └── socket.js     # Socket 通信
+├── frontend/
+│   ├── css/style.css
+│   ├── js/game.js
+│   ├── js/socket.js
+│   ├── js/ui.js
 │   ├── index.html
 │   └── Dockerfile
-├── nginx/                # Nginx 配置
-│   ├── nginx.conf
-│   └── host-nginx.conf   # 宿主机 Nginx 配置示例
-├── docker-compose.yml    # Docker Compose 配置
-├── auto-deploy.sh        # 自动部署脚本
-├── deploy.sh             # 基础部署脚本
+├── nginx/
+│   └── host-nginx.conf
+├── docker-compose.yml
+├── auto-deploy.sh
+├── REDIS_SETUP.md
 └── README.md
 ```
 
-## 🔧 技术栈
+## 路由说明
 
-### 🎨 前端
-- **原生 JavaScript** - 无框架依赖
-- **Canvas API** - 棋盘渲染
-- **Socket.IO Client** - 实时通信
-- **CSS3** - 响应式布局与动画
+- `/`：首页
+- `/ai`：人机对战
+- `/multiplayer`：玩家对战入口
+- `/room`：玩家对战入口（兼容路径）
+- `/room/:roomId`：指定房间页面
 
-### ⚙️ 后端
-- **Node.js** - 运行环境
-- **Express** - Web 框架
-- **Socket.IO** - WebSocket 通信
-- **Docker** - 容器化部署
+## 本地开发
 
-## 🤖 AI 算法
+### 1) 启动后端
 
-AI 采用启发式评估算法：
-- 评估每个空位的进攻和防守价值
-- 识别活四、冲四、活三等棋型
-- 综合考虑进攻和防守因素
-
-```javascript
-// 评分示例
-if (count >= 4) score += 100000;        // 成五
-else if (count === 3 && openEnds === 2) // 活四
-  score += 10000;
-else if (count === 3 && openEnds === 1) // 冲四
-  score += 1000;
+```bash
+cd backend
+npm install
+npm start
 ```
 
-## 📝 更新日志
+默认端口：`5001`
 
-### v1.1.0 (2024-02-15)
-- ✅ 准备系统 - 双方准备后开始游戏
-- ✅ 房主转移 - 房主离开后自动转移
-- ✅ 自动重连 - 刷新页面或切换模式后恢复对局
-- ✅ 移动端优化 - 适配触摸操作和响应式布局
-- ✅ 部署脚本优化
+### 2) 启动前端
 
-### v1.0.0 (2024-02-14)
-- ✅ 人机对战功能
-- ✅ 多人对战功能
-- ✅ 房间系统与邀请链接
-- ✅ 断线重连
-- ✅ 响应式设计
-- ✅ 主题切换
-- ✅ 游戏统计
+```bash
+cd frontend
+npx serve -p 8080 .
+```
 
-## 🤝 贡献指南
+默认访问：`http://localhost:8080`
 
-欢迎提交 Issue 和 Pull Request！
+## Docker 部署
 
-1. Fork 本仓库
-2. 创建特性分支 (`git checkout -b feature/AmazingFeature`)
-3. 提交更改 (`git commit -m 'Add some AmazingFeature'`)
-4. 推送到分支 (`git push origin feature/AmazingFeature`)
-5. 提交 Pull Request
+```bash
+docker-compose up -d --build
+docker-compose logs -f
+```
 
-## 📄 许可证
+默认端口：
 
-本项目采用 MIT 许可证 - 详见 [LICENSE](LICENSE) 文件
+- 前端：`8080`
+- 后端：`5001`
 
-## 🙏 致谢
+## 环境变量
 
-- 感谢所有贡献者的付出
-- 灵感来源于经典的五子棋游戏
-- 使用 [Socket.IO](https://socket.io/) 实现实时通信
+复制并按需修改：
 
-## 📮 联系方式
+```bash
+cp .env.example .env
+```
 
-- 项目地址: [https://github.com/sorangegu/gobang](https://github.com/sorangegu/gobang)
-- 问题反馈: [Issues](https://github.com/sorangegu/gobang/issues)
+关键项：
 
----
+- `PORT`：后端端口
+- `FRONTEND_PORT`：前端端口
+- `ALLOWED_ORIGINS`：允许的前端域名（逗号分隔）
+- `REDIS_HOST` / `REDIS_PORT` / `REDIS_PASSWORD` / `REDIS_DB`
+- `LOG_LEVEL`
 
-⭐ 如果这个项目对你有帮助，欢迎 Star 支持！
+Redis 连接细节可参考：`REDIS_SETUP.md`
+
+## 自动部署（auto-deploy.sh）
+
+脚本会执行：
+
+1. `git add -A`
+2. `git commit`
+3. `git push origin main`
+4. SSH 到远端拉取代码并重启服务
+
+使用方式：
+
+```bash
+./auto-deploy.sh "chore: your commit message"
+```
+
+执行前请在 `.env` 提供：
+
+- `SSH_HOST`
+- `DEPLOY_PATH`
+- `FRONTEND_PATH`
+
+## 本次优化（当前版本）
+
+- 修复重连事件名不一致（后端与前端统一并做兼容）
+- 修复 Redis 房间恢复未正确等待异步结果的问题
+- 修复重连流程中对手在线状态判断不准确的问题
+- 修复 AI 分支潜在变量引用错误
+- 修复前端多人模式路径识别不一致（`/room` 与 `/multiplayer`）
+- 更新文档与真实代码结构保持一致
+
+## 测试说明
+
+目前仓库未内置完整自动化测试用例（根目录仅有 Playwright 依赖）。
+建议在部署前至少做一轮手工回归：
+
+- 创建房间 / 加入房间 / 准备开始
+- 对战落子同步
+- 悔棋与重开
+- 断线重连
+
+## License
+
+MIT

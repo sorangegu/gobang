@@ -15,7 +15,8 @@
       // 检测当前路径模式
       if (path === '/ai' || path === '/ai/') {
         document.body.dataset.initialMode = 'ai';
-      } else if (path === '/multiplayer' || path === '/multiplayer/' ||
+      } else if (path === '/room' || path === '/room/' ||
+                 path === '/multiplayer' || path === '/multiplayer/' ||
                  /^\/room\/[A-Z0-9]{6}\/?$/i.test(path)) {
         document.body.dataset.initialMode = 'multiplayer';
       } else {

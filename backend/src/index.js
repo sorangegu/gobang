@@ -197,23 +197,26 @@ io.on('connection', (socket) => {
   });
 
   // 重连房间
-  socket.on('reconnect_room', (data, callback) => {
+  socket.on('reconnect_room', async (data, callback) => {
     try {
       if (!data || !data.roomId || !data.playerColor) {
-        return callback({ success: false, error: '无效的重连参数' });
+        if (callback) callback({ success: false, error: '无效的重连参数' });
+        return;
       }
 
       // 验证房间号格式
       if (!/^[A-Z0-9]{6}$/i.test(data.roomId)) {
-        return callback({ success: false, error: '无效的房间号格式' });
+        if (callback) callback({ success: false, error: '无效的房间号格式' });
+        return;
       }
 
       // 验证玩家颜色
       if (![1, 2].includes(data.playerColor)) {
-        return callback({ success: false, error: '无效的玩家颜色' });
+        if (callback) callback({ success: false, error: '无效的玩家颜色' });
+        return;
       }
 
-      const result = roomManager.reconnectRoom(socket, data.roomId, data.playerColor);
+      const result = await roomManager.reconnectRoom(socket, data.roomId, data.playerColor);
       logger.info(`重连房间：${data.roomId}, 用户：${socket.id}, 结果：${result.success}`);
       if (callback) callback(result);
     } catch (error) {

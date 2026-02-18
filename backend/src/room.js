@@ -280,7 +280,7 @@ class RoomManager {
         winner: 2,
         reason: '五子连珠'
       });
-      this.deleteRoomFromRedis(roomId);
+      this.deleteRoomFromRedis(room.roomId);
       return;
     }
 
@@ -507,22 +507,29 @@ class RoomManager {
   }
 
   // 重连房间（唯一版本）
-  reconnectRoom(socket, roomId, playerColor) {
-    const room = this.rooms.get(roomId);
+  async reconnectRoom(socket, roomId, playerColor) {
+    let room = this.rooms.get(roomId);
+    let restored = false;
 
     // 如果内存中没有，尝试从 Redis 恢复
-    if (!room && this.redisClient) {
-      const roomData = this.redisClient.getRoom(roomId);
+    if (!room && this.redisClient && this.redisClient.isConnected()) {
+      const roomData = await this.redisClient.getRoom(roomId);
       if (roomData) {
         logger.info(`从 Redis 恢复房间：${roomId}`);
         // 恢复房间到内存
-        const restoredRoom = Room.fromJSON(roomData, socket);
-        this.rooms.set(roomId, restoredRoom);
-        return {
-          success: true,
-          restored: true,
-          ...roomData
-        };
+        room = Room.fromJSON(roomData, socket);
+
+        // 如果先恢复的是 guest，先放一个离线占位 host，避免颜色映射错误。
+        if (playerColor === 2) {
+          room.host = {
+            id: '__offline_host__',
+            __placeholder: true,
+            emit: () => {}
+          };
+        }
+
+        this.rooms.set(roomId, room);
+        restored = true;
       }
     }
 
@@ -553,14 +560,16 @@ class RoomManager {
 
     // 状态同步
     const opponent = isHost ? room.guest : room.host;
-    if (opponent) {
-      opponent.emit('player_reconnected', {
+    if (opponent && !opponent.__placeholder) {
+      opponent.emit('opponent_reconnected', {
         playerColor: playerColor
       });
     }
 
     // 检查对手是否在线
-    const opponentOnline = isHost ? (room.guest !== null) : (room.host !== null);
+    const opponentOnline = isHost
+      ? !!(room.guest && !room.guest.__placeholder)
+      : !!(room.host && !room.host.__placeholder);
 
     logger.info(`玩家重连房间：${roomId}, 玩家：${socket.id}`);
 
@@ -569,6 +578,7 @@ class RoomManager {
 
     return {
       success: true,
+      restored,
       roomId,
       isHost,
       playerColor,
@@ -589,10 +599,11 @@ class RoomManager {
     const room = this.rooms.get(roomId);
     if (!room) return;
 
-    const isHost = socket.id === room.host.id;
+    const isHost = room.host && socket.id === room.host.id;
     const opponent = isHost ? room.guest : room.host;
+    const hasOpponent = opponent && !opponent.__placeholder;
 
-    if (isHost && opponent) {
+    if (isHost && hasOpponent) {
       // 房主离开，guest 变为新房主，重置对局
       room.host = opponent;
       room.guest = null;
@@ -616,7 +627,7 @@ class RoomManager {
       });
 
       this.saveRoomToRedis(roomId, room);
-    } else if (!isHost && opponent) {
+    } else if (!isHost && hasOpponent) {
       // Guest 离开
       room.guest = null;
       room.status = 'waiting';
@@ -656,7 +667,7 @@ class RoomManager {
     if (!room) return { success: false, error: '房间不存在' };
     if (room.status !== 'waiting') return { success: false, error: '游戏已开始' };
 
-    const isHost = socket.id === room.host.id;
+    const isHost = room.host && socket.id === room.host.id;
 
     if (isHost) {
       room.hostReady = true;
@@ -704,7 +715,7 @@ class RoomManager {
     if (!room) return;
 
     // 标记玩家断开，给 15 分钟重连时间
-    if (socket.id === room.host.id) {
+    if (room.host && socket.id === room.host.id) {
       room.hostDisconnected = true;
       room.hostDisconnectTime = Date.now();
     } else if (room.guest && socket.id === room.guest.id) {
