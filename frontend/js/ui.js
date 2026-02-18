@@ -113,9 +113,9 @@ function showHomePanel() {
   hideAllPanels();
 
   // 显示首页选择面板
-  const homePanel = document.getElementById('homePanel');
-  if (homePanel) {
-    homePanel.style.display = 'flex';
+  const homeSelect = document.getElementById('homeSelect');
+  if (homeSelect) {
+    homeSelect.style.display = 'flex';
   }
 
   // 更新导航状态
@@ -201,9 +201,9 @@ function initMultiplayerSelect() {
     hideAllPanels();
     setRoomInfoSectionDisplay('none');
 
-    const multiplayerSelect = document.getElementById('multiplayerSelect');
-    if (multiplayerSelect) {
-      multiplayerSelect.style.display = 'block';
+    const multiplayerSelectPanel = document.getElementById('multiplayerSelectPanel');
+    if (multiplayerSelectPanel) {
+      multiplayerSelectPanel.style.display = 'block';
     }
 
     updateModeUI('multiplayer');
@@ -252,9 +252,9 @@ function initRoomPage(roomId) {
     hideAllPanels();
     setRoomInfoSectionDisplay('none');
 
-    const multiplayerSelect = document.getElementById('multiplayerSelect');
-    if (multiplayerSelect) {
-      multiplayerSelect.style.display = 'block';
+    const multiplayerSelectPanel = document.getElementById('multiplayerSelectPanel');
+    if (multiplayerSelectPanel) {
+      multiplayerSelectPanel.style.display = 'block';
     }
 
     updateModeUI('multiplayer');
@@ -281,7 +281,7 @@ function clearGameForNewMode() {
 
 // 隐藏所有面板
 function hideAllPanels() {
-  const panels = ['homePanel', 'difficultyPanel', 'multiplayerSelect', 'roomPanel'];
+  const panels = ['homeSelect', 'aiSelect', 'multiplayerSelectPanel', 'roomPanel'];
   panels.forEach(panelId => {
     const panel = document.getElementById(panelId);
     if (panel) {
@@ -704,9 +704,9 @@ function initEventListeners() {
 function showDifficultyPanel() {
   hideAllPanels();
 
-  const difficultyPanel = document.getElementById('difficultyPanel');
-  if (difficultyPanel) {
-    difficultyPanel.style.display = 'flex';
+  const aiSelect = document.getElementById('aiSelect');
+  if (aiSelect) {
+    aiSelect.style.display = 'flex';
   }
 
   updateNavState('ai');
@@ -736,7 +736,7 @@ function showMultiplayerSelect() {
   if (savedRoom) {
     console.log('[DEBUG] Found saved room, attempting reconnect...', savedRoom);
 
-    document.getElementById('multiplayerSelect').style.display = 'none';
+    document.getElementById('multiplayerSelectPanel').style.display = 'none';
     UIState.pendingReconnect = savedRoom;
     showToast('正在恢复房间连接...', 2000);
     socketManager.reconnectRoom(savedRoom.roomId, savedRoom.playerColor);
@@ -755,9 +755,9 @@ function showMultiplayerSelect() {
   hideAllPanels();
   setRoomInfoSectionDisplay('none');
 
-  const multiplayerSelect = document.getElementById('multiplayerSelect');
-  if (multiplayerSelect) {
-    multiplayerSelect.style.display = 'block';
+  const multiplayerSelectPanel = document.getElementById('multiplayerSelectPanel');
+  if (multiplayerSelectPanel) {
+    multiplayerSelectPanel.style.display = 'block';
   }
 
   updateModeUI('multiplayer');
@@ -776,7 +776,7 @@ function createRoom() {
 
   socketManager.createRoom();
 
-  document.getElementById('multiplayerSelect').style.display = 'none';
+  document.getElementById('multiplayerSelectPanel').style.display = 'none';
   document.body.setAttribute('data-game-status', 'waiting');
   setInviteSectionDisplay('none');
 
@@ -1067,9 +1067,9 @@ function updateModeUI(mode) {
   if (mode === 'ai') {
     Elements.roomPanel.style.display = 'none';
     setRoomInfoSectionDisplay('none');
-    document.getElementById('multiplayerSelect').style.display = 'none';
-    document.getElementById('homePanel').style.display = 'none';
-    document.getElementById('difficultyPanel').style.display = 'none';
+    document.getElementById('multiplayerSelectPanel').style.display = 'none';
+    document.getElementById('homeSelect').style.display = 'none';
+    document.getElementById('aiSelect').style.display = 'none';
 
     const opponentCard = document.getElementById('opponentCard');
     if (opponentCard) {
@@ -1086,9 +1086,9 @@ function updateModeUI(mode) {
   } else if (mode === 'multiplayer') {
     Elements.roomPanel.style.display = 'none';
     setRoomInfoSectionDisplay('none');
-    document.getElementById('multiplayerSelect').style.display = 'block';
-    document.getElementById('homePanel').style.display = 'none';
-    document.getElementById('difficultyPanel').style.display = 'none';
+    document.getElementById('multiplayerSelectPanel').style.display = 'block';
+    document.getElementById('homeSelect').style.display = 'none';
+    document.getElementById('aiSelect').style.display = 'none';
 
     const opponentCard = document.getElementById('opponentCard');
     if (opponentCard) {
@@ -1101,9 +1101,9 @@ function updateModeUI(mode) {
     updateGameMode('multiplayer');
   } else if (mode === 'create' || mode === 'join' || mode === 'room') {
     Elements.roomPanel.style.display = 'none';
-    document.getElementById('multiplayerSelect').style.display = 'none';
-    document.getElementById('homePanel').style.display = 'none';
-    document.getElementById('difficultyPanel').style.display = 'none';
+    document.getElementById('multiplayerSelectPanel').style.display = 'none';
+    document.getElementById('homeSelect').style.display = 'none';
+    document.getElementById('aiSelect').style.display = 'none';
     setRoomInfoSectionDisplay('block');
 
     const opponentCard = document.getElementById('opponentCard');
@@ -1113,9 +1113,9 @@ function updateModeUI(mode) {
   } else if (mode === 'home') {
     Elements.roomPanel.style.display = 'none';
     setRoomInfoSectionDisplay('none');
-    document.getElementById('multiplayerSelect').style.display = 'none';
-    document.getElementById('difficultyPanel').style.display = 'none';
-    document.getElementById('homePanel').style.display = 'flex';
+    document.getElementById('multiplayerSelectPanel').style.display = 'none';
+    document.getElementById('aiSelect').style.display = 'none';
+    document.getElementById('homeSelect').style.display = 'flex';
 
     updateGameStatus(null);
     updateGameMode(null);
@@ -1241,7 +1241,7 @@ function initSocketListeners() {
       document.body.dataset.gameStatus = data.status === 'playing' ? 'playing' : 'waiting';
 
       Elements.roomPanel.style.display = 'none';
-      document.getElementById('multiplayerSelect').style.display = 'none';
+      document.getElementById('multiplayerSelectPanel').style.display = 'none';
       setRoomInfoSectionDisplay('block');
 
       const opponentCard = document.getElementById('opponentCard');
