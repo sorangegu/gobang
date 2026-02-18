@@ -23,14 +23,17 @@ class RedisClient {
       this.client = createClient({
         socket: {
           host: this.config.host,
-          port: this.config.port
+          port: this.config.port,
+          // Redis 不可达时快速失败，避免阻塞服务启动
+          connectTimeout: 3000,
+          reconnectStrategy: () => false
         },
         password: this.config.password,
         database: this.config.db
       });
 
       this.client.on('error', (err) => {
-        logger.error('Redis 连接错误:', err.message);
+        logger.error(`Redis 连接错误: ${err.message}`);
         this.connected = false;
       });
 
@@ -48,8 +51,10 @@ class RedisClient {
       logger.info(`Redis 已连接：${this.config.host}:${this.config.port}`);
       return true;
     } catch (error) {
-      logger.error('Redis 连接失败，使用内存存储:', error.message);
+      logger.error(`Redis 连接失败，使用内存存储: ${error.message}`);
       this.connected = false;
+      // 连接失败后主动释放 client，避免后续误用
+      this.client = null;
       return false;
     }
   }
