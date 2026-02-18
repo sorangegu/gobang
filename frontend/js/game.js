@@ -3,7 +3,7 @@
 class Game {
   constructor() {
     this.board = [];
-    this.currentPlayer = 1; // 1: 黑棋, 2: 白棋
+    this.currentPlayer = 1; // 1: 黑棋，2: 白棋
     this.myColor = 1; // 我的颜色
     this.gameMode = this.detectInitialMode(); // ai, create, join, multiplayer
     this.isPlaying = false;
@@ -12,6 +12,7 @@ class Game {
     this.roomId = null;
     this.isHost = false;
     this.lastMove = null; // {x, y}
+    this.aiDifficulty = 'medium'; // easy, medium, hard
   }
 
   // 根据当前 URL 检测初始模式
@@ -34,11 +35,12 @@ class Game {
   }
 
   // 初始化游戏
-  init(gameMode = 'ai') {
+  init(gameMode = 'ai', difficulty = 'medium') {
     this.gameMode = gameMode;
+    this.aiDifficulty = difficulty;
     this.board = Array(15).fill(null).map(() => Array(15).fill(0));
     this.currentPlayer = 1;
-    this.isPlaying = false;
+    this.isPlaying = gameMode === 'ai'; // AI 模式立即开始
     this.moveHistory = [];
     this.winner = null;
     this.lastMove = null;
@@ -190,7 +192,8 @@ class Game {
       myColor: this.myColor,
       moveHistory: this.moveHistory,
       lastMove: this.lastMove,
-      winner: this.winner
+      winner: this.winner,
+      difficulty: this.aiDifficulty
     };
 
     localStorage.setItem('gomoku_game_state', JSON.stringify(gameState));
@@ -212,6 +215,7 @@ class Game {
       this.moveHistory = gameState.moveHistory;
       this.lastMove = gameState.lastMove;
       this.winner = gameState.winner;
+      this.aiDifficulty = gameState.difficulty || 'medium';
       this.isPlaying = true;
       return true;
     } catch (e) {

@@ -1,6 +1,7 @@
 const { v4: uuidv4 } = require('uuid');
+const logger = require('./logger');
 
-// 生成房间ID (6位字母数字)
+// 生成房间 ID (6 位字母数字)
 function generateRoomId() {
   const chars = 'ABCDEFGHJKLMNPQRSTUVWXYZ23456789';
   let result = '';
@@ -11,19 +12,26 @@ function generateRoomId() {
 }
 
 class Room {
-  constructor(roomId, hostSocket) {
+  constructor(roomId, hostSocket, difficulty = 'medium') {
     this.roomId = roomId;
     this.host = hostSocket;
     this.guest = null;
     this.status = 'waiting'; // waiting, ready, playing, finished
     this.board = Array(15).fill(null).map(() => Array(15).fill(0));
-    this.currentPlayer = 1; // 1: 黑棋, 2: 白棋
+    this.currentPlayer = 1; // 1: 黑棋，2: 白棋
     this.moveHistory = [];
     this.undoRequested = false;
     this.restartRequested = false;
     this.winner = null;
     this.hostReady = false;
     this.guestReady = false;
+    this.difficulty = difficulty; // AI 难度
+
+    // 断开连接状态
+    this.hostDisconnected = false;
+    this.guestDisconnected = false;
+    this.hostDisconnectTime = 0;
+    this.guestDisconnectTime = 0;
   }
 
   getPlayerColor(socket) {
@@ -39,23 +47,69 @@ class Room {
   isBothReady() {
     return this.hostReady && this.guestReady;
   }
+
+  // 序列化为可存储的格式
+  toJSON() {
+    return {
+      roomId: this.roomId,
+      status: this.status,
+      board: this.board,
+      currentPlayer: this.currentPlayer,
+      moveHistory: this.moveHistory,
+      winner: this.winner,
+      hostReady: this.hostReady,
+      guestReady: this.guestReady,
+      difficulty: this.difficulty,
+      hostDisconnected: this.hostDisconnected,
+      guestDisconnected: this.guestDisconnected,
+      hostDisconnectTime: this.hostDisconnectTime,
+      guestDisconnectTime: this.guestDisconnectTime
+    };
+  }
+
+  // 从存储恢复
+  static fromJSON(data, hostSocket) {
+    const room = new Room(data.roomId, hostSocket, data.difficulty);
+    room.status = data.status;
+    room.board = data.board;
+    room.currentPlayer = data.currentPlayer;
+    room.moveHistory = data.moveHistory;
+    room.winner = data.winner;
+    room.hostReady = data.hostReady;
+    room.guestReady = data.guestReady;
+    room.hostDisconnected = data.hostDisconnected;
+    room.guestDisconnected = data.guestDisconnected;
+    room.hostDisconnectTime = data.hostDisconnectTime;
+    room.guestDisconnectTime = data.guestDisconnectTime;
+    return room;
+  }
 }
 
 class RoomManager {
   constructor(io) {
     this.io = io;
     this.rooms = new Map();
-    this.aiGame = null; // 人机对战
+    this.redisClient = null;
+  }
+
+  // 设置 Redis 客户端
+  setRedisClient(redisClient) {
+    this.redisClient = redisClient;
+  }
+
+  // 获取房间数量
+  getRoomCount() {
+    return this.rooms.size;
   }
 
   // 创建房间
-  createRoom(socket) {
+  createRoom(socket, difficulty = 'medium') {
     let roomId;
     do {
       roomId = generateRoomId();
     } while (this.rooms.has(roomId));
 
-    const room = new Room(roomId, socket);
+    const room = new Room(roomId, socket, difficulty);
     this.rooms.set(roomId, room);
 
     socket.join(roomId);
@@ -63,12 +117,16 @@ class RoomManager {
     socket.isHost = true;
     socket.playerColor = 1;
 
-    // 通过回调返回结果（前端使用回调方式处理）
+    // 保存到 Redis
+    this.saveRoomToRedis(roomId, room);
+
+    logger.info(`房间创建成功：${roomId}, 难度：${difficulty}`);
     return {
       success: true,
       roomId,
       isHost: true,
-      playerColor: 1
+      playerColor: 1,
+      difficulty
     };
   }
 
@@ -92,10 +150,13 @@ class RoomManager {
     }
 
     room.guest = socket;
+    room.guestDisconnected = false;
+
     // 如果是重新加入，保持 playing 状态
     if (!isRejoining) {
       room.status = 'waiting';
     }
+
     socket.join(roomId);
     socket.roomId = roomId;
     socket.isHost = false;
@@ -109,7 +170,10 @@ class RoomManager {
       isRejoining
     });
 
-    // 通过回调返回结果给加入者
+    // 保存到 Redis
+    this.saveRoomToRedis(roomId, room);
+
+    logger.info(`玩家加入房间：${roomId}, 玩家：${socket.id}`);
     return {
       success: true,
       roomId,
@@ -120,25 +184,6 @@ class RoomManager {
       moveHistory: room.moveHistory,
       currentPlayer: room.currentPlayer,
       isPlaying: room.status === 'playing'
-    };
-  }
-
-  // 人机对战创建
-  createAIPlayer(socket) {
-    const roomId = 'ai_' + socket.id;
-    const room = new Room(roomId, socket);
-    room.aiPlayer = true;
-    room.status = 'playing';
-
-    socket.roomId = roomId;
-    socket.playerColor = 1; // 玩家执黑
-
-    // 返回创建成功
-    return {
-      success: true,
-      isAI: true,
-      playerColor: 1,
-      roomId
     };
   }
 
@@ -179,6 +224,7 @@ class RoomManager {
         winner: playerColor,
         reason: '五子连珠'
       });
+      this.deleteRoomFromRedis(roomId);
       return;
     }
 
@@ -189,6 +235,7 @@ class RoomManager {
         winner: 0,
         reason: '平局'
       });
+      this.deleteRoomFromRedis(roomId);
       return;
     }
 
@@ -201,12 +248,16 @@ class RoomManager {
         this.makeAIMove(room);
       }, 500);
     }
+
+    // 保存到 Redis
+    this.saveRoomToRedis(roomId, room);
   }
 
   // AI 落子
   makeAIMove(room) {
     const ai = require('./ai');
-    const { x, y } = ai.getBestMove(room.board, 2);
+    const difficulty = room.difficulty || 'medium';
+    const { x, y } = ai.getBestMove(room.board, 2, difficulty);
 
     if (x === -1) return; // 无可用位置
 
@@ -229,10 +280,12 @@ class RoomManager {
         winner: 2,
         reason: '五子连珠'
       });
+      this.deleteRoomFromRedis(roomId);
       return;
     }
 
     room.currentPlayer = 1;
+    this.saveRoomToRedis(room.roomId, room);
   }
 
   // 检查胜利
@@ -299,7 +352,7 @@ class RoomManager {
         const lastMove = room.moveHistory.pop();
         room.board[lastMove.y][lastMove.x] = 0;
 
-        // 如果悔的是AI的棋，需要再悔一步玩家的
+        // 如果悔的是 AI 的棋，需要再悔一步玩家的
         if (room.moveHistory.length > 0 && room.currentPlayer === 2) {
           const prevMove = room.moveHistory.pop();
           room.board[prevMove.y][prevMove.x] = 0;
@@ -312,6 +365,7 @@ class RoomManager {
           currentPlayer: room.currentPlayer
         });
 
+        this.saveRoomToRedis(roomId, room);
         return { success: true };
       }
     }
@@ -361,6 +415,8 @@ class RoomManager {
         board: room.board,
         currentPlayer: room.currentPlayer
       });
+
+      this.saveRoomToRedis(roomId, room);
     }
 
     if (opponent) {
@@ -391,6 +447,7 @@ class RoomManager {
         currentPlayer: 1
       });
 
+      this.saveRoomToRedis(roomId, room);
       return { success: true };
     }
 
@@ -445,29 +502,44 @@ class RoomManager {
       opponent.emit('restart_response', { accepted: true });
     }
 
+    this.saveRoomToRedis(roomId, room);
     return { success: true, accepted: true };
   }
 
-  // 重连房间
+  // 重连房间（唯一版本）
   reconnectRoom(socket, roomId, playerColor) {
     const room = this.rooms.get(roomId);
+
+    // 如果内存中没有，尝试从 Redis 恢复
+    if (!room && this.redisClient) {
+      const roomData = this.redisClient.getRoom(roomId);
+      if (roomData) {
+        logger.info(`从 Redis 恢复房间：${roomId}`);
+        // 恢复房间到内存
+        const restoredRoom = Room.fromJSON(roomData, socket);
+        this.rooms.set(roomId, restoredRoom);
+        return {
+          success: true,
+          restored: true,
+          ...roomData
+        };
+      }
+    }
+
     if (!room) {
       return { success: false, error: '房间不存在或已过期' };
     }
 
     // 验证身份并更新 socket
     let isHost = false;
-    let originalSocket = null;
 
     if (playerColor === 1) {
-      // 尝试作为房主重连
-      // 简单的验证：如果房主位置被占且ID不同，可能认为是其他人（但在无鉴权系统中，我们假设是同一个人换了连接）
-      // 实际上，只要 socket 断开，这里就会认为是重新连接
       room.host = socket;
+      room.hostDisconnected = false;
       isHost = true;
     } else if (playerColor === 2) {
-      // 尝试作为访客重连
       room.guest = socket;
+      room.guestDisconnected = false;
       isHost = false;
     } else {
       return { success: false, error: '无效的玩家颜色' };
@@ -480,7 +552,6 @@ class RoomManager {
     socket.playerColor = playerColor;
 
     // 状态同步
-    // 通知对手（如果有）
     const opponent = isHost ? room.guest : room.host;
     if (opponent) {
       opponent.emit('player_reconnected', {
@@ -488,7 +559,14 @@ class RoomManager {
       });
     }
 
-    // 返回当前游戏状态
+    // 检查对手是否在线
+    const opponentOnline = isHost ? (room.guest !== null) : (room.host !== null);
+
+    logger.info(`玩家重连房间：${roomId}, 玩家：${socket.id}`);
+
+    // 更新 Redis
+    this.saveRoomToRedis(roomId, room);
+
     return {
       success: true,
       roomId,
@@ -499,7 +577,7 @@ class RoomManager {
       currentPlayer: room.currentPlayer,
       moveHistory: room.moveHistory,
       isPlaying: room.status === 'playing',
-      opponentOnline: !!opponent
+      opponentOnline
     };
   }
 
@@ -530,18 +608,16 @@ class RoomManager {
       room.hostReady = false;
       room.guestReady = false;
 
-      // 通知新房主，不保留对局
+      // 通知新房主
       opponent.emit('became_host', {
         roomId,
         reason: '房主离开，你已成为新房主，对局已重置',
         preserveGame: false
       });
-    } else if (!isHost && opponent) {
-      // Guest 离开，房主保留房间但重置对局（或者也可以选择保留，但为了统一体验，建议重置或至少不强制保留）
-      // 这里我们保持原逻辑：Guest离开，房主获胜或者游戏结束。但如果是为了避免混淆，我们可以直接结束当前局。
-      // 当前逻辑是：Guest离开，房主保留对局。这在 technical 上是没问题的（房主没变），但用户体验上对手跑了，应该重置。
-      // 让我们修改为告知房主对手离开了，并重置游戏状态进入等待。
 
+      this.saveRoomToRedis(roomId, room);
+    } else if (!isHost && opponent) {
+      // Guest 离开
       room.guest = null;
       room.status = 'waiting';
       room.board = Array(15).fill(null).map(() => Array(15).fill(0));
@@ -556,9 +632,12 @@ class RoomManager {
         reason: '对手离开，对局已重置',
         preserveGame: false
       });
+
+      this.saveRoomToRedis(roomId, room);
     } else {
       // 两边都不在，清理房间
       this.rooms.delete(roomId);
+      this.deleteRoomFromRedis(roomId);
     }
 
     socket.roomId = null;
@@ -602,6 +681,8 @@ class RoomManager {
         currentPlayer: room.currentPlayer,
         board: room.board
       });
+
+      this.saveRoomToRedis(roomId, room);
     }
 
     return { success: true, hostReady: room.hostReady, guestReady: room.guestReady };
@@ -615,13 +696,14 @@ class RoomManager {
     // 人机对战
     if (roomId.startsWith('ai_')) {
       this.rooms.delete(roomId);
+      this.deleteRoomFromRedis(roomId);
       return;
     }
 
     const room = this.rooms.get(roomId);
     if (!room) return;
 
-    // 标记玩家断开，给15分钟重连时间
+    // 标记玩家断开，给 15 分钟重连时间
     if (socket.id === room.host.id) {
       room.hostDisconnected = true;
       room.hostDisconnectTime = Date.now();
@@ -638,12 +720,14 @@ class RoomManager {
       });
     }
 
-    // 15分钟后清理房间（如果没有重连）
+    // 保存到 Redis
+    this.saveRoomToRedis(roomId, room);
+
+    // 15 分钟后清理房间（如果没有重连）
     setTimeout(() => {
       const currentRoom = this.rooms.get(roomId);
       if (!currentRoom) return;
 
-      // 检查是否还需要清理
       const now = Date.now();
       const hostTimeout = currentRoom.hostDisconnected && (now - currentRoom.hostDisconnectTime > 900000);
       const guestTimeout = currentRoom.guestDisconnected && (now - currentRoom.guestDisconnectTime > 900000);
@@ -657,58 +741,31 @@ class RoomManager {
           currentRoom.guest.emit('player_left', { reason: '对手离开' });
         }
         this.rooms.delete(roomId);
+        this.deleteRoomFromRedis(roomId);
       }
     }, 901000);
   }
 
-  // 重连房间
-  reconnectRoom(socket, roomId, playerColor) {
-    const room = this.rooms.get(roomId);
-    if (!room) {
-      return { success: false, error: '房间不存在' };
+  // 保存到 Redis
+  async saveRoomToRedis(roomId, room) {
+    if (!this.redisClient || !this.redisClient.isConnected()) return;
+
+    try {
+      await this.redisClient.saveRoom(roomId, room.toJSON());
+    } catch (error) {
+      logger.error('保存房间到 Redis 失败:', error.message);
     }
+  }
 
-    // 检查玩家身份并更新 socket
-    if (playerColor === 1) {
-      // 房主重连 - 直接更新 socket 引用
-      room.host = socket;
-      room.hostDisconnected = false;
-      socket.join(roomId);
-      socket.roomId = roomId;
-      socket.isHost = true;
-      socket.playerColor = 1;
-    } else if (playerColor === 2) {
-      // 访客重连 - 直接更新 socket 引用
-      room.guest = socket;
-      room.guestDisconnected = false;
-      socket.join(roomId);
-      socket.roomId = roomId;
-      socket.isHost = false;
-      socket.playerColor = 2;
-    } else {
-      return { success: false, error: '无效的玩家身份' };
+  // 从 Redis 删除房间
+  async deleteRoomFromRedis(roomId) {
+    if (!this.redisClient || !this.redisClient.isConnected()) return;
+
+    try {
+      await this.redisClient.deleteRoom(roomId);
+    } catch (error) {
+      logger.error('从 Redis 删除房间失败:', error.message);
     }
-
-    // 通知对手
-    const opponent = socket.id === room.host.id ? room.guest : room.host;
-    if (opponent) {
-      opponent.emit('opponent_reconnected', {});
-    }
-
-    // 检查对手是否在线
-    const opponentOnline = socket.isHost ? (room.guest !== null) : (room.host !== null);
-
-    return {
-      success: true,
-      roomId,
-      isHost: socket.isHost,
-      playerColor: socket.playerColor,
-      board: room.board,
-      moveHistory: room.moveHistory,
-      currentPlayer: room.currentPlayer,
-      status: room.status,
-      opponentOnline
-    };
   }
 }
 

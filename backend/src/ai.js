@@ -1,4 +1,4 @@
-// 简单五子棋 AI - 评分函数 + 贪心算法
+// 简单五子棋 AI - 评分函数 + 贪心算法 (支持难度)
 
 // 评分模式
 const SCORES = {
@@ -23,6 +23,28 @@ const DIRECTIONS = [
   [1, 1],   // 对角线
   [1, -1]   // 反对角线
 ];
+
+// 难度配置
+const DIFFICULTY_CONFIG = {
+  easy: {
+    randomFactor: 0.4,        // 40% 概率随机落子
+    searchDepth: 1,           // 只搜索一步
+    candidateCount: 5,        // 只考虑前 5 个候选点
+    evaluationNoise: 0.3      // 评估值添加 30% 噪声
+  },
+  medium: {
+    randomFactor: 0.15,       // 15% 概率随机落子
+    searchDepth: 1,
+    candidateCount: 10,
+    evaluationNoise: 0.1
+  },
+  hard: {
+    randomFactor: 0.02,       // 几乎不随机
+    searchDepth: 2,           // 搜索两步
+    candidateCount: 15,
+    evaluationNoise: 0
+  }
+};
 
 // 评估整个棋盘
 function evaluateBoard(board, aiPlayer) {
@@ -56,7 +78,6 @@ function evaluatePoint(board, x, y, player) {
 
 // 评估一个方向上的连子情况
 function evaluateLine(board, x, y, dx, dy, player) {
-  // 收集该方向上的棋子
   let count = 0;
   let openEnds = 0;
   let blocked = 0;
@@ -114,11 +135,15 @@ function evaluateLine(board, x, y, dx, dy, player) {
   return 0;
 }
 
-// 获取最佳落子点
-function getBestMove(board, aiPlayer = 2) {
-  let bestScore = -Infinity;
-  let bestX = -1;
-  let bestY = -1;
+// 获取最佳落子点 (支持难度)
+function getBestMove(board, aiPlayer = 2, difficulty = 'medium') {
+  const config = DIFFICULTY_CONFIG[difficulty] || DIFFICULTY_CONFIG.medium;
+
+  // 简单难度：一定概率随机落子
+  if (Math.random() < config.randomFactor) {
+    const randomMove = getRandomMove(board);
+    if (randomMove) return randomMove;
+  }
 
   // 先检查是否需要防守 (对手有活四)
   const humanPlayer = 3 - aiPlayer;
@@ -135,18 +160,30 @@ function getBestMove(board, aiPlayer = 2) {
     return defendMove;
   }
 
-  // 否则找最高评分点
-  // 限制搜索范围在已有棋子附近
-  const candidates = getCandidateMoves(board);
+  // 获取候选落子点
+  const candidates = getCandidateMoves(board, config.candidateCount);
 
-  for (const { x, y } of candidates) {
+  // 添加评估噪声
+  const scoredCandidates = candidates.map(candidate => {
+    const { x, y, score } = candidate;
+    const noise = (Math.random() - 0.5) * 2 * config.evaluationNoise * score;
+    return { x, y, score: score + noise };
+  });
+
+  // 找最高评分点
+  let bestScore = -Infinity;
+  let bestX = -1;
+  let bestY = -1;
+
+  for (const { x, y, score } of scoredCandidates) {
     // 模拟落子
     board[y][x] = aiPlayer;
     const { total } = evaluateBoard(board, aiPlayer);
     board[y][x] = 0;
 
-    if (total > bestScore) {
-      bestScore = total;
+    const finalScore = score + total;
+    if (finalScore > bestScore) {
+      bestScore = finalScore;
       bestX = x;
       bestY = y;
     }
@@ -164,6 +201,36 @@ function getBestMove(board, aiPlayer = 2) {
   }
 
   return { x: bestX, y: bestY };
+}
+
+// 随机落子
+function getRandomMove(board) {
+  const emptyPoints = [];
+  // 优先选择中心区域
+  const center = 7;
+  const radius = 4;
+
+  for (let y = center - radius; y <= center + radius; y++) {
+    for (let x = center - radius; x <= center + radius; x++) {
+      if (y >= 0 && y < 15 && x >= 0 && x < 15 && board[y][x] === 0) {
+        emptyPoints.push({ x, y });
+      }
+    }
+  }
+
+  if (emptyPoints.length === 0) {
+    // 如果中心区域没有空位，选择任意空位
+    for (let y = 0; y < 15; y++) {
+      for (let x = 0; x < 15; x++) {
+        if (board[y][x] === 0) {
+          emptyPoints.push({ x, y });
+        }
+      }
+    }
+  }
+
+  if (emptyPoints.length === 0) return null;
+  return emptyPoints[Math.floor(Math.random() * emptyPoints.length)];
 }
 
 // 找到关键点 (活四或冲四)
@@ -184,8 +251,8 @@ function findCriticalMove(board, player) {
   return null;
 }
 
-// 获取候选落子点 (已有棋子周围)
-function getCandidateMoves(board) {
+// 获取候选落子点 (已有棋子附近)
+function getCandidateMoves(board, count = 15) {
   const candidates = new Set();
   const visited = new Set();
 
@@ -226,12 +293,13 @@ function getCandidateMoves(board) {
   // 按评分排序
   const sorted = Array.from(candidates).sort((a, b) => b.score - a.score);
 
-  // 返回前N个候选点
-  return sorted.slice(0, 15);
+  // 返回前 N 个候选点
+  return sorted.slice(0, count);
 }
 
 module.exports = {
   getBestMove,
   evaluateBoard,
-  evaluatePoint
+  evaluatePoint,
+  DIFFICULTY_CONFIG
 };

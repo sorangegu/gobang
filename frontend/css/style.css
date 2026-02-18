@@ -2111,3 +2111,400 @@ body:not([data-game-mode="ai"])[data-game-status="playing"] .room-code-preview {
     transform: scale(0.96);
   }
 }
+
+/* ═══════════════════════════════════════════════════════════════════
+   首页选择界面样式
+   ═══════════════════════════════════════════════════════════════════ */
+
+/* 首页选择面板 */
+.home-select {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  min-height: calc(100vh - 120px);
+  padding: 24px;
+}
+
+.home-card {
+  max-width: 900px;
+  width: 100%;
+  text-align: center;
+}
+
+.home-title {
+  font-size: 42px;
+  font-weight: 700;
+  color: var(--accent);
+  margin-bottom: 8px;
+  letter-spacing: 4px;
+}
+
+.home-subtitle {
+  font-size: 16px;
+  color: var(--text-secondary);
+  margin-bottom: 48px;
+}
+
+.mode-cards {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 24px;
+  margin: 0 auto;
+}
+
+.mode-card {
+  background-color: var(--bg-secondary);
+  border: 1px solid var(--border-color);
+  border-radius: var(--radius-lg);
+  padding: 40px 32px;
+  transition: all var(--transition);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+.mode-card:hover {
+  transform: translateY(-4px);
+  box-shadow: 0 8px 24px rgba(233, 69, 96, 0.2);
+  border-color: var(--accent);
+}
+
+.mode-icon {
+  font-size: 64px;
+  margin-bottom: 16px;
+}
+
+.mode-card h2 {
+  font-size: 24px;
+  color: var(--text-primary);
+  margin-bottom: 12px;
+}
+
+.mode-card p {
+  font-size: 14px;
+  color: var(--text-secondary);
+  margin-bottom: 24px;
+}
+
+.mode-btn {
+  padding: 12px 32px;
+  font-size: 16px;
+  font-weight: 600;
+  text-decoration: none;
+  display: inline-block;
+}
+
+/* 难度选择面板 */
+.ai-select {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  min-height: calc(100vh - 120px);
+  padding: 24px;
+}
+
+.select-card {
+  max-width: 900px;
+  width: 100%;
+  text-align: center;
+}
+
+.select-title {
+  font-size: 32px;
+  font-weight: 700;
+  color: var(--text-primary);
+  margin-bottom: 8px;
+}
+
+.select-subtitle {
+  font-size: 14px;
+  color: var(--text-secondary);
+  margin-bottom: 40px;
+}
+
+.difficulty-cards {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 20px;
+  margin: 0 auto;
+}
+
+.difficulty-card {
+  background-color: var(--bg-secondary);
+  border: 1px solid var(--border-color);
+  border-radius: var(--radius-lg);
+  padding: 32px 24px;
+  transition: all var(--transition);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+.difficulty-card:hover {
+  transform: translateY(-4px);
+  border-color: var(--accent);
+  box-shadow: 0 8px 24px rgba(233, 69, 96, 0.15);
+}
+
+.difficulty-card[data-difficulty="easy"]:hover {
+  box-shadow: 0 8px 24px rgba(46, 204, 113, 0.3);
+}
+
+.difficulty-card[data-difficulty="medium"]:hover {
+  box-shadow: 0 8px 24px rgba(241, 196, 15, 0.3);
+}
+
+.difficulty-card[data-difficulty="hard"]:hover {
+  box-shadow: 0 8px 24px rgba(231, 76, 60, 0.3);
+}
+
+.difficulty-icon {
+  font-size: 48px;
+  margin-bottom: 12px;
+}
+
+.difficulty-card h3 {
+  font-size: 20px;
+  color: var(--text-primary);
+  margin-bottom: 8px;
+}
+
+.difficulty-card p {
+  font-size: 13px;
+  color: var(--text-secondary);
+  margin-bottom: 20px;
+  line-height: 1.5;
+}
+
+.difficulty-btn {
+  padding: 10px 24px;
+  font-size: 14px;
+}
+
+.back-home {
+  margin-top: 32px;
+}
+
+.back-link {
+  color: var(--text-secondary);
+  text-decoration: none;
+  font-size: 14px;
+  transition: color var(--transition);
+}
+
+.back-link:hover {
+  color: var(--accent);
+}
+
+/* 玩家对战选择面板 */
+.multiplayer-select-panel {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  min-height: calc(100vh - 120px);
+  padding: 24px;
+}
+
+.multiplayer-select-panel .multiplayer-actions {
+  display: flex;
+  gap: 16px;
+  justify-content: center;
+  margin-bottom: 20px;
+}
+
+.multiplayer-select-panel .btn-large {
+  padding: 16px 40px;
+  font-size: 16px;
+  min-width: 160px;
+}
+
+.multiplayer-select-panel .join-input-section {
+  display: flex;
+  gap: 12px;
+  justify-content: center;
+  align-items: center;
+  margin-top: 20px;
+}
+
+.multiplayer-select-panel .join-input-section input {
+  padding: 14px 20px;
+  font-size: 16px;
+  width: 200px;
+  text-transform: uppercase;
+  letter-spacing: 3px;
+  text-align: center;
+  background-color: var(--bg-primary);
+  border: 1px solid var(--border-color);
+  border-radius: var(--radius);
+  color: var(--text-primary);
+}
+
+.multiplayer-select-panel .join-input-section input:focus {
+  border-color: var(--accent);
+  outline: none;
+}
+
+.multiplayer-select-panel .join-input-section .btn-large {
+  padding: 14px 32px;
+}
+
+/* 游戏包装器 */
+.game-wrapper {
+  width: 100%;
+}
+
+/* 桌面端显示逻辑 */
+body[data-initial-mode="home"] .home-select {
+  display: flex;
+}
+
+body[data-initial-mode="home"] .ai-select,
+body[data-initial-mode="home"] .multiplayer-select-panel,
+body[data-initial-mode="home"] .game-wrapper {
+  display: none;
+}
+
+body[data-initial-mode="ai"] .ai-select {
+  display: flex;
+}
+
+body[data-initial-mode="ai"] .home-select,
+body[data-initial-mode="ai"] .multiplayer-select-panel,
+body[data-initial-mode="ai"] .game-wrapper {
+  display: none;
+}
+
+body[data-initial-mode="multiplayer"] .multiplayer-select-panel {
+  display: flex;
+}
+
+body[data-initial-mode="multiplayer"] .home-select,
+body[data-initial-mode="multiplayer"] .ai-select,
+body[data-initial-mode="multiplayer"] .game-wrapper {
+  display: none;
+}
+
+body[data-game-active="true"] .home-select,
+body[data-game-active="true"] .ai-select,
+body[data-game-active="true"] .multiplayer-select-panel {
+  display: none;
+}
+
+body[data-game-active="true"] .game-wrapper {
+  display: block;
+}
+
+/* 难度显示行 */
+.difficulty-display {
+  border-bottom: 1px solid var(--border-color);
+  padding: 12px 0;
+  font-size: 15px;
+}
+
+.difficulty-display span:first-child {
+  color: var(--text-secondary);
+  margin-right: 12px;
+}
+
+.difficulty-display span:last-child {
+  font-weight: 500;
+  color: var(--accent);
+}
+
+/* 移动端响应式 */
+@media (max-width: 768px) {
+  .home-select,
+  .ai-select,
+  .multiplayer-select-panel {
+    padding: 16px 10px;
+    min-height: auto;
+    padding-top: 40px;
+    padding-bottom: 40px;
+  }
+
+  .home-title {
+    font-size: 28px;
+    letter-spacing: 2px;
+  }
+
+  .home-subtitle {
+    font-size: 14px;
+    margin-bottom: 32px;
+  }
+
+  .mode-cards {
+    grid-template-columns: 1fr;
+    gap: 16px;
+  }
+
+  .mode-card {
+    padding: 28px 20px;
+  }
+
+  .mode-icon {
+    font-size: 48px;
+  }
+
+  .mode-card h2 {
+    font-size: 20px;
+  }
+
+  .mode-card p {
+    font-size: 13px;
+  }
+
+  .difficulty-cards {
+    grid-template-columns: 1fr;
+    gap: 12px;
+  }
+
+  .difficulty-card {
+    padding: 24px 16px;
+  }
+
+  .difficulty-icon {
+    font-size: 40px;
+  }
+
+  .difficulty-card h3 {
+    font-size: 18px;
+  }
+
+  .difficulty-card p {
+    font-size: 12px;
+  }
+
+  .select-title {
+    font-size: 24px;
+  }
+
+  .select-subtitle {
+    font-size: 13px;
+    margin-bottom: 28px;
+  }
+
+  .multiplayer-select-panel .multiplayer-actions {
+    flex-direction: column;
+    gap: 12px;
+  }
+
+  .multiplayer-select-panel .btn-large {
+    width: 100%;
+    min-width: auto;
+    padding: 14px 24px;
+  }
+
+  .multiplayer-select-panel .join-input-section {
+    flex-direction: column;
+    width: 100%;
+  }
+
+  .multiplayer-select-panel .join-input-section input {
+    width: 100%;
+    padding: 14px;
+  }
+
+  .multiplayer-select-panel .join-input-section .btn-large {
+    width: 100%;
+  }
+}
