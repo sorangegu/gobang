@@ -281,7 +281,7 @@ function clearGameForNewMode() {
 
 // 隐藏所有面板
 function hideAllPanels() {
-  const panels = ['homeSelect', 'aiSelect', 'multiplayerSelectPanel', 'roomPanel'];
+  const panels = ['homeSelect', 'aiSelect', 'multiplayerSelectPanel', 'roomPanel', 'gameWrapper'];
   panels.forEach(panelId => {
     const panel = document.getElementById(panelId);
     if (panel) {
@@ -466,7 +466,9 @@ function drawStone(x, y, player) {
 function initElements() {
   Elements.navBtns = document.querySelectorAll('.nav-btn');
   Elements.themeToggle = document.getElementById('themeToggle');
-  Elements.roomPanel = document.getElementById('roomPanel');
+  // 兼容旧版布局：当前页面已无 #roomPanel，保留安全兜底防止空指针。
+  Elements.roomPanel = document.getElementById('roomPanel') || { style: { display: 'none' } };
+  Elements.gameWrapper = document.getElementById('gameWrapper');
   Elements.playerCard = document.getElementById('playerCard');
   Elements.opponentCard = document.getElementById('opponentCard');
   Elements.currentTurnDisplay = document.getElementById('currentTurn');
@@ -705,10 +707,15 @@ function showDifficultyPanel() {
   hideAllPanels();
 
   const aiSelect = document.getElementById('aiSelect');
+  const gameWrapper = Elements.gameWrapper || document.getElementById('gameWrapper');
   if (aiSelect) {
     aiSelect.style.display = 'flex';
   }
+  if (gameWrapper) {
+    gameWrapper.style.display = 'none';
+  }
 
+  delete document.body.dataset.gameActive;
   updateNavState('ai');
   drawBoard();
 }
@@ -1062,14 +1069,21 @@ function updateNavState(mode) {
 }
 
 function updateModeUI(mode) {
+  const homeSelect = document.getElementById('homeSelect');
+  const aiSelect = document.getElementById('aiSelect');
+  const multiplayerSelectPanel = document.getElementById('multiplayerSelectPanel');
+  const gameWrapper = Elements.gameWrapper || document.getElementById('gameWrapper');
+
   updateNavState(mode);
 
   if (mode === 'ai') {
     Elements.roomPanel.style.display = 'none';
     setRoomInfoSectionDisplay('none');
-    document.getElementById('multiplayerSelectPanel').style.display = 'none';
-    document.getElementById('homeSelect').style.display = 'none';
-    document.getElementById('aiSelect').style.display = 'none';
+    if (multiplayerSelectPanel) multiplayerSelectPanel.style.display = 'none';
+    if (homeSelect) homeSelect.style.display = 'none';
+    if (aiSelect) aiSelect.style.display = 'none';
+    if (gameWrapper) gameWrapper.style.display = 'block';
+    document.body.dataset.gameActive = 'true';
 
     const opponentCard = document.getElementById('opponentCard');
     if (opponentCard) {
@@ -1086,9 +1100,11 @@ function updateModeUI(mode) {
   } else if (mode === 'multiplayer') {
     Elements.roomPanel.style.display = 'none';
     setRoomInfoSectionDisplay('none');
-    document.getElementById('multiplayerSelectPanel').style.display = 'block';
-    document.getElementById('homeSelect').style.display = 'none';
-    document.getElementById('aiSelect').style.display = 'none';
+    if (multiplayerSelectPanel) multiplayerSelectPanel.style.display = 'block';
+    if (homeSelect) homeSelect.style.display = 'none';
+    if (aiSelect) aiSelect.style.display = 'none';
+    if (gameWrapper) gameWrapper.style.display = 'none';
+    delete document.body.dataset.gameActive;
 
     const opponentCard = document.getElementById('opponentCard');
     if (opponentCard) {
@@ -1101,9 +1117,11 @@ function updateModeUI(mode) {
     updateGameMode('multiplayer');
   } else if (mode === 'create' || mode === 'join' || mode === 'room') {
     Elements.roomPanel.style.display = 'none';
-    document.getElementById('multiplayerSelectPanel').style.display = 'none';
-    document.getElementById('homeSelect').style.display = 'none';
-    document.getElementById('aiSelect').style.display = 'none';
+    if (multiplayerSelectPanel) multiplayerSelectPanel.style.display = 'none';
+    if (homeSelect) homeSelect.style.display = 'none';
+    if (aiSelect) aiSelect.style.display = 'none';
+    if (gameWrapper) gameWrapper.style.display = 'block';
+    document.body.dataset.gameActive = 'true';
     setRoomInfoSectionDisplay('block');
 
     const opponentCard = document.getElementById('opponentCard');
@@ -1113,9 +1131,11 @@ function updateModeUI(mode) {
   } else if (mode === 'home') {
     Elements.roomPanel.style.display = 'none';
     setRoomInfoSectionDisplay('none');
-    document.getElementById('multiplayerSelectPanel').style.display = 'none';
-    document.getElementById('aiSelect').style.display = 'none';
-    document.getElementById('homeSelect').style.display = 'flex';
+    if (multiplayerSelectPanel) multiplayerSelectPanel.style.display = 'none';
+    if (aiSelect) aiSelect.style.display = 'none';
+    if (homeSelect) homeSelect.style.display = 'flex';
+    if (gameWrapper) gameWrapper.style.display = 'none';
+    delete document.body.dataset.gameActive;
 
     updateGameStatus(null);
     updateGameMode(null);
